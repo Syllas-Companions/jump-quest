@@ -4,9 +4,9 @@
   "description": "multiplayer javascript online game",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "start": "npm run build && node index.js"
+    "build-front": "webpack",
+    "start": "node server.js",
+    "dev": "gulp"
   },
   "repository": {
     "type": "git",
@@ -22,11 +22,20 @@
     "express": "^4.17.1",
     "matter-js": "^0.14.2",
     "socket.io": "^2.3.0",
-    "socket.io-client": "^2.3.0"
+    "socket.io-client": "^2.3.0",
+    "uws": "^10.148.2"
   },
   "devDependencies": {
+    "browser-sync": "^2.26.7",
+    "clean-webpack-plugin": "^3.0.0",
+    "gulp": "^4.0.2",
+    "gulp-nodemon": "^2.4.2",
     "html-webpack-plugin": "^3.2.0",
+    "nodemon": "^2.0.1",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0",
+    "webpack-node-externals": "^1.7.2",
+    "webpack-stream": "^5.2.1"
   }
 }
