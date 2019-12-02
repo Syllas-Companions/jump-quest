@@ -4,21 +4,26 @@ var browserSync = require('browser-sync').create();
 var compiler = require('webpack');
 const webpack = require('webpack-stream');
 
+function handleError(err) {
+    console.log(err.toString())
+    this.emit('end');
+}
 
 function wp() {
     return src('./src/index.js')
-        .pipe(webpack(require('./webpack.config.js', compiler)))
+        .pipe(webpack(require('./webpack.config.js', compiler))).on('error', handleError)
         .pipe(dest('dist/'));
 };
-function gulp_nodemon() {
+async function gulp_nodemon() {
     nodemon({
         script: './server.js', //this is where my express server is
+        watch: ['server.js'],
         ext: 'js html css', //nodemon watches *.js, *.html and *.css files
         env: { 'NODE_ENV': 'development' }
-    });
+    })
 };
 
-function sync() {
+async function sync() {
     browserSync.init({
         port: 3001, //this can be any port, it will show our app
         proxy: {
@@ -26,9 +31,10 @@ function sync() {
             ws: true
         }, //this is the port where express server works
         // ui: { port: 3003 }, //UI, can be any port
-        reloadDelay: 1000 //Important, otherwise syncing will not work
+        reloadDelay: 1000, //Important, otherwise syncing will not work
+        notify: false
     });
-    watch(['./server.js']).on("change", function(){
+    watch(['./server.js']).on("change", function () {
         browserSync.reload();
     });
     watch(['./src/*.*']).on("change", function () {

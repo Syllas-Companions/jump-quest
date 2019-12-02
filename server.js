@@ -11,8 +11,8 @@ io.on('connection', function (socket) {
   socket.emit('hello');
 //   socket.on('my other event', function (data) {
 //     console.log(data);
-//   });
-});
+//   }); 
+}); 
  
 console.log("Server is listenning on port "+(process.env.PORT || 3000))
 
