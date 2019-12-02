@@ -20,7 +20,7 @@ var render = Render.create({
     element: document.body,
     engine: engine
 });
-  
+
 // create two boxes and a ground
 var boxA = Bodies.rectangle(400, 200, 80, 80);
 var boxB = Bodies.rectangle(450, 50, 80, 80);
