@@ -37,8 +37,14 @@ document.addEventListener('keydown', function(event) {
 	console.log(event.keyCode);
 	// Body.applyForce(boxA,{x:boxA.position.x,y:boxA.position.y},{x:0.0,y:-0.05});
 	//function move 
-	character.move(event.keyCode);
+	if(event.keyCode === 37||event.keyCode === 39){
+		character.move(event.keyCode);
+	}
 	//function jump
+	if(event.keyCode === 38){
+		character.jump(event.keyCode);
+		character.isJumping =false;
+	}
 });	
 
 
