@@ -32,8 +32,18 @@ var leftBar = Bodies.rectangle(0, 0, 60, 2000, { isStatic: true });
 //create new character
 var character = new Character(engine.world,{x:500, y:500});
 
+//variable for jump
+var timeStart = 0;
+var timeEnd = 0;
+var deltaTime = 0;
+var forceJump = 0;
+
+//set status 
+	character.isJumping = false;
+
 //input to move character
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keyup', function(event) {
+
 	console.log(event.keyCode);
 	// Body.applyForce(boxA,{x:boxA.position.x,y:boxA.position.y},{x:0.0,y:-0.05});
 	//function move 
@@ -42,10 +52,28 @@ document.addEventListener('keydown', function(event) {
 	}
 	//function jump
 	if(event.keyCode === 38){
-		character.jump(event.keyCode);
-		character.isJumping =false;
+		var timeNow = new Date();
+		timeEnd = timeNow.getTime();
+		deltaTime = timeEnd - timeStart ;
+		console.log("time for force  = " +deltaTime);
+		forceJump = deltaTime/4000;
+		console.log("check");
+		character.jump(forceJump);
+		character.isJumping = false;
+		character.isChanneling = false;
 	}
 });	
+document.addEventListener('keydown',function(event){
+	//variable keydown
+	var timeStartPressDown = new Date(); //time start press
+	if(event.keyCode === 38){
+		var timeNow = new Date();
+		timeStart = timeNow.getTime();
+		// console.log(timeStart);
+	}
+});
+
+
 
 
 // add all of the bodies to the world

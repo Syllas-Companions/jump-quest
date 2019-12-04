@@ -19,10 +19,10 @@ export default class Character{
 		if(!this.isJumping){
 			//turn left non jump
 			if(e === 37){
-				Body.applyForce(this.bodyC,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:-0.05,y:0.00});
+				Body.applyForce(this.bodyC,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:-0.02,y:0.00});
 			//move right not jump
 			}else if(e === 39){
-				Body.applyForce(this.bodyC,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:0.05,y:0.00});
+				Body.applyForce(this.bodyC,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:0.02,y:0.00});
 			}	
 		}else{
 			//turn left jumping
@@ -35,11 +35,13 @@ export default class Character{
 		}
 	}
 
-	jump(){
-		console.log("jumping");
-		console.log(this.isJumping);
+	jump(forceJump){
+		// console.log(this.isJumping);
 		if(!this.isJumping && !this.Channeling){
-		Body.applyForce(this.bodyC,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:0.00,y:-0.05});
+		console.log(this.isJumping);
+		console.log("jumping");
+		Body.applyForce(this.bodyC,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:0.00,y:-forceJump});
+		//set status in jump
 		this.isJumping = true;
 		this.isChanneling = true;
 		}
