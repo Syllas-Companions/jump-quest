@@ -37,7 +37,7 @@ async function sync() {
     watch(['./server.js']).on("change", function () {
         browserSync.reload();
     });
-    watch(['./src/*.*']).on("change", function () {
+    watch(['./src/**/*.*']).on("change", function () {
         wp();
         browserSync.reload();
     })
