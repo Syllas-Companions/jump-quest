@@ -29,6 +29,7 @@ var upBar = Bodies.rectangle(0, 0, 2000, 60, { isStatic: true });
 var rightBar = Bodies.rectangle(800, 400, 60, 810, { isStatic: true });
 var leftBar = Bodies.rectangle(0, 0, 60, 2000, { isStatic: true });
 
+
 //create new character
 var character = new Character(engine.world,{x:500, y:500});
 
@@ -72,9 +73,6 @@ document.addEventListener('keydown',function(event){
 		// console.log(timeStart);
 	}
 });
-
-
-
 
 // add all of the bodies to the world
 World.add(engine.world, [boxA, boxB, ground,leftBar,rightBar,upBar]);

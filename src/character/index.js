@@ -9,7 +9,11 @@ var Engine = Matter.Engine,
 export default class Character{
 	constructor(world,pos){
 			this.bodyC = Bodies.rectangle(pos.x,pos.y,50,50);
-			World.add(world,this.bodyC);
+			this.sensor = Bodies.rectangle(pos.x,pos.y+27,4,4, {isSensor: true});
+			this.composite = Body.create({
+				parts: [this.bodyC,this.sensor]
+			});
+			World.add(world,this.composite);
 			this.isJumping = true;
 			this.isChanneling = true; 
 			//create body
@@ -19,18 +23,18 @@ export default class Character{
 		if(!this.isJumping){
 			//turn left non jump
 			if(e === 37){
-				Body.applyForce(this.bodyC,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:-0.02,y:0.00});
+				Body.applyForce(this.composite,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:-0.02,y:0.00});
 			//move right not jump
 			}else if(e === 39){
-				Body.applyForce(this.bodyC,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:0.02,y:0.00});
+				Body.applyForce(this.composite,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:0.02,y:0.00});
 			}	
 		}else{
 			//turn left jumping
 			if(e === 37){
-				Body.applyForce(this.bodyC,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:-0.02,y:0.00});
+				Body.applyForce(this.composite,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:-0.02,y:0.00});
 			//move right jumping
 			}else if(e === 39){
-				Body.applyForce(this.bodyC,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:0.02,y:0.00});
+				Body.applyForce(this.composite,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:0.02,y:0.00});
 			}
 		}
 	}
@@ -40,7 +44,7 @@ export default class Character{
 		if(!this.isJumping && !this.Channeling){
 		console.log(this.isJumping);
 		console.log("jumping");
-		Body.applyForce(this.bodyC,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:0.00,y:-forceJump});
+		Body.applyForce(this.composite,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:0.00,y:-forceJump});
 		//set status in jump
 		this.isJumping = true;
 		this.isChanneling = true;
