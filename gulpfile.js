@@ -6,17 +6,15 @@ const webpack = require('webpack-stream');
 
 function handleError(err) {
     console.log(err.toString())
-    this.emit('end');
 }
-
 function wp() {
     return src('./src/index.js')
         .pipe(webpack(require('./webpack.config.js', compiler))).on('error', handleError)
-        .pipe(dest('dist/'));
+        .pipe(dest('dist/'))
 };
 async function gulp_nodemon() {
     nodemon({
-        script: './server.js', //this is where my express server is
+        script: './server.js', //this is where express server is
         watch: ['server.js'],
         ext: 'js html css', //nodemon watches *.js, *.html and *.css files
         env: { 'NODE_ENV': 'development' }

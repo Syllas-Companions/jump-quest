@@ -3,6 +3,7 @@ var express = require('express');
 var app = express();
 
 app.use(express.static(__dirname + '/dist')); 
+app.use("/map",express.static(__dirname + '/maps'));
 
 var server = require('http').Server(app);
 var io = require('socket.io')(server);  

@@ -9,33 +9,41 @@ var Engine = Matter.Engine,
 //class character
 export default class Character {
 	constructor(engine, pos) {
-		this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, {inertia: Infinity});
+		this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity });
 		this.sensor = Bodies.rectangle(pos.x, pos.y + 27, 4, 4, { isSensor: true });
 		this.composite = Body.create({
 			parts: [this.bodyC, this.sensor],
 			options: { objType: "character" }
 		});
-		// console.log(this.composite)
-		this.sensor.onCollideActive((pair) => {
-			//if (pair.bodyA.objType == "ground" || pair.bodyB.objType == "ground") {
-				// console.log(pairs)
-				this.isJumping = false;
-				// console.log("set to false")
-			//}
-		})
+		this.engine = engine;
+
 		World.add(engine.world, this.composite);
 		// this.isJumping = true;
 		// this.isChanneling = true;
-		//create body
+		//create body 
 		// Body.create();
 		this.maxJumpTime = 200;
+	}
+
+	// added update function that get called from main index.js every "beforeUpdate" event
+	update() {
+		// query the list of collisions
+		Matter.Query.collides(this.sensor, this.engine.world.bodies)
+			.forEach((collision) => {
+				if (collision.bodyA.id != collision.bodyB.id) {
+					// if the sensor is collided (landed) set isJumping to false
+					// if (collision.bodyA.objType == "ground" || collision.bodyB.objType == "ground") {
+					this.isJumping = false;
+					// }
+				}
+			})
 	}
 	inputHandler(keyState) {
 		if (keyState[38]) {
 			this.jump();
 		}
-		if(keyState[37]) this.move(-1);
-		if(keyState[39]) this.move(1);
+		if (keyState[37]) this.move(-1);
+		if (keyState[39]) this.move(1);
 	}
 	move(dir) {
 		let coeff = this.isJumping ? 0.1 : 1;
