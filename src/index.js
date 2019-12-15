@@ -1,7 +1,7 @@
 import io from 'socket.io-client'
 import Matter from 'matter-js'
 import Character from './character'
-
+import GameMap from './game-map'
 var socket = io.connect();
 socket.on('hello', function () {
     console.log("connected!");
@@ -35,12 +35,6 @@ var leftBar = Bodies.rectangle(0, 0, 60, 2000, { isStatic: true, objType:"ground
 //create new character
 var character = new Character(engine,{x:500, y:500});
 
-//variable for jump
-var timeStart = 0;
-var timeEnd = 0;
-var deltaTime = 0;
-var forceJump = 0;
-
 
 //input to move character
 var keyState = {}
@@ -55,6 +49,16 @@ Events.on(engine, 'beforeUpdate', function(){
 	character.inputHandler(keyState)
     character.update()
 })
+
+var currentMap = null;
+fetch("/maps/demo.json")
+.then(res=>{
+    return res.json()
+}).then(res=>{
+    currentMap = new GameMap(engine,res)
+    console.log(engine.world)
+})
+
 // add all of the bodies to the world
 World.add(engine.world, [boxA, boxB, ground,leftBar,rightBar,upBar]);
 

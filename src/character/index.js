@@ -30,6 +30,7 @@ export default class Character {
 		// query the list of collisions
 		Matter.Query.collides(this.sensor, this.engine.world.bodies)
 			.forEach((collision) => {
+				console.log(collision)
 				if (collision.bodyA.id != collision.bodyB.id) {
 					// if the sensor is collided (landed) set isJumping to false
 					// if (collision.bodyA.objType == "ground" || collision.bodyB.objType == "ground") {
