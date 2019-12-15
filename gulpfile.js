@@ -7,7 +7,7 @@ const webpack = require('webpack-stream');
 function handleError(err) {
     console.log(err.toString())
 }
-function wp() {
+async function wp() {
     return src('./src/index.js')
         .pipe(webpack(require('./webpack.config.js', compiler))).on('error', handleError)
         .pipe(dest('dist/'))
@@ -20,7 +20,6 @@ async function gulp_nodemon() {
         env: { 'NODE_ENV': 'development' }
     })
 };
-
 async function sync() {
     browserSync.init({
         port: 3001, //this can be any port, it will show our app
@@ -36,9 +35,8 @@ async function sync() {
         browserSync.reload();
     });
     watch(['./src/**/*.*']).on("change", function () {
-        wp();
         browserSync.reload();
     })
 };
 
-exports.default = series(wp, parallel(gulp_nodemon, sync));
+exports.default = parallel(wp, gulp_nodemon, sync);
