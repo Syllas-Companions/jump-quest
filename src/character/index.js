@@ -8,11 +8,13 @@ var Engine = Matter.Engine,
 	Body = Matter.Body;
 //class character
 export default class Character {
+
 	constructor(engine, pos) {
 		this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity });
-		this.sensor = Bodies.rectangle(pos.x, pos.y + 27, 4, 4, { isSensor: true });
+		this.sensorD = Bodies.rectangle(pos.x, pos.y + 27, 48, 0.01, { isSensor: true });
+		this.sensorR = Bodies.rectangle(pos.x + 27, pos.y, 0.01, 48, { isSensor: true});
 		this.composite = Body.create({
-			parts: [this.bodyC, this.sensor],
+			parts: [this.bodyC, this.sensorD],
 			options: { objType: "character" }
 		});
 		this.engine = engine;
@@ -20,17 +22,27 @@ export default class Character {
 		World.add(engine.world, this.composite);
 		// this.isJumping = true;
 		// this.isChanneling = true;
-		//create body 
+		//create body
 		// Body.create();
+
+		//field
+		this.forceMoveX = 0.005;
+		this.forceJumpLandingX = 0;
+		this.forceJumpLandingY = -0.05;
+		this.forceJumpFlyX = 0;
+		this.forceJumpFlyY = -0.005;
 		this.maxJumpTime = 200;
+		this.maxJumpLandingV = 6.0;
+		this.maxJumpFlyV = 5.0;
+
 	}
 
 	// added update function that get called from main index.js every "beforeUpdate" event
 	update() {
 		// query the list of collisions
-		Matter.Query.collides(this.sensor, this.engine.world.bodies)
+		Matter.Query.collides(this.sensorD, this.engine.world.bodies)
 			.forEach((collision) => {
-				console.log(collision)
+				// console.log(collision)
 				if (collision.bodyA.id != collision.bodyB.id) {
 					// if the sensor is collided (landed) set isJumping to false
 					// if (collision.bodyA.objType == "ground" || collision.bodyB.objType == "ground") {
@@ -48,42 +60,30 @@ export default class Character {
 	}
 	move(dir) {
 		let coeff = this.isJumping ? 0.1 : 1;
-		Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: dir * 0.005 * coeff, y: 0.00 });
-
-		// if(!this.isJumping){
-		// 	//turn left non jump
-		// 	if(e === 37){
-		// 		Body.applyForce(this.composite,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:-0.02,y:0.00});
-		// 	//move right not jump
-		// 	}else if(e === 39){
-		// 		Body.applyForce(this.composite,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:0.02,y:0.00});
-		// 	}	
-		// }else{
-		// 	//turn left jumping
-		// 	if(e === 37){
-		// 		Body.applyForce(this.composite,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:-0.02,y:0.00});
-		// 	//move right jumping
-		// 	}else if(e === 39){
-		// 		Body.applyForce(this.composite,{x: this.bodyC.position.x,y:this.bodyC.position.y},{x:0.02,y:0.00});
-		// 	}
-		// }
+		Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: dir * this.forceMoveX * coeff, y: 0.00 });
 	}
 
 	jump() {
 		// console.log(this.isJumping);
-		console.log("called" + (!this.isJumping))
+		console.log(this.composite.speed);
+		// console.log("called" + (!this.isJumping));
 		if (!this.isJumping) {
 			this.timeStartJump = new Date();
-			Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: 0.00, y: -0.05 });
+			if(this.composite.speed <= this.maxJumpLandingV){
+				Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: 0.00, y: this.forceJumpLandingY });
+			}
 			//set status in jump
 			this.isJumping = true;
 			// this.isChanneling = true;
 		} else {
 			if (new Date() - this.timeStartJump < this.maxJumpTime) {
-				Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: 0.00, y: -0.003 });
+				if(this.composite.speed <= this.maxJumpFlyV){
+					Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: 0.00, y: this.forceJumpFlyY });
+				}
 			}
 		}
 	}
+
 	effect() {
 
 	}
@@ -92,4 +92,3 @@ export default class Character {
 	}
 
 }
-
