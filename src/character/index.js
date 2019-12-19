@@ -34,7 +34,7 @@ export default class Character {
 		this.maxJumpTime = 200;
 		this.maxJumpLandingV = 6.0;
 		this.maxJumpFlyV = 5.0;
-
+		this.maxMoveSpeed = 5.0;
 	}
 
 	// added update function that get called from main index.js every "beforeUpdate" event
@@ -60,8 +60,11 @@ export default class Character {
 	}
 	move(dir) {
 		let coeff = this.isJumping ? 0.1 : 1;
-		Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: dir * this.forceMoveX * coeff, y: 0.00 });
+		if(this.composite.speed <=this.maxMoveSpeed){
+			Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: dir * this.forceMoveX * coeff, y: 0.00 });
+		}
 	}
+
 
 	jump() {
 		// console.log(this.isJumping);
