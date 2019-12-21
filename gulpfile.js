@@ -54,6 +54,7 @@ async function gulp_nodemon_online(){
     nodemon({
         script: './server_2.js', //this is where express server is
         watch: ['server_2.js'],
+        nodeArgs: ['-r','esm'],
         ext: 'js html css', //nodemon watches *.js, *.html and *.css files
         env: { 'NODE_ENV': 'development' }
     })
