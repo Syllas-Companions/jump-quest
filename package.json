@@ -6,7 +6,8 @@
   "scripts": {
     "build-front": "webpack",
     "start": "node server.js",
-    "dev": "gulp"
+    "dev": "gulp",
+    "dev-socketio": "gulp server_client_test"
   },
   "repository": {
     "type": "git",
