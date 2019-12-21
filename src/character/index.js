@@ -37,6 +37,10 @@ export default class Character {
 		this.maxMoveSpeed = 5.0;
 	}
 
+	destroy(){
+		World.remove(this.engine.world,this.composite,true);
+	}
+
 	// added update function that get called from main index.js every "beforeUpdate" event
 	update() {
 		// query the list of collisions
@@ -68,7 +72,7 @@ export default class Character {
 
 	jump() {
 		// console.log(this.isJumping);
-		console.log(this.composite.speed);
+		// console.log(this.composite.speed);
 		// console.log("called" + (!this.isJumping));
 		if (!this.isJumping) {
 			this.timeStartJump = new Date();
