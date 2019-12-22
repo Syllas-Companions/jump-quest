@@ -11,6 +11,7 @@ var io = require('socket.io')(server);
 import Matter from 'matter-js'
 import Character from './src/character'
 import GameMap from './src/game-map'
+import { decycle } from "json-cyclic"
 
 var Engine = Matter.Engine,
   Render = Matter.Render,
@@ -38,15 +39,20 @@ World.add(engine.world, [boxA, boxB, ground, leftBar, rightBar, upBar]);
 
 var client_character_map = new Map();
 var client_input_map = new Map();
+var server_view = null;
 io.on('connection', function (socket) {
   socket.emit('hello');
-  console.log("Client "+socket.id+" connected!")
+  console.log("Client " + socket.id + " connected!")
   let character = new Character(engine, { x: 500, y: 500 });
   client_character_map.set(socket.id, character);
 
   socket.on('inputUpdate', function (data) {
     client_input_map.set(socket.id, data);
   });
+
+  socket.on('requestServerView', function () {
+    server_view = socket;
+  })
 
   socket.on('disconnect', function () {
     console.log('Client ' + socket.id + ' disconnected!');
@@ -64,17 +70,21 @@ Events.on(engine, 'beforeUpdate', function () {
     }
   })
 })
+
 // run the engine
 setInterval(function () {
   Engine.update(engine, 1000 / 60);
+  if (server_view != null) {
+    server_view.emit('serverStateChanged');
+  }
 }, 1000 / 60);
 
 setInterval(function () {
   let objects = []
-  engine.world.bodies.forEach((body)=>{
+  engine.world.bodies.forEach((body) => {
     let vertices_arr = []
-    body.vertices.forEach((vertex)=>{
-      vertices_arr.push({x:vertex.x, y:vertex.y});
+    body.vertices.forEach((vertex) => {
+      vertices_arr.push({ x: vertex.x, y: vertex.y });
     })
     let obj = {
       id: body.id,
@@ -84,7 +94,7 @@ setInterval(function () {
   })
 
   io.emit('worldUpdate', objects)
-}, 1000/20)
+}, 1000 / 20)
 
 console.log("Server is listenning on port " + (process.env.PORT || 3000))
 

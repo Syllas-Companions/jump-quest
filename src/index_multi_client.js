@@ -51,74 +51,59 @@ setInterval(() => {
     socket.emit("inputUpdate", keyState);
 }, 20);
 
-function roughSizeOfObject(object) {
-
-    var objectList = [];
-    var stack = [object];
-    var bytes = 0;
-
-    while (stack.length) {
-        var value = stack.pop();
-
-        if (typeof value === 'boolean') {
-            bytes += 4;
-        }
-        else if (typeof value === 'string') {
-            bytes += value.length * 2;
-        }
-        else if (typeof value === 'number') {
-            bytes += 8;
-        }
-        else if
-            (
-            typeof value === 'object'
-            && objectList.indexOf(value) === -1
-        ) {
-            objectList.push(value);
-
-            for (var i in value) {
-                stack.push(value[i]);
-            }
-        }
-    }
-    return bytes;
-}
 var receivedStates = []
 socket.on('worldUpdate', function (data) {
-    receivedStates.push(data);
-    if (receivedStates.length > 3) receivedStates.shift();
+    receivedStates.push({ timestamp: new Date().getTime()+100, data: data });
+    //if (receivedStates.length > 3) receivedStates.shift();
 });
 
 let sketch = function (p) {
     p.setup = function () {
         p.createCanvas(p.windowWidth - 20, p.windowHeight - 20);
-
+        p.frameRate(60)
     };
-
+    p.keyPressed = function () {
+        if (p.keyCode === p.ENTER) {
+            console.log(receivedStates);
+        }
+    }
     p.draw = function () {
         p.background(0);
-        p.fill(255);
+        p.stroke(160);
+        p.noFill();
+        let curTime = new Date().getTime();
         if (receivedStates.length > 0) {
-            let currentState = receivedStates[0];
+            let currentState = receivedStates[0].data;
             currentState.forEach(objCurState => {
-                // If there are at least 2 cached state then try to lerp from the current state to the next one;
+                // If there are at least 2 cached state then try to add frames to transit from the current state to the next one;
                 if (receivedStates.length > 1) {
                     let id = objCurState.id;
-                    let objNextState = receivedStates[1].find(val => val.id == id); // try to find the object with the same id
+                    let objNextState = receivedStates[1].data.find(val => val.id == id); // try to find the object with the same id (aka same object in next state)
                     if (objNextState) {
-                        // lerp all vertices towards the next state
+                        // draw frames in middle
+                        p.beginShape();
                         for (let i = 0; i < objCurState.vertices.length; i++) {
-                            objCurState.vertices[i].x = p.lerp(objCurState.vertices[i].x, objNextState.vertices[i].x, 0.4);
-                            objCurState.vertices[i].y = p.lerp(objCurState.vertices[i].y, objNextState.vertices[i].y, 0.4);
+                            // p.vertex(
+                            //     p.map(curTime, receivedStates[0].timestamp, receivedStates[1].timestamp,objCurState.vertices[i].x,objNextState.vertices[i].x,true),
+                            //     p.map(curTime, receivedStates[0].timestamp, receivedStates[1].timestamp,objCurState.vertices[i].y,objNextState.vertices[i].y,true)
+                            // )
+                            objCurState.vertices[i].x = p.lerp(objCurState.vertices[i].x, objNextState.vertices[i].x, 0.3);
+                            objCurState.vertices[i].y = p.lerp(objCurState.vertices[i].y, objNextState.vertices[i].y, 0.3);
+                            p.vertex(objCurState.vertices[i].x, objCurState.vertices[i].y);
                         }
+                        p.endShape(p.CLOSE)
                     }
+                    if(curTime>receivedStates[1].timestamp) receivedStates.shift();
+                } 
+                else 
+                {
+                    // draw the object in current state
+                    p.beginShape();
+                    objCurState.vertices.forEach(vertex => {
+                        p.vertex(vertex.x, vertex.y);
+                    })
+                    p.endShape(p.CLOSE);
                 }
-                // draw the object in current state
-                p.beginShape();
-                objCurState.vertices.forEach(vertex => {
-                    p.vertex(vertex.x, vertex.y);
-                })
-                p.endShape(p.CLOSE);
             });
         }
     };

@@ -5,18 +5,28 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
   mode: 'development',
   watch: true,
-  entry: './src/index_local_client.js',
+  entry: {
+    'server': './src/index_multi_server.js',
+    'client': './src/index_multi_client.js'
+  },
   devtool: 'inline-source-map',
   devServer: {
     contentBase: './dist',
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'JumpQuest Development',
+      chunks: ['server'],
+      title: 'JumpQuest Development Server',
+      filename: 'server.html'
+    }),
+    new HtmlWebpackPlugin({
+      chunks: ['client'],
+      title: 'JumpQuest Development Client',
+      filename: 'index.html'
     })
   ],
   output: {
-    filename: 'main.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
   }
