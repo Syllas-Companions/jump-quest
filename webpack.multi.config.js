@@ -1,26 +1,26 @@
+const nodeExternals = require('webpack-node-externals');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-module.exports = {
+const common = {
   mode: 'development',
   watch: true,
+  devtool: 'inline-source-map'
+};
+
+const frontend = {
   entry: {
-    'server': './src/index_multi_server.js',
-    'client': './src/index_multi_client.js'
-  },
-  devtool: 'inline-source-map',
-  devServer: {
-    contentBase: './dist',
+    'server-view': './src/index_multi_server.js',
+    'client-view': './src/index_multi_client.js'
   },
   plugins: [
     new HtmlWebpackPlugin({
-      chunks: ['server'],
+      chunks: ['server-view'],
       title: 'JumpQuest Development Server',
       filename: 'server.html'
     }),
     new HtmlWebpackPlugin({
-      chunks: ['client'],
+      chunks: ['client-view'],
       title: 'JumpQuest Development Client',
       filename: 'index.html'
     })
@@ -28,6 +28,23 @@ module.exports = {
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/',
+    publicPath: '/'
   }
 };
+
+const backend = {
+  entry: [
+    './src/server/multi/server.multi.js'
+  ],
+  output: {
+    filename: 'server.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  target: 'node',
+  externals: [nodeExternals()]
+};
+
+module.exports = [
+  Object.assign({}, common, frontend),
+  Object.assign({}, common, backend)
+];

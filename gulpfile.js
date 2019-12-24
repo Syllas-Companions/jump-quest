@@ -1,37 +1,61 @@
 var { series, parallel, watch, src, dest } = require('gulp');
+var merge = require('merge-stream');
 var nodemon = require('gulp-nodemon');
 var browserSync = require('browser-sync').create();
 var compiler = require('webpack');
 const del = require('del');
 const webpack = require('webpack-stream');
-
+const webpack2 = require('webpack-stream');
 function handleError(err) {
     console.log(err.toString())
 }
 
-function clean_dist_folder(){
+function clean_dist_folder() {
     return del(['dist/**', '!dist']);
 }
 // function for deploying local version
-function copy_dev_explorer(){
+function copy_dev_explorer() {
     return src(['./src/dev-explorer/**/*']).pipe(dest('./dist/explorer'));
 }
 async function wp() {
     return src('./src/index_single_client.js')
         .pipe(webpack(require('./webpack.single.config.js', compiler))).on('error', handleError)
+        .pipe(dest('dist/public/'))
+};
+async function wp_single_front() {
+    const config = require('./webpack.single.config.js');
+    return src(['./src/index_single_client.js'])
+        .pipe(
+            webpack(config[0],
+                compiler
+            )
+        ).on('error', handleError)
+        .pipe(dest('dist/public/'))
+}
+async function wp_single_back() {
+    const config = require('./webpack.single.config.js');
+    return src(['./src/server/single/server.single.js'])
+        .pipe(
+            webpack(config[1],
+                compiler
+            )
+        ).on('error', handleError)
         .pipe(dest('dist/'))
 };
+const wp_single = parallel(wp_single_front, wp_single_back)
 
-async function gulp_nodemon() {
-    nodemon({
-        script: './server.single.js', //this is where express server is
-        watch: ['server.single.js'],
-        ext: 'js html css', //nodemon watches *.js, *.html and *.css files
-        env: { 'NODE_ENV': 'development' }
-    })
+async function nodemon_single() {
+    setTimeout(function(){
+        nodemon({
+            script: './dist/server.js', //this is where express server is
+            watch: ['./dist/server.js'],
+            ext: 'js html css', //nodemon watches *.js, *.html and *.css files
+            env: { 'NODE_ENV': 'development' }
+        })    
+    },2000)
 };
 
-async function sync() {
+async function sync_single() {
     browserSync.init({
         port: 3001, //this can be any port, it will show our app
         proxy: {
@@ -42,29 +66,44 @@ async function sync() {
         reloadDelay: 1000, //Important, otherwise syncing will not work
         notify: false
     });
-    watch(['./server.single.js']).on("change", function () {
-        browserSync.reload();
-    });
-    watch(['./src/**/*.*']).on("change", function () {
+    watch(['./dist/**/*']).on("change", function () {
         browserSync.reload();
     })
 };
 
 // functions for deploying server-client version
 
-async function wp_multi() {
-    return src('./src/index_multi_client.js')
-        .pipe(webpack(require('./webpack.multi.config.js', compiler))).on('error', handleError)
+async function wp_multi_front() {
+    const config = require('./webpack.multi.config.js');
+    return src(['./src/index_multi_server.js', './src/index_multi_client.js'])
+        .pipe(
+            webpack(config[0],
+                compiler
+            )
+        ).on('error', handleError)
+        .pipe(dest('dist/public/'))
+}
+async function wp_multi_back() {
+    const config = require('./webpack.multi.config.js');
+    return src(['./src/server/multi/server.multi.js'])
+        .pipe(
+            webpack(config[1],
+                compiler
+            )
+        ).on('error', handleError)
         .pipe(dest('dist/'))
 };
-async function gulp_nodemon_multi(){
-    nodemon({
-        script: './server.multi.js', //this is where express server is
-        watch: ['server.multi.js'],
-        nodeArgs: ['-r','esm'],
-        ext: 'js html css', //nodemon watches *.js, *.html and *.css files
-        env: { 'NODE_ENV': 'development' }
-    })
+const wp_multi = parallel(wp_multi_front, wp_multi_back)
+async function nodemon_multi() {
+    setTimeout(function(){
+        nodemon({
+            script: './dist/server.js', //this is where express server is
+            watch: ['./dist/server.js'],
+            nodeArgs: ['-r', 'esm'],
+            ext: 'js html css', //nodemon watches *.js, *.html and *.css files
+            env: { 'NODE_ENV': 'development' }
+        })    
+    },2000)
 }
 async function sync_multi() {
     browserSync.init({
@@ -72,19 +111,15 @@ async function sync_multi() {
         proxy: {
             target: 'http://localhost:3000/',
             ws: true
-        }, 
+        },
         reloadDelay: 1000, //Important, otherwise syncing will not work
         notify: false
     });
-    watch(['./server.multi.js']).on("change", function () {
-        browserSync.reload();
-    });
-    watch(['./src/**/*.*']).on("change", function () {
+    watch(['./dist/**/*']).on("change", function () {
         browserSync.reload();
     })
 };
-
-exports.multi = series(clean_dist_folder,parallel(wp_multi,gulp_nodemon_multi, sync_multi));
-exports.single = series(clean_dist_folder,copy_dev_explorer,parallel(wp, gulp_nodemon, sync));
+exports.multi = series(clean_dist_folder, parallel(wp_multi, nodemon_multi, sync_multi));
+exports.single = series(clean_dist_folder, copy_dev_explorer, parallel(wp_single, nodemon_single, sync_single));
 
 exports.default = exports.single;

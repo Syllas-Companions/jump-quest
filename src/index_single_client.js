@@ -72,7 +72,7 @@ Example.init = function () {
     Render.run(render);
     
     // context for MatterTools.Demo
-    return {
+    return { 
         engine: engine,
         runner: runner,
         render: render,

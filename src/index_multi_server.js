@@ -1,11 +1,14 @@
 import io from 'socket.io-client'
 import Matter from 'matter-js'
+import Serializer from './utilities/serializer' 
+
+var serializer = Serializer.create();
 
 var socket = io.connect();
 
 var Engine = Matter.Engine,
-    Render = Matter.Render,
-    Events = Matter.Events,
+    Render = Matter.Render, 
+    Events = Matter.Events, 
     World = Matter.World,
     Bodies = Matter.Bodies,
     Body = Matter.Body;
@@ -22,7 +25,8 @@ var render = Render.create({
 socket.on('hello', function () {
     socket.emit('requestServerView');
     socket.on('serverStateChanged', function (data) {
-        console.log(data);
+        var loadedWorld = serializer.resurrect(data);
+        Engine.merge(engine, { world: loadedWorld });
     })
 })
 
