@@ -1,6 +1,6 @@
 import io from 'socket.io-client'
 import Matter from 'matter-js'
-import { encycle } from "json-cyclic"
+
 var socket = io.connect();
 
 var Engine = Matter.Engine,

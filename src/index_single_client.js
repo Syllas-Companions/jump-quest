@@ -1,11 +1,6 @@
-import io from 'socket.io-client'
 import Matter from 'matter-js'
 import Character from './character'
 import GameMap from './game-map'
-var socket = io.connect();
-socket.on('hello', function () {
-    console.log("connected!");
-});
 
 var Engine = Matter.Engine,
 	Render = Matter.Render,

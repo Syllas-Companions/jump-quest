@@ -11,7 +11,6 @@ var io = require('socket.io')(server);
 import Matter from 'matter-js'
 import Character from './src/character'
 import GameMap from './src/game-map'
-import { decycle } from "json-cyclic"
 
 var Engine = Matter.Engine,
   Render = Matter.Render,
