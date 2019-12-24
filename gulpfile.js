@@ -13,6 +13,9 @@ function clean_dist_folder(){
     return del(['dist/**', '!dist']);
 }
 // function for deploying local version
+function copy_dev_explorer(){
+    return src(['./src/dev-explorer/**/*']).pipe(dest('./dist/explorer'));
+}
 async function wp() {
     return src('./src/index_single_client.js')
         .pipe(webpack(require('./webpack.single.config.js', compiler))).on('error', handleError)
@@ -82,6 +85,6 @@ async function sync_multi() {
 };
 
 exports.multi = series(clean_dist_folder,parallel(wp_multi,gulp_nodemon_multi, sync_multi));
-exports.single = series(clean_dist_folder,parallel(wp, gulp_nodemon, sync));
+exports.single = series(clean_dist_folder,copy_dev_explorer,parallel(wp, gulp_nodemon, sync));
 
 exports.default = exports.single;
