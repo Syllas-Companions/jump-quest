@@ -5,7 +5,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const common = {
   mode: 'development',
   watch: true,
-  devtool: 'inline-source-map'
+  devtool: 'inline-source-map',
+  resolve: {
+    modules: [path.resolve(__dirname, 'src'), 'node_modules']
+  }
 };
 
 const frontend = {

@@ -5,7 +5,7 @@ var browserSync = require('browser-sync').create();
 var compiler = require('webpack');
 const del = require('del');
 const webpack = require('webpack-stream');
-const webpack2 = require('webpack-stream');
+
 function handleError(err) {
     console.log(err.toString())
 }
@@ -45,30 +45,32 @@ async function wp_single_back() {
 const wp_single = parallel(wp_single_front, wp_single_back)
 
 async function nodemon_single() {
-    setTimeout(function(){
+    setTimeout(function () {
         nodemon({
             script: './dist/server.js', //this is where express server is
             watch: ['./dist/server.js'],
             ext: 'js html css', //nodemon watches *.js, *.html and *.css files
             env: { 'NODE_ENV': 'development' }
-        })    
-    },2000)
+        })
+    }, 2000)
 };
 
 async function sync_single() {
-    browserSync.init({
-        port: 3001, //this can be any port, it will show our app
-        proxy: {
-            target: 'http://localhost:3000/',
-            ws: true
-        }, //this is the port where express server works
-        // ui: { port: 3003 }, //UI, can be any port
-        reloadDelay: 1000, //Important, otherwise syncing will not work
-        notify: false
-    });
-    watch(['./dist/**/*']).on("change", function () {
-        browserSync.reload();
-    })
+    setTimeout(function () {
+        browserSync.init({
+            port: 3001, //this can be any port, it will show our app
+            proxy: {
+                target: 'http://localhost:3000/',
+                ws: true
+            }, //this is the port where express server works
+            // ui: { port: 3003 }, //UI, can be any port
+            reloadDelay: 1000, //Important, otherwise syncing will not work
+            notify: false
+        });
+        watch(['./dist/**/*']).on("change", function () {
+            browserSync.reload();
+        })
+    }, 2500)
 };
 
 // functions for deploying server-client version
@@ -95,29 +97,32 @@ async function wp_multi_back() {
 };
 const wp_multi = parallel(wp_multi_front, wp_multi_back)
 async function nodemon_multi() {
-    setTimeout(function(){
+    setTimeout(function () {
         nodemon({
             script: './dist/server.js', //this is where express server is
             watch: ['./dist/server.js'],
             nodeArgs: ['-r', 'esm'],
             ext: 'js html css', //nodemon watches *.js, *.html and *.css files
             env: { 'NODE_ENV': 'development' }
-        })    
-    },2000)
+        })
+    }, 2000)
 }
 async function sync_multi() {
-    browserSync.init({
-        port: 3001, //this can be any port, it will show our app
-        proxy: {
-            target: 'http://localhost:3000/',
-            ws: true
-        },
-        reloadDelay: 1000, //Important, otherwise syncing will not work
-        notify: false
-    });
-    watch(['./dist/**/*']).on("change", function () {
-        browserSync.reload();
-    })
+
+    setTimeout(function () {
+        browserSync.init({
+            port: 3001, //this can be any port, it will show our app
+            proxy: {
+                target: 'http://localhost:3000/',
+                ws: true
+            },
+            reloadDelay: 1000, //Important, otherwise syncing will not work
+            notify: false
+        });
+        watch(['./dist/**/*']).on("change", function () {
+            browserSync.reload();
+        })
+    }, 2500)
 };
 exports.multi = series(clean_dist_folder, parallel(wp_multi, nodemon_multi, sync_multi));
 exports.single = series(clean_dist_folder, copy_dev_explorer, parallel(wp_single, nodemon_single, sync_single));

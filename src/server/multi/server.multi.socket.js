@@ -1,8 +1,8 @@
 var sockets = {};
 import Matter from 'matter-js'
-import Character from '../../character'
-import GameMap from '../../game-map'
-import Serializer from '../../utilities/serializer'
+import Character from 'character'
+import GameMap from 'game-map'
+import Serializer from 'utilities/serializer'
 
 sockets.init = function (server) {
     // socket.io setup

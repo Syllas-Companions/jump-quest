@@ -2,30 +2,13 @@ const nodeExternals = require('webpack-node-externals');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
-module.exports = {
-  mode: 'development',
-  watch: true,
-  entry: './src/index_single_client.js',
-  devtool: 'inline-source-map',
-  devServer: {
-    contentBase: './dist',
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      title: 'JumpQuest Development (Single)',
-    })
-  ],
-  output: {
-    filename: 'main.js',
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/',
-  }
-};
-
 const common = {
   mode: 'development',
   watch: true,
-  devtool: 'inline-source-map'
+  devtool: 'inline-source-map',
+  resolve: {
+    modules: [path.resolve(__dirname, 'src'), 'node_modules']
+  }
 };
 
 const frontend = {
