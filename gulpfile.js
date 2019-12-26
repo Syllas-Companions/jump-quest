@@ -52,7 +52,7 @@ async function nodemon_single() {
             ext: 'js html css', //nodemon watches *.js, *.html and *.css files
             env: { 'NODE_ENV': 'development' }
         })
-    }, 2000)
+    }, 4000)
 };
 
 async function sync_single() {
@@ -70,7 +70,7 @@ async function sync_single() {
         watch(['./dist/**/*']).on("change", function () {
             browserSync.reload();
         })
-    }, 2500)
+    }, 4500)
 };
 
 // functions for deploying server-client version
@@ -101,11 +101,11 @@ async function nodemon_multi() {
         nodemon({
             script: './dist/server.js', //this is where express server is
             watch: ['./dist/server.js'],
-            nodeArgs: ['-r', 'esm'],
+            //nodeArgs: ['-r', 'esm'],
             ext: 'js html css', //nodemon watches *.js, *.html and *.css files
             env: { 'NODE_ENV': 'development' }
         })
-    }, 2000)
+    }, 4000)
 }
 async function sync_multi() {
 
@@ -122,7 +122,7 @@ async function sync_multi() {
         watch(['./dist/**/*']).on("change", function () {
             browserSync.reload();
         })
-    }, 2500)
+    }, 4500)
 };
 exports.multi = series(clean_dist_folder, parallel(wp_multi, nodemon_multi, sync_multi));
 exports.single = series(clean_dist_folder, copy_dev_explorer, parallel(wp_single, nodemon_single, sync_single));

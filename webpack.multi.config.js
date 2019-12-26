@@ -8,6 +8,13 @@ const common = {
   devtool: 'inline-source-map',
   resolve: {
     modules: [path.resolve(__dirname, 'src'), 'node_modules']
+  },
+  module: {
+    rules: [{
+      test: /\.js$/,
+      exclude: /node_modules/,
+      use: ['babel-loader']
+    }]
   }
 };
 

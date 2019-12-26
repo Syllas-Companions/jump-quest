@@ -21,6 +21,9 @@
   },
   "homepage": "https://github.com/levi218/jump-quest#readme",
   "dependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "babel-loader": "^8.0.6",
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "matter-js": "^0.14.2",
