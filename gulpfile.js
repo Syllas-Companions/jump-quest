@@ -1,5 +1,4 @@
 var { series, parallel, watch, src, dest } = require('gulp');
-var merge = require('merge-stream');
 var nodemon = require('gulp-nodemon');
 var browserSync = require('browser-sync').create();
 var compiler = require('webpack');

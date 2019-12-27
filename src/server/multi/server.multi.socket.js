@@ -34,20 +34,19 @@ sockets.init = function (server) {
     // add all of the bodies to the world
     World.add(engine.world, [boxA, boxB, ground, leftBar, rightBar, upBar]);
 
-    var client_character_map = new Map();
-    var client_input_map = new Map();
+    var client_map = new Map();
     var server_view = null;
     io.on('connection', function (socket) {
         socket.emit('hello');
-
+        client_map.set(socket.id, { input: null, character: null });
         socket.on('inputUpdate', function (data) {
-            client_input_map.set(socket.id, data);
+            client_map.get(socket.id).input = data;
         });
 
         socket.on('requestClientView', function () {
             console.log("Client " + socket.id + " connected!")
             let character = new Character(engine, { x: 500, y: 500 });
-            client_character_map.set(socket.id, character);
+            client_map.get(socket.id).character = character;
         })
         socket.on('requestServerView', function () {
             server_view = socket;
@@ -57,19 +56,19 @@ sockets.init = function (server) {
         socket.on('disconnect', function () {
             if (!server_view || socket.id != server_view.id) {
                 console.log('Client ' + socket.id + ' disconnected!');
-                client_character_map.get(socket.id).destroy();
-                client_character_map.delete(socket.id);
-                client_input_map.delete(socket.id);
+                client_map.get(socket.id).character.destroy();
+                client_map.delete(socket.id);
             }
         });
     });
 
     Events.on(engine, 'beforeUpdate', function () {
-        client_character_map.forEach((value, key, map) => {
-            if (client_input_map.has(key)) {
-                value.inputHandler(client_input_map.get(key));
-                value.update();
+        client_map.forEach((client_info, key, map) => {
+            if (client_info.character && client_info.input) {
+                client_info.character.inputHandler(client_info.input);
+                client_info.character.update();
             }
+
         })
     })
 
@@ -79,13 +78,16 @@ sockets.init = function (server) {
 
     }, 1000 / 60);
 
+    // send world to server view 10 times per sec
     setInterval(function () {
         if (server_view != null) {
             server_view.emit('serverStateChanged', Serializer.serialise(serializer, engine.world));
         }
     }, 1000 / 10);
 
+    // send world to client views 20 times per sec
     setInterval(function () {
+        // create a minimized list of object to send
         let objects = []
         engine.world.bodies.forEach((body) => {
             let vertices_arr = []
@@ -94,7 +96,9 @@ sockets.init = function (server) {
             })
             let obj = {
                 id: body.id,
-                vertices: vertices_arr
+                vertices: vertices_arr,
+                tileset_id: null, // information to render on client side, loaded to object from map
+                tile_id: null //
             }
             objects.push(obj);
         })

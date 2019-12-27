@@ -25,6 +25,7 @@
     "@babel/preset-env": "^7.7.7",
     "babel-loader": "^8.0.6",
     "esm": "^3.2.25",
+    "everpolate": "0.0.3",
     "express": "^4.17.1",
     "matter-js": "^0.14.2",
     "p5": "^0.10.2",

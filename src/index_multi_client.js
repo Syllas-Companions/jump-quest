@@ -1,6 +1,9 @@
 import io from 'socket.io-client'
 import p5 from 'p5'
+import {polynomial} from 'everpolate'
 
+
+// console.log(polynomial([1,2,6,7],[3, 4],[4,5]))
 var socket = io.connect();
 socket.on('hello', function () {
     console.log("connected!");
