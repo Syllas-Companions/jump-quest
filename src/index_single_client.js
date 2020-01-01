@@ -1,6 +1,7 @@
 import Matter from 'matter-js'
 import Character from './character'
 import GameMap from './game-map'
+import BearTrap from './traps/BearTrap'
 
 var Example = Example || {}
 
@@ -16,7 +17,7 @@ Example.init = function () {
     // create an engine
     var engine = Engine.create();
 
-    // create a renderer 
+    // create a renderer
     var render = Render.create({
         element: document.body,
         engine: engine
@@ -35,8 +36,12 @@ Example.init = function () {
 
     //create new character
     var character = new Character(engine, { x: 500, y: 500 });
+    console.log(character);
 
-
+    //create new traps
+    var bearTrap1 = new BearTrap(engine, { x: 600, y: 600} );
+    var bearTrap2 = new BearTrap(engine, { x: 700, y: 600} );
+    // console.log(bearTrap1);
     //input to move character
     var keyState = {}
     window.addEventListener('keydown', function (e) {
@@ -47,8 +52,10 @@ Example.init = function () {
     }, true);
 
     Events.on(engine, 'beforeUpdate', function () {
-        character.inputHandler(keyState)
-        character.update()
+        character.inputHandler(keyState);
+        character.update();
+        bearTrap1.update();
+        bearTrap2.update();
     })
 
     var currentMap = null;
@@ -70,9 +77,9 @@ Example.init = function () {
 
     // run the renderer
     Render.run(render);
-    
+
     // context for MatterTools.Demo
-    return { 
+    return {
         engine: engine,
         runner: runner,
         render: render,

@@ -11,10 +11,10 @@ export default class Character {
 
 	constructor(engine, pos) {
 		this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity });
-		this.sensorD = Bodies.rectangle(pos.x, pos.y + 27, 48, 0.01, { isSensor: true });
-		this.sensorR = Bodies.rectangle(pos.x + 27, pos.y, 0.01, 48, { isSensor: true});
+		this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 46, 0.001, { isSensor: true ,objType: "character"});
+		// this.sensorR = Bodies.rectangle(pos.x + 27, pos.y, 0.01, 48, { isSensor: true});
 		this.composite = Body.create({
-			parts: [this.bodyC, this.sensorD],
+			parts: [this.bodyC, this.sensorDown],
 			options: { objType: "character" }
 		});
 		this.engine = engine;
@@ -25,16 +25,20 @@ export default class Character {
 		//create body
 		// Body.create();
 
-		//field
-		this.forceMoveX = 0.005;
+		//field for use force (applyForce)
+		this.forceMoveX = 0.01;
 		this.forceJumpLandingX = 0;
 		this.forceJumpLandingY = -0.05;
 		this.forceJumpFlyX = 0;
-		this.forceJumpFlyY = -0.005;
+		this.forceJumpFlyY = -0.002;
 		this.maxJumpTime = 200;
-		this.maxJumpLandingV = 6.0;
+		this.maxJumpLandingV = 7.0;
 		this.maxJumpFlyV = 5.0;
-		this.maxMoveSpeed = 5.0;
+		this.maxMoveSpeed = 8.0;
+
+		//filed for use velocity (setVelocity)
+		this.moveVelocity = 1;
+		this.jumpVelocity = 1;
 	}
 
 	destroy(){
@@ -44,16 +48,23 @@ export default class Character {
 	// added update function that get called from main index.js every "beforeUpdate" event
 	update() {
 		// query the list of collisions
-		Matter.Query.collides(this.sensorD, this.engine.world.bodies)
+		Matter.Query.collides(this.sensorDown, this.engine.world.bodies)
 			.forEach((collision) => {
-				// console.log(collision)
+				//used for check sensor
+				// console.log(collision.bodyA.objType);
+				// console.log(collision.bodyB.objType);
+
 				if (collision.bodyA.id != collision.bodyB.id) {
 					// if the sensor is collided (landed) set isJumping to false
 					// if (collision.bodyA.objType == "ground" || collision.bodyB.objType == "ground") {
 					this.isJumping = false;
 					// }
 				}
+				if (collision.bodyA.objType == "bearTrap" || collision.bodyB.objType == "bearTrap") {
+					console.log("u fucking dead :v");
+				}
 			})
+
 	}
 	inputHandler(keyState) {
 		if (keyState[38]) {
@@ -65,7 +76,8 @@ export default class Character {
 	move(dir) {
 		let coeff = this.isJumping ? 0.1 : 1;
 		if(this.composite.speed <=this.maxMoveSpeed){
-			Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: dir * this.forceMoveX * coeff, y: 0.00 });
+			// Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: dir * this.forceMoveX * coeff, y: 0.00 });
+			Body.setVelocity(this.composite, {x: 3 *dir, y: 2});
 		}
 	}
 
@@ -78,6 +90,7 @@ export default class Character {
 			this.timeStartJump = new Date();
 			if(this.composite.speed <= this.maxJumpLandingV){
 				Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: 0.00, y: this.forceJumpLandingY });
+				// Body.setVelocity(this.composite, {x: 0, y: -10});
 			}
 			//set status in jump
 			this.isJumping = true;
@@ -86,6 +99,7 @@ export default class Character {
 			if (new Date() - this.timeStartJump < this.maxJumpTime) {
 				if(this.composite.speed <= this.maxJumpFlyV){
 					Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: 0.00, y: this.forceJumpFlyY });
+					// Body.setVelocity(this.composite, {x: 0, y: -10});
 				}
 			}
 		}
