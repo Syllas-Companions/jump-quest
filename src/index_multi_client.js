@@ -1,7 +1,7 @@
 import io from 'socket.io-client'
 import p5 from 'p5'
 import {polynomial} from 'everpolate'
-
+import tileset_manager from 'tileset_manager'
 
 // console.log(polynomial([1,2,6,7],[3, 4],[4,5]))
 var socket = io.connect();
@@ -10,6 +10,8 @@ socket.on('hello', function () {
     socket.emit('requestClientView');
 });
 
+// tileset_manager.loadTileset('demo-tilesets');
+// window.tileset_manager = tileset_manager;
 
 //input to move character
 var keyState = {} 

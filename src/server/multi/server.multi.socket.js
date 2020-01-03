@@ -23,16 +23,12 @@ sockets.init = function (server) {
     // create two boxes and a ground
     var boxA = Bodies.rectangle(400, 200, 80, 80);
     var boxB = Bodies.rectangle(250, 50, 80, 80);
-    var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true, objType: "ground" });
-    var upBar = Bodies.rectangle(0, 0, 2000, 60, { isStatic: true, objType: "ground" });
-    var rightBar = Bodies.rectangle(800, 400, 60, 810, { isStatic: true, objType: "ground" });
-    var leftBar = Bodies.rectangle(0, 0, 60, 2000, { isStatic: true, objType: "ground" });
 
     var currentMapJson = require("../../../maps/demo.json");
     var currentMap = new GameMap(engine, currentMapJson)
 
     // add all of the bodies to the world
-    World.add(engine.world, [boxA, boxB, ground, leftBar, rightBar, upBar]);
+    World.add(engine.world, [boxA, boxB]);
 
     var client_map = new Map();
     var server_view = null;
@@ -51,6 +47,10 @@ sockets.init = function (server) {
         socket.on('requestServerView', function () {
             server_view = socket;
 
+        })
+
+        socket.on('getMapData', function () {
+            // TODO: return current map information for rendering on client
         })
 
         socket.on('disconnect', function () {
@@ -87,6 +87,12 @@ sockets.init = function (server) {
 
     // send world to client views 20 times per sec
     setInterval(function () {
+        // TODO: send only information of characters and movable objects (traps included?)
+        // possible solution: loop through list of characters (value.character of client_map)
+        // and create an array
+
+        /* OBSOLATED */ 
+        /*
         // create a minimized list of object to send
         let objects = []
         engine.world.bodies.forEach((body) => {
@@ -102,7 +108,7 @@ sockets.init = function (server) {
             }
             objects.push(obj);
         })
-
+        */
         io.emit('worldUpdate', objects)
     }, 1000 / 20)
 

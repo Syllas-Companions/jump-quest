@@ -5,6 +5,7 @@ var app = express();
 
 app.use("/",express.static('dist/public'));
 app.use("/maps", express.static('maps'));
+app.use("/tilesets", express.static('tilesets'));
 
 var server = require('http').Server(app);
  
