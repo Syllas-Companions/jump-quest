@@ -19,6 +19,7 @@ export default class Character {
 		});
 		this.engine = engine;
 
+		this.bodyC.character_logic = this;
 		World.add(engine.world, this.composite);
 		// this.isJumping = true;
 		// this.isChanneling = true;
@@ -34,7 +35,7 @@ export default class Character {
 		this.maxJumpTime = 200;
 		this.maxJumpLandingV = 7.0;
 		this.maxJumpFlyV = 5.0;
-		this.maxMoveSpeed = 8.0;
+		this.maxMoveSpeed = 5.0;
 
 		//filed for use velocity (setVelocity)
 		this.moveVelocity = 1;
@@ -74,11 +75,16 @@ export default class Character {
 		if (keyState[39]) this.move(1);
 	}
 	move(dir) {
-		let coeff = this.isJumping ? 0.1 : 1;
-		if(this.composite.speed <=this.maxMoveSpeed){
+		let coeff = this.isJumping ? 0.05 : 1;
+		// if(Math.abs(this.composite.velocity.x) <=this.maxMoveSpeed){
 			// Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: dir * this.forceMoveX * coeff, y: 0.00 });
-			Body.setVelocity(this.composite, {x: 3 *dir, y: 2});
-		}
+			let curVelX = this.composite.velocity.x;
+			curVelX+=(2 * dir * coeff);
+			if(curVelX > this.maxMoveSpeed) curVelX = this.maxMoveSpeed;
+			if(curVelX < -this.maxMoveSpeed) curVelX = -this.maxMoveSpeed;
+			console.log(this.isJumping+"  "+curVelX);
+			Body.setVelocity(this.composite, {x: curVelX, y: this.composite.velocity.y});
+		// }
 	}
 
 
@@ -88,19 +94,20 @@ export default class Character {
 		// console.log("called" + (!this.isJumping));
 		if (!this.isJumping) {
 			this.timeStartJump = new Date();
-			if(this.composite.speed <= this.maxJumpLandingV){
-				Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: 0.00, y: this.forceJumpLandingY });
-				// Body.setVelocity(this.composite, {x: 0, y: -10});
-			}
+			// if(this.composite.speed <= this.maxJumpLandingV){
+				// Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: 0.00, y: this.forceJumpLandingY });
+				
+			Body.setVelocity(this.composite, {x: this.composite.velocity.x, y: -10});
+			// }
 			//set status in jump
 			this.isJumping = true;
 			// this.isChanneling = true;
 		} else {
 			if (new Date() - this.timeStartJump < this.maxJumpTime) {
-				if(this.composite.speed <= this.maxJumpFlyV){
-					Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: 0.00, y: this.forceJumpFlyY });
-					// Body.setVelocity(this.composite, {x: 0, y: -10});
-				}
+				// if(this.composite.speed <= this.maxJumpFlyV){
+					// Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: 0.00, y: this.forceJumpFlyY });
+					Body.setVelocity(this.composite, {x: this.composite.velocity.x, y: -10});
+				// }
 			}
 		}
 	}

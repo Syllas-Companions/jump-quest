@@ -6,6 +6,7 @@ import Serializer from 'utilities/serializer'
 var Engine = Matter.Engine,
     Render = Matter.Render,
     Events = Matter.Events,
+    Runner = Matter.Runner,
     World = Matter.World,
     Bodies = Matter.Bodies,
     Body = Matter.Body;
@@ -16,15 +17,20 @@ export default class GameManager {
 
         // create an engine
         this.engine = Engine.create();
-
-        this.currentMap = loadDemoMap()
+        
+        this.currentMap = this.loadDemoMap()
 
         // init character array
-        this.characters = [];
+        this.character_map = new Map();
+    
     }
-    createCharacter(){
-        var character = new Character(engine, { x: 500, y: 500 });
-        this.characters.push(character);
+
+    createRunner(){
+        this.runner = Runner.create();
+    }
+    createCharacter(id){
+        var character = new Character(this.engine, { x: 500, y: 500 });
+        this.character_map.set(id, {input: {}, character: character})
         return character;
     }
     loadDemoMap() {
@@ -37,10 +43,49 @@ export default class GameManager {
         var rightBar = Bodies.rectangle(800, 400, 60, 810, { isStatic: true, objType: "ground" });
         var leftBar = Bodies.rectangle(0, 0, 60, 2000, { isStatic: true, objType: "ground" });
 
-        var currentMapJson = require("../../../maps/demo.json");
+        var currentMapJson = require("../maps/demo.json"); 
         // add all of the bodies to the world
-        World.add(engine.world, [boxA, boxB, ground, leftBar, rightBar, upBar]);
+        World.add(this.engine.world, [boxA, boxB, ground, leftBar, rightBar, upBar]);
 
-        return new GameMap(engine, currentMapJson)
+        this.currentMap = new GameMap(this.engine, currentMapJson);
+    }
+
+    start(){
+        // this.registerInputHandler();
+        let context = this;
+        Events.on(this.engine, 'beforeUpdate', function() {
+            context.beforeUpdate()
+        })
+        if(this.runner)
+            Runner.run(this.runner, this.engine);
+
+    }
+
+    // registerInputHandler(){
+    //     this.keyState = {}
+    //     var contxt = this;
+    //     window.addEventListener('keydown', function (e) {
+    //         contxt.keyState[e.keyCode || e.which] = true;
+    //     }, true);
+    //     window.addEventListener('keyup', function (e) {
+    //         contxt.keyState[e.keyCode || e.which] = false;
+    //     }, true);
+    // }
+
+    updateInput(id, input){
+        this.character_map.get(id).input = input;
+    }
+
+    beforeUpdate(){
+        // if(this.character_map)
+        this.character_map.forEach((character_info, key, map) => {
+            if (character_info.character && character_info.input) {
+                character_info.character.inputHandler(character_info.input);
+                character_info.character.update();
+            }
+
+        })
+        // bearTrap1.update();
+        // bearTrap2.update();
     }
 }

@@ -49,6 +49,7 @@ async function nodemon_single() {
             script: './dist/server.js', //this is where express server is
             watch: ['./dist/server.js'],
             ext: 'js html css', //nodemon watches *.js, *.html and *.css files
+            nodeArgs: ['-r', 'esm'],
             env: { 'NODE_ENV': 'development' }
         })
     }, 4000)
@@ -100,7 +101,7 @@ async function nodemon_multi() {
         nodemon({
             script: './dist/server.js', //this is where express server is
             watch: ['./dist/server.js'],
-            //nodeArgs: ['-r', 'esm'],
+            nodeArgs: ['-r', 'esm'],
             ext: 'js html css', //nodemon watches *.js, *.html and *.css files
             env: { 'NODE_ENV': 'development' }
         })
