@@ -1,5 +1,5 @@
 import Matter from 'matter-js'
-
+import C from 'constants'
 var Engine = Matter.Engine,
 	Render = Matter.Render,
 	Events = Matter.Events,
@@ -14,8 +14,13 @@ export default class Character {
 		this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 46, 0.001, { isSensor: true ,objType: "character"});
 		// this.sensorR = Bodies.rectangle(pos.x + 27, pos.y, 0.01, 48, { isSensor: true});
 		this.composite = Body.create({
+<<<<<<< Updated upstream
 			parts: [this.bodyC, this.sensorDown],
 			options: { objType: "character" }
+=======
+			parts: [this.bodyC, this.sensorD],
+			options: { objLayer: C.LAYER_CHARACTER }
+>>>>>>> Stashed changes
 		});
 		this.engine = engine;
 
