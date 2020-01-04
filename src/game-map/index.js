@@ -27,6 +27,11 @@ export default class GameMap {
                 }
             }
         }
+        this.tilesets = mapJson.tilesets.reverse();
+        this.tilesets.forEach(s => {
+            let matched = s.source.match(/([^/]*)$/);
+            s.source = matched ? matched[0] : str
+        })
         World.add(engine.world, this.tiles);
     }
 

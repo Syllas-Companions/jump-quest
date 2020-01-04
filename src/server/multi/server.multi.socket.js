@@ -9,6 +9,7 @@ sockets.init = function (server) {
     var io = require('socket.io')(server);
 
 
+    // TODO: use GameManager instead of throwing code here
     var serializer = Serializer.create();
     var Engine = Matter.Engine,
         Render = Matter.Render,
@@ -44,7 +45,7 @@ sockets.init = function (server) {
             let character = new Character(engine, { x: 500, y: 500 });
             client_map.get(socket.id).character = character;
             // send current map information for rendering on client
-            socket.emit('mapData', currentMap.getStaticObj());
+            socket.emit('mapData', {tilesets: currentMap.tilesets, map: currentMap.getStaticObj()});
         })
         socket.on('requestServerView', function () {
             server_view = socket;

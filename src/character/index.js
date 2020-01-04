@@ -87,7 +87,6 @@ export default class Character {
 			curVelX+=(2 * dir * coeff);
 			if(curVelX > this.maxMoveSpeed) curVelX = this.maxMoveSpeed;
 			if(curVelX < -this.maxMoveSpeed) curVelX = -this.maxMoveSpeed;
-			console.log(this.isJumping+"  "+curVelX);
 			Body.setVelocity(this.composite, {x: curVelX, y: this.composite.velocity.y});
 		// }
 	}

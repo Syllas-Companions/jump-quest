@@ -33,23 +33,52 @@ socket.on('worldUpdate', function (data) {
     if (receivedStates.length > 3) receivedStates.shift();
 });
 
-var mapData = []
+var mapData = { tilesets: [], map: [] }
 socket.on('mapData', function (data) {
     mapData = data;
+    // Load all tilesets
+    mapData.tilesets.forEach(ts => {
+        tileset_manager.loadTileset(ts.source);
+    })
 });
 
 
 let sketch = function (p) {
     p.drawMap = function () {
-        mapData.forEach(obj => {
-            p.beginShape();
-            obj.vertices.forEach(vertex => {
-                p.vertex(vertex.x, vertex.y);
+        p.push();
+        // Render tiles using tilesheet's information (TileSet and tileset_manager)
+        mapData.map.forEach(obj => {
+            let tileset = mapData.tilesets.find(ts => {
+                return ts.firstgid < obj.tile_id;
             })
-            p.endShape(p.CLOSE);
+            if (tileset) {
+                let res = tileset_manager.getTile(tileset.source, obj.tile_id)
+                if (res) {
+                    // resource ready
+                    p.imageMode(p.CENTER);
+                    p.image(res.tileset.image, obj.position.x, obj.position.y,64,64, res.x, res.y, res.width, res.height);
+                } else {
+                    console.log("not ready yet")
+                }
+                // TEST DATA W/O IMAGE
+                // p.fill(123)
+                // p.rect(obj.position.x, obj.position.y, 64,64);
+            } else {
+                // if resource not found
+                p.stroke(160);
+                p.rectMode(p.CENTER)
+                p.noFill();
+                p.beginShape();
+                obj.vertices.forEach(vertex => {
+                    p.vertex(vertex.x, vertex.y);
+                })
+                p.endShape(p.CLOSE);
+            }
         });
+        p.pop();
     }
     p.setup = function () {
+        tileset_manager.setP5Instance(p);
         p.createCanvas(p.windowWidth - 20, p.windowHeight - 20);
         p.frameRate(60)
     };
@@ -59,10 +88,11 @@ let sketch = function (p) {
         }
     }
     p.draw = function () {
+        let time = new Date();
         p.background(0);
         p.stroke(160);
         p.noFill();
-        if(mapData){
+        if (mapData) {
             p.drawMap();
         }
         let curTime = new Date().getTime();
