@@ -49,8 +49,13 @@ export default class Character {
 	// added update function that get called from main index.js every "beforeUpdate" event
 	update() {
 		// query the list of collisions
-		Matter.Query.collides(this.sensorDown, this.engine.world.bodies)
-			.forEach((collision) => {
+		let collisions = Matter.Query.collides(this.sensorDown, this.engine.world.bodies);
+		// not jumping but collided with no object (incl platform)
+		// => falling from the edge of the platform
+		if(collisions.length==1 && this.isJumping == false){
+			this.isJumping = true;
+		}else
+		collisions.forEach((collision) => {
 				//used for check sensor
 				// console.log(collision.bodyA.objType);
 				// console.log(collision.bodyB.objType);
