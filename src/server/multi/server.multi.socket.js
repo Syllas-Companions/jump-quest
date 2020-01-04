@@ -43,15 +43,19 @@ sockets.init = function (server) {
             console.log("Client " + socket.id + " connected!")
             let character = new Character(engine, { x: 500, y: 500 });
             client_map.get(socket.id).character = character;
+            // send current map information for rendering on client
+            socket.emit('mapData', currentMap.getStaticObj());
         })
         socket.on('requestServerView', function () {
             server_view = socket;
 
         })
 
-        socket.on('getMapData', function () {
-            // TODO: return current map information for rendering on client
-        })
+        /* CURRENTLY UNNECESSARY */
+        // socket.on('getMapData', function () {
+        //     // send current map information for rendering on client
+        //     socket.emit('mapData', currentMap.getStaticObj());
+        // })
 
         socket.on('disconnect', function () {
             if (!server_view || socket.id != server_view.id) {
@@ -85,30 +89,34 @@ sockets.init = function (server) {
         }
     }, 1000 / 10);
 
+    function getCharactersRenderObj() {
+        let objects = []
+        client_map.forEach((client_info, key, map) => {
+            if (client_info.character) {
+                let c = client_info.character.bodyC;
+                let vertices_arr = []
+                c.vertices.forEach((vertex) => {
+                    vertices_arr.push({ x: vertex.x, y: vertex.y });
+                })
+                let obj = {
+                    id: c.id,
+                    vertices: vertices_arr,
+                    tile_id: c.tile_id,
+                    position: c.position
+                }
+                objects.push(obj);
+            }
+        })
+        return objects
+    }
+
     // send world to client views 20 times per sec
     setInterval(function () {
-        // TODO: send only information of characters and movable objects (traps included?)
-        // possible solution: loop through list of characters (value.character of client_map)
-        // and create an array
-
-        /* OBSOLATED */ 
-        /*
+        // send only information of characters and movable objects
+        
         // create a minimized list of object to send
         let objects = []
-        engine.world.bodies.forEach((body) => {
-            let vertices_arr = []
-            body.vertices.forEach((vertex) => {
-                vertices_arr.push({ x: vertex.x, y: vertex.y });
-            })
-            let obj = {
-                id: body.id,
-                vertices: vertices_arr,
-                tileset_id: null, // information to render on client side, loaded to object from map
-                tile_id: null //
-            }
-            objects.push(obj);
-        })
-        */
+        objects = objects.concat(currentMap.getMovingObj(), getCharactersRenderObj())
         io.emit('worldUpdate', objects)
     }, 1000 / 20)
 

@@ -1,6 +1,6 @@
 import io from 'socket.io-client'
 import p5 from 'p5'
-import {polynomial} from 'everpolate'
+import { polynomial } from 'everpolate'
 import tileset_manager from 'tileset_manager'
 
 // console.log(polynomial([1,2,6,7],[3, 4],[4,5]))
@@ -14,7 +14,7 @@ socket.on('hello', function () {
 // window.tileset_manager = tileset_manager;
 
 //input to move character
-var keyState = {} 
+var keyState = {}
 window.addEventListener('keydown', function (e) {
     keyState[e.keyCode || e.which] = true;
 }, true);
@@ -29,11 +29,26 @@ setInterval(() => {
 
 var receivedStates = []
 socket.on('worldUpdate', function (data) {
-    receivedStates.push({ timestamp: new Date().getTime()+100, data: data });
-    //if (receivedStates.length > 3) receivedStates.shift();
+    receivedStates.push({ timestamp: new Date().getTime() + 100, data: data });
+    if (receivedStates.length > 3) receivedStates.shift();
 });
 
+var mapData = []
+socket.on('mapData', function (data) {
+    mapData = data;
+});
+
+
 let sketch = function (p) {
+    p.drawMap = function () {
+        mapData.forEach(obj => {
+            p.beginShape();
+            obj.vertices.forEach(vertex => {
+                p.vertex(vertex.x, vertex.y);
+            })
+            p.endShape(p.CLOSE);
+        });
+    }
     p.setup = function () {
         p.createCanvas(p.windowWidth - 20, p.windowHeight - 20);
         p.frameRate(60)
@@ -47,6 +62,9 @@ let sketch = function (p) {
         p.background(0);
         p.stroke(160);
         p.noFill();
+        if(mapData){
+            p.drawMap();
+        }
         let curTime = new Date().getTime();
         if (receivedStates.length > 0) {
             let currentState = receivedStates[0].data;
@@ -69,10 +87,9 @@ let sketch = function (p) {
                         }
                         p.endShape(p.CLOSE)
                     }
-                    if(curTime>receivedStates[1].timestamp) receivedStates.shift();
-                } 
-                else 
-                {
+                    if (curTime > receivedStates[1].timestamp) receivedStates.shift();
+                }
+                else {
                     // draw the object in current state
                     p.beginShape();
                     objCurState.vertices.forEach(vertex => {
