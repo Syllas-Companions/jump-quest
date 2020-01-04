@@ -22,7 +22,7 @@ export default class GameMap {
                         tilesLayer.x + j * this.tileWidth,
                         tilesLayer.y + i * this.tileHeight,
                         this.tileWidth, this.tileHeight,
-                        { isStatic: true, objLayer: C.LAYER_MAP_TILES });
+                        { isStatic: true, objLayer: C.LAYER_MAP_TILES, tile_id: tilesLayer.data[i * tilesLayer.width + j]});
                     this.tiles.push(tile);
                 }
             }
@@ -30,7 +30,28 @@ export default class GameMap {
         World.add(engine.world, this.tiles);
     }
 
-    getRenderInfo(){
-        // TODO: return an array consist of information for rendering the map
+    // get a list of static object (platforms)
+    getStaticObj(){
+        let objects = []
+        this.tiles.forEach((tile) => {
+            let vertices_arr = []
+            tile.vertices.forEach((vertex) => {
+                vertices_arr.push({ x: vertex.x, y: vertex.y });
+            })
+            let obj = {
+                id: tile.id,
+                vertices: vertices_arr,
+                tile_id: tile.tile_id,
+                position: tile.position
+            }
+            objects.push(obj);
+        })
+        return objects
+    }
+
+    // get a list of movable objects in the map (traps, enemies,...)
+    getMovingObj(){
+        // TODO: return traps', enemies' position, etc
+        return []
     }
 }
