@@ -9,16 +9,7 @@ sockets.init = function (server) {
     // socket.io setup
     var io = require('socket.io')(server);
 
-
-    // MTODO: use GameManager instead of throwing code here
     var serializer = Serializer.create();
-    var Engine = Matter.Engine,
-        Render = Matter.Render,
-        Events = Matter.Events,
-        World = Matter.World,
-        Bodies = Matter.Bodies,
-        Body = Matter.Body;
-
 
     var game_manager = new GameManager();
     game_manager.start();
@@ -54,7 +45,7 @@ sockets.init = function (server) {
             }
         });
     });
-
+    
     // send world to server view 10 times per sec
     setInterval(function () {
         if (server_view != null) {

@@ -1,10 +1,8 @@
 import Matter from 'matter-js'
 import Character from 'character'
 import GameMap from 'game-map'
-import Serializer from 'utilities/serializer'
 
 var Engine = Matter.Engine,
-    Render = Matter.Render,
     Events = Matter.Events,
     Runner = Matter.Runner,
     World = Matter.World,
@@ -13,8 +11,6 @@ var Engine = Matter.Engine,
 
 export default class GameManager {
     constructor() {
-        this.serializer = Serializer.create();
-
         // create an engine
         this.engine = Engine.create();
 
@@ -34,8 +30,10 @@ export default class GameManager {
         return character;
     }
     deleteCharacter(id) {
-        this.character_map.get(id).character.destroy();
-        this.character_map.delete(id);
+        if (this.character_map.has(id)) {
+            this.character_map.get(id).character.destroy();
+            this.character_map.delete(id);
+        }
     }
     loadDemoMap() {
 
@@ -79,7 +77,7 @@ export default class GameManager {
         }
     }
 
-    stop(){
+    stop() {
         let context = this;
         Events.off(this.engine, 'beforeUpdate')
         if (this.runner)
@@ -89,7 +87,7 @@ export default class GameManager {
             clearInterval(this.gameLoopInterval)
         }
     }
-    
+
     getCharactersRenderObj() {
         let objects = []
         this.character_map.forEach((character_info, key, map) => {
@@ -97,6 +95,7 @@ export default class GameManager {
                 let c = character_info.character.bodyC;
                 let obj = {
                     id: c.id,
+                    client_id: key,
                     vertices: c.vertices.map((vertex) => {
                         return { x: vertex.x, y: vertex.y };
                     }),
@@ -108,16 +107,6 @@ export default class GameManager {
         })
         return objects
     }
-    // registerInputHandler(){
-    //     this.keyState = {}
-    //     var contxt = this;
-    //     window.addEventListener('keydown', function (e) {
-    //         contxt.keyState[e.keyCode || e.which] = true;
-    //     }, true);
-    //     window.addEventListener('keyup', function (e) {
-    //         contxt.keyState[e.keyCode || e.which] = false;
-    //     }, true);
-    // }
 
     updateInput(id, input) {
         if (this.character_map.has(id))

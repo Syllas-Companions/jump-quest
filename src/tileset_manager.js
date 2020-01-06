@@ -22,7 +22,9 @@ export default {
     },
     getTileset: function (name) {
         if (this.tilesets.has(name)) {
-            return this.tilesets.get(name)
+            if(this.tilesets.get(name).name)
+                return this.tilesets.get(name)
+            else return null
         } else {
             this.loadTileset(name)
             return null
@@ -31,6 +33,7 @@ export default {
     loadTileset: function (name) {
         if (!this.tilesets.has(name)) {
             // load tileset information from json
+            this.tilesets.set(name,{})
             fetch('/tilesets/' + name)
                 .then(response => {
                     return response.json()
