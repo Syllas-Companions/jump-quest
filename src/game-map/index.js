@@ -11,6 +11,7 @@ var Engine = Matter.Engine,
 
 export default class GameMap {
     constructor(engine, mapJson) {
+        this.engine = engine;
         this.tileWidth = mapJson.tilewidth;
         this.tileHeight = mapJson.tileheight;
         let tilesLayer = mapJson.layers.find(layer => layer.name == "tiles");
@@ -22,7 +23,7 @@ export default class GameMap {
                         tilesLayer.x + j * this.tileWidth,
                         tilesLayer.y + i * this.tileHeight,
                         this.tileWidth, this.tileHeight,
-                        { isStatic: true, objLayer: C.LAYER_MAP_TILES, tile_id: tilesLayer.data[i * tilesLayer.width + j]});
+                        { isStatic: true, objLayer: C.LAYER_MAP_TILES, tile_id: tilesLayer.data[i * tilesLayer.width + j] });
                     this.tiles.push(tile);
                 }
             }
@@ -36,27 +37,42 @@ export default class GameMap {
     }
 
     // get a list of static object (platforms)
-    getStaticObj(){
-        let objects = []
+    getStaticObj() {
+        let result = []
         this.tiles.forEach((tile) => {
-            let vertices_arr = []
-            tile.vertices.forEach((vertex) => {
-                vertices_arr.push({ x: vertex.x, y: vertex.y });
-            })
             let obj = {
                 id: tile.id,
-                vertices: vertices_arr,
+                vertices: tile.vertices.map(vertex => {
+                    return { x: vertex.x, y: vertex.y }
+                }),
                 tile_id: tile.tile_id,
                 position: tile.position
             }
-            objects.push(obj);
+            result.push(obj);
         })
-        return objects
+        return result
     }
 
+    addObject(obj) {
+        if (!this.objects) this.objects = [];
+        this.objects.push(obj);
+        World.add(this.engine.world, obj);
+    }
     // get a list of movable objects in the map (traps, enemies,...)
-    getMovingObj(){
-        // TODO: return traps', enemies' position, etc
-        return []
+    getMovingObj() {
+        // MTODO: return traps', enemies' position, etc
+        if (!this.objects) return [];
+        let result = []
+        this.objects.forEach((obj) => {
+            result.push({
+                id: obj.id,
+                vertices: obj.vertices.map(vertex => {
+                    return { x: vertex.x, y: vertex.y }
+                }),
+                tile_id: obj.tile_id,
+                position: obj.position
+            })
+        })
+        return result
     }
 }
