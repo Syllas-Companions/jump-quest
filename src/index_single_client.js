@@ -1,7 +1,6 @@
 import Matter from 'matter-js'
-import Character from './character'
-import GameMap from './game-map'
 import GameManager from 'game_manager'
+import camera from 'camera'
 // import BearTrap from './traps/BearTrap'
 
 var Example = Example || {}
@@ -22,7 +21,11 @@ Example.init = function () {
     // create a renderer
     var render = Render.create({
         element: document.body,
-        engine: game_manager.engine
+        engine: game_manager.engine,
+        options: {
+            width: window.innerWidth-20,
+            height: window.innerHeight-20
+        }
     });
 
 
@@ -50,17 +53,17 @@ Example.init = function () {
     var keyState = {}
     window.addEventListener('keydown', function (e) {
         keyState[e.keyCode || e.which] = true;
-        game_manager.updateInput(1,keyState);
+        game_manager.updateInput(1, keyState);
     }, true);
     window.addEventListener('keyup', function (e) {
         keyState[e.keyCode || e.which] = false;
-        game_manager.updateInput(1,keyState);
+        game_manager.updateInput(1, keyState);
     }, true);
     // Events.on(engine, 'beforeUpdate', function () {
     //     character.inputHandler(keyState);
     //     character.update();
-        // bearTrap1.update();
-        // bearTrap2.update();
+    // bearTrap1.update();
+    // bearTrap2.update();
     // })
 
     // var currentMap = null;
@@ -81,8 +84,21 @@ Example.init = function () {
     // Runner.run(runner, engine);
 
     // run the renderer
+    // Render.lookAt(render,character.composite)
     Render.run(render);
     game_manager.start();
+
+    /* SINGLE MODE CAMERA UPDATE */
+    camera.width = render.canvas.width;
+    camera.height = render.canvas.height;
+    setInterval(function () {
+        camera.towards(character.composite.position.x, character.composite.position.y);
+        camera.update();
+        Render.lookAt(render, [{
+            min:camera.min(),
+            max:camera.max()
+        }])
+    }, 15)
     // context for MatterTools.Demo
     return {
         engine: game_manager.engine,

@@ -14,6 +14,12 @@ export default {
     towards: function (x, y) {
         this.target = { x: x, y: y };
     },
+    min: function () {
+        return { x: this.position.x - this.width / 2, y: this.position.y - this.height / 2 }
+    },
+    max: function () {
+        return { x: this.position.x + this.width / 2, y: this.position.y + this.height / 2 }
+    },
     update: function () {
         // move camera toward target's position
         if (this.target) {
