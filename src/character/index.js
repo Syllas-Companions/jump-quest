@@ -74,7 +74,7 @@ export default class Character {
 		else this.composite.friction = 0.1;
 		
 		//take item
-		let collisionTakeItem = Matter.Query.collides(this.sensorFace , this.engine.bodies);
+		let collisionTakeItem = Matter.Query.collides(this.sensorFace , this.engine.world.bodies);
 		//change face
 		if(this.facing ==  1) Body.setPosition(this.sensorFace,{x: this.composite.position.x+27, y: this.composite.position.y});
 		if(this.facing == -1) Body.setPosition(this.sensorFace,{x: this.composite.position.x-27, y: this.composite.position.y});

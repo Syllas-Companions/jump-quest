@@ -54,18 +54,10 @@ export default class GameManager {
         // add some objects to the map
         this.currentMap.addObject(boxA);
         this.currentMap.addObject(boxB);
-<<<<<<< HEAD
-        this.currentMap.addObject(ground);
-        this.currentMap.addObject(upBar);
-        this.currentMap.addObject(rightBar);
-        this.currentMap.addObject(leftBar);
-        
-=======
         // this.currentMap.addObject(ground);
         // this.currentMap.addObject(upBar);
         // this.currentMap.addObject(rightBar);
         // this.currentMap.addObject(leftBar);
->>>>>>> 361a73c5f8c4a32ef2645ca846cd0a8b10d1e0fd
 
     }
 
