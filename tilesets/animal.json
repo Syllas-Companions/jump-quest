@@ -1,0 +1,15 @@
+{ "columns":5,
+ "image":"square_nodetails.png",
+ "imageheight":383,
+ "imagewidth":320,
+ "margin":0,
+ "name":"animal",
+ "spacing":0,
+ "tilecount":25,
+ "tiledversion":"2019.10.30",
+ "tileheight":64,
+ "tilewidth":64,
+ "transparentcolor":"#ffffff",
+ "type":"tileset",
+ "version":1.2
+}

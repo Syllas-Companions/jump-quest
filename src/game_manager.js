@@ -40,10 +40,10 @@ export default class GameManager {
         // create two boxes and a ground
         var boxA = Bodies.rectangle(400, 200, 80, 80);
         var boxB = Bodies.rectangle(250, 50, 80, 80);
-        var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true, objType: "ground" });
-        var upBar = Bodies.rectangle(0, 0, 2000, 60, { isStatic: true, objType: "ground" });
-        var rightBar = Bodies.rectangle(800, 400, 60, 810, { isStatic: true, objType: "ground" });
-        var leftBar = Bodies.rectangle(0, 0, 60, 2000, { isStatic: true, objType: "ground" });
+        // var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true, objType: "ground" });
+        // var upBar = Bodies.rectangle(0, 0, 2000, 60, { isStatic: true, objType: "ground" });
+        // var rightBar = Bodies.rectangle(800, 400, 60, 810, { isStatic: true, objType: "ground" });
+        // var leftBar = Bodies.rectangle(0, 0, 60, 2000, { isStatic: true, objType: "ground" });
 
         var currentMapJson = require("../maps/demo.json");
         // add all of the bodies to the world
@@ -54,11 +54,18 @@ export default class GameManager {
         // add some objects to the map
         this.currentMap.addObject(boxA);
         this.currentMap.addObject(boxB);
+<<<<<<< HEAD
         this.currentMap.addObject(ground);
         this.currentMap.addObject(upBar);
         this.currentMap.addObject(rightBar);
         this.currentMap.addObject(leftBar);
         
+=======
+        // this.currentMap.addObject(ground);
+        // this.currentMap.addObject(upBar);
+        // this.currentMap.addObject(rightBar);
+        // this.currentMap.addObject(leftBar);
+>>>>>>> 361a73c5f8c4a32ef2645ca846cd0a8b10d1e0fd
 
     }
 
