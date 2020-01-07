@@ -17,6 +17,9 @@ sockets.init = function (server) {
     var server_view = null;
     io.on('connection', function (socket) {
         socket.emit('hello');
+        socket.on('pingRequest', function () {
+            socket.emit('pongResponse');
+        });
         socket.on('inputUpdate', function (data) {
             game_manager.updateInput(socket.id, data);
         });
@@ -45,7 +48,7 @@ sockets.init = function (server) {
             }
         });
     });
-    
+
     // send world to server view 10 times per sec
     setInterval(function () {
         if (server_view != null) {

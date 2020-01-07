@@ -9,7 +9,7 @@ export default {
         let width = tileset.tilewidth;
         let height = tileset.tileheight;
         let x_cell = gid % tileset.columns;
-        let y_cell = (gid-x_cell) / tileset.columns;
+        let y_cell = (gid - x_cell) / tileset.columns;
         let x_image = x_cell * width;
         let y_image = y_cell * height;
         return {
@@ -22,7 +22,7 @@ export default {
     },
     getTileset: function (name) {
         if (this.tilesets.has(name)) {
-            if(this.tilesets.get(name).name)
+            if (this.tilesets.get(name).name)
                 return this.tilesets.get(name)
             else return null
         } else {
@@ -31,9 +31,9 @@ export default {
         }
     },
     loadTileset: function (name) {
-        if (!this.tilesets.has(name)) {
+        if (!this.tilesets.has(name) && this.p_instance) {
             // load tileset information from json
-            this.tilesets.set(name,{})
+            this.tilesets.set(name, {})
             fetch('/tilesets/' + name)
                 .then(response => {
                     return response.json()

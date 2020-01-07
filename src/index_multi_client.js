@@ -4,15 +4,24 @@ import { polynomial } from 'everpolate'
 import tileset_manager from 'tileset_manager'
 import camera from 'camera'
 
-// console.log(polynomial([1,2,6,7],[3, 4],[4,5]))
 var socket = io.connect();
 socket.on('hello', function () {
     console.log("connected!");
     socket.emit('requestClientView');
 });
 
-// tileset_manager.loadTileset('demo-tilesets');
-// window.tileset_manager = tileset_manager;
+// calculate latency for future uses
+var pingStartTime;
+var latency;
+setInterval(function () {
+    pingStartTime = Date.now();
+    socket.emit('pingRequest');
+}, 1000);
+
+socket.on('pongResponse', function () {
+    latency = Date.now() - pingStartTime;
+    console.log(latency);
+});
 
 //input to move character
 var keyState = {}
@@ -32,7 +41,7 @@ var receivedStates = []
 var MAX_SAVED_STATE = 4
 var objectData = new Map()
 socket.on('worldUpdate', function (data) {
-    let timestamp = new Date().getTime()+50; // TODO: might be better when considering ping in place of constant
+    let timestamp = new Date().getTime() + 50; // TODO: might be better when considering ping in place of constant
     receivedStates.push({ timestamp: timestamp + 100, data: data });
 
     // (obj definition in game_manager.getCharactersRenderObj)
