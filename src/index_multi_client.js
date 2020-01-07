@@ -168,10 +168,10 @@ let sketch = function (p) {
             // Render tiles using tilesheet's information (TileSet and tileset_manager)
             mapData.map.forEach(obj => {
                 let tileset = mapData.tilesets.find(ts => {
-                    return ts.firstgid < obj.tile_id;
+                    return ts.firstgid < obj.tile_id+1;
                 })
                 if (tileset) {
-                    let res = tileset_manager.getTile(tileset.source, obj.tile_id)
+                    let res = tileset_manager.getTile(tileset.source, obj.tile_id-tileset.firstgid)
                     if (res) {
                         // resource ready
                         p.imageMode(p.CENTER);
@@ -212,7 +212,9 @@ let sketch = function (p) {
     p.draw = function () {
         camera.update();
         p.background(0);
-        p.translate(-camera.position.x + camera.width / 2, -camera.position.y + camera.height / 2)
+        let scale = 2;
+        p.scale(scale)
+        p.translate(-camera.position.x + camera.width / 2 / scale,-camera.position.y + camera.height / 2 / scale)
         p.drawMap();
         p.drawMovingObjs();
     };
