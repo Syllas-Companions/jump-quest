@@ -58,6 +58,7 @@ export default class GameManager {
         this.currentMap.addObject(upBar);
         this.currentMap.addObject(rightBar);
         this.currentMap.addObject(leftBar);
+        
 
     }
 
@@ -122,7 +123,9 @@ export default class GameManager {
             }
 
         })
-        // bearTrap1.update();
+
+        this.currentMap.traps.forEach(trap => trap.update())
+        // this.BearTrap1.update();
         // bearTrap2.update();
     }
 }

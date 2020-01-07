@@ -10,7 +10,7 @@ var Engine = Matter.Engine,
 export default class Character {
 
 	constructor(engine, pos) {
-		this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity });
+		this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity ,objType: "character"});
 		this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 46, 0.001, { isSensor: true ,objType: "character"});
 		// this.sensorR = Bodies.rectangle(pos.x + 27, pos.y, 0.01, 48, { isSensor: true});
 		this.composite = Body.create({
@@ -45,7 +45,9 @@ export default class Character {
 	destroy(){
 		World.remove(this.engine.world,this.composite,true);
 	}
-
+	die(){
+		Body.setPosition(this.composite,{x:500,y:500});
+	}
 	// added update function that get called from main index.js every "beforeUpdate" event
 	update() {
 		// query the list of collisions
@@ -67,7 +69,7 @@ export default class Character {
 					// }
 				}
 				if (collision.bodyA.objType == "bearTrap" || collision.bodyB.objType == "bearTrap") {
-					console.log("u fucking dead :v");
+					// console.log("u fucking dead :v");
 				}
 			})
 
