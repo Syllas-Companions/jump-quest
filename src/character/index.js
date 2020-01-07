@@ -11,10 +11,10 @@ export default class Character {
 
 	constructor(engine, pos) {
 		this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity ,objType: "character"});
-		this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 46, 0.001, { isSensor: true ,objType: "character"});
-		// this.sensorR = Bodies.rectangle(pos.x + 27, pos.y, 0.01, 48, { isSensor: true});
+		this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 46, 0.001, { isSensor: true });
+		this.sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 0.01, 48, { isSensor: true});
 		this.composite = Body.create({
-			parts: [this.bodyC, this.sensorDown],
+			parts: [this.bodyC, this.sensorDown,this.sensorFace],
 			options: { objType: "character" }
 		});
 		this.engine = engine;
@@ -48,6 +48,10 @@ export default class Character {
 	die(){
 		Body.setPosition(this.composite,{x:500,y:500});
 	}
+	teleport(posTo){
+		Body.setPosition(this.composite,{x:posTo.x + 60 , y:posTo.y});
+		Body.setVelocity(this.composite,{x:0,y:0});
+	}
 	// added update function that get called from main index.js every "beforeUpdate" event
 	update() {
 		// query the list of collisions
@@ -58,9 +62,6 @@ export default class Character {
 			this.isJumping = true;
 		}else
 		collisions.forEach((collision) => {
-				//used for check sensor
-				// console.log(collision.bodyA.objType);
-				// console.log(collision.bodyB.objType);
 
 				if (collision.bodyA.id != collision.bodyB.id) {
 					// if the sensor is collided (landed) set isJumping to false
@@ -68,10 +69,16 @@ export default class Character {
 					this.isJumping = false;
 					// }
 				}
-				if (collision.bodyA.objType == "bearTrap" || collision.bodyB.objType == "bearTrap") {
-					// console.log("u fucking dead :v");
-				}
 			})
+		if(this.isJumping) this.composite.friction = 0;
+		else this.composite.friction = 0.1;
+		
+		//take item
+		let collisionTakeItem = Matter.Query.collides(this.sensorFace , this.engine.bodies);
+		//change face
+		if(this.facing ==  1) Body.setPosition(this.sensorFace,{x: this.composite.position.x+27, y: this.composite.position.y});
+		if(this.facing == -1) Body.setPosition(this.sensorFace,{x: this.composite.position.x-27, y: this.composite.position.y});
+		
 
 	}
 	inputHandler(keyState) {
@@ -82,6 +89,9 @@ export default class Character {
 		if (keyState[39]) this.move(1);
 	}
 	move(dir) {
+		if(dir >0) this.facing = 1;
+		else if (dir<0) this.facing = -1;
+		
 		let coeff = this.isJumping ? 0.05 : 1;
 		// if(Math.abs(this.composite.velocity.x) <=this.maxMoveSpeed){
 			// Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: dir * this.forceMoveX * coeff, y: 0.00 });

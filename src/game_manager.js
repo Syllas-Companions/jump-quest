@@ -124,7 +124,8 @@ export default class GameManager {
 
         })
 
-        this.currentMap.traps.forEach(trap => trap.update())
+        this.currentMap.traps.forEach(trap => trap.update());
+        this.currentMap.doors.forEach(door => door.update());
         // this.BearTrap1.update();
         // bearTrap2.update();
     }

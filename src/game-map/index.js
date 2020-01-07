@@ -1,6 +1,7 @@
 import Matter from 'matter-js'
 import C from 'constants'
 import BearTrap from 'traps/BearTrap'
+import Door from 'door'
 
 var Engine = Matter.Engine,
     Render = Matter.Render,
@@ -35,6 +36,10 @@ export default class GameMap {
             s.source = matched ? matched[0] : str
         })
         World.add(engine.world, this.tiles);
+        this.initTraps(mapJson)
+        this.initDoors(mapJson)
+    }
+    initTraps(mapJson){
         this.traps = [];
         this.createBearTraps(mapJson);
     }
@@ -46,8 +51,19 @@ export default class GameMap {
         bearTraps.objects.forEach(obj => {
             let bt = new BearTrap(this.engine, {x: obj.x, y:obj.y});
             this.traps.push(bt);
-        }) 
-        
+        })  
+    }
+    initDoors(mapJson){
+        this.doors = [];
+        let doorsLayer = mapJson.layers.find(layer => layer.name == "doors");
+        if(!doorsLayer) return;
+        doorsLayer.objects.forEach(obj => {
+            let door = new Door(this, obj);
+            this.doors.push(door);
+        })  
+    }
+    getDoor(name){
+        return this.doors.find(door => door.name==name);
     }
     // get a list of static object (platforms)
     getStaticObj() {
