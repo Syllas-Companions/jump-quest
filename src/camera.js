@@ -1,20 +1,24 @@
 export default {
     position: {
-        x: 0,
-        y: 0
+        x: 300,
+        y: 200
+    },
+    target: {
+        x: 300,
+        y: 200
     },
     width: 600,
     height: 400,
     ratio: 1,
     // target: Matter.js' body
-    follow: function (target) {
-        this.target = target;
+    towards: function (x, y) {
+        this.target = { x: x, y: y };
     },
     update: function () {
         // move camera toward target's position
         if (this.target) {
-            this.position.x += (this.target.position.x - this.position.x) * 0.1;
-            this.position.y += (this.target.position.y - this.position.y) * 0.1;
+            this.position.x += (this.target.x - this.position.x) * 0.05;
+            this.position.y += (this.target.y - this.position.y) * 0.05;
         }
 
     }
