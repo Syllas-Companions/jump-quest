@@ -7,8 +7,9 @@ import camera from 'camera'
 var socket = io.connect();
 socket.on('hello', function () {
     console.log("connected!");
-    socket.emit('requestClientView');
+    socket.emit('joinGame');
 });
+// MTODO: pause rendering and show message when socket disconnected
 
 // calculate latency for future uses
 var pingStartTime;
@@ -37,13 +38,11 @@ setInterval(() => {
     socket.emit("inputUpdate", keyState);
 }, 20);
 
-var receivedStates = []
 var MAX_SAVED_STATE = 4
 var objectData = new Map()
 socket.on('worldUpdate', function (data) {
     let timestamp = new Date().getTime() + 50; // TODO: might be better when considering ping in place of constant
-    receivedStates.push({ timestamp: timestamp + 100, data: data });
-
+    
     // (obj definition in game_manager.getCharactersRenderObj)
     data.forEach(obj => {
         if (objectData.has(obj.id)) {
@@ -92,8 +91,8 @@ socket.on('mapData', function (data) {
     })
 });
 
-// DEBUG //
 let sketch = function (p) {
+    //MTODO: currently only static objects will have tile graphic rendered, need to implement for moving object
     p.drawMovingObjs = function () {
         let timestamp = new Date().getTime();
         p.push();
@@ -119,49 +118,6 @@ let sketch = function (p) {
         })
         p.pop();
     }
-    // p.drawMovingObjs = function () {
-    //     p.push();
-    //     if (receivedStates.length > 0) {
-    //         let currentState = receivedStates[0].data;
-    //         currentState.forEach(objCurState => {
-    //             // Assign target for camera = character of the current client
-    //             if (socket.id == objCurState.client_id) {
-    //                 camera.follow(objCurState);
-    //                 window.camera = camera;
-    //             }
-    //             // If there are at least 2 cached state then try to add frames to transit from the current state to the next one;
-    //             if (receivedStates.length > 1) {
-    //                 p.stroke(160);
-    //                 p.noFill();
-    //                 let id = objCurState.id;
-    //                 let objNextState = receivedStates[1].data.find(val => val.id == id); // try to find the object with the same id (aka same object in next state)
-    //                 if (objNextState) {
-    //                     // draw frames in middle
-    //                     p.beginShape();
-    //                     for (let i = 0; i < objCurState.vertices.length; i++) {
-    //                         objCurState.vertices[i].x = p.lerp(objCurState.vertices[i].x, objNextState.vertices[i].x, 0.3);
-    //                         objCurState.vertices[i].y = p.lerp(objCurState.vertices[i].y, objNextState.vertices[i].y, 0.3);
-    //                         p.vertex(objCurState.vertices[i].x, objCurState.vertices[i].y);
-    //                     }
-    //                     p.endShape(p.CLOSE)
-    //                 }
-    //                 let curTime = new Date().getTime();
-    //                 if (curTime > receivedStates[0].timestamp) receivedStates.shift();
-    //             }
-    //             else {
-    //                 // draw the object in current state
-    //                 p.stroke(255, 0, 0);
-    //                 p.noFill();
-    //                 p.beginShape();
-    //                 objCurState.vertices.forEach(vertex => {
-    //                     p.vertex(vertex.x, vertex.y);
-    //                 })
-    //                 p.endShape(p.CLOSE);
-    //             }
-    //         });
-    //     }
-    //     p.pop();
-    // }
     p.drawMap = function () {
         if (mapData) {
             p.push();

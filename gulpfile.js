@@ -77,7 +77,7 @@ async function sync_single() {
 
 async function wp_multi_front() {
     const config = require('./webpack.multi.config.js');
-    return src(['./src/index_multi_server.js', './src/index_multi_client.js'])
+    return src([/*'./src/index_multi_server.js',*/ './src/index_multi_client.js'])
         .pipe(
             webpack(config[0],
                 compiler

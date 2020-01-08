@@ -51,6 +51,7 @@ export default class GameMap {
         bearTraps.objects.forEach(obj => {
             let bt = new BearTrap(this.engine, {x: obj.x, y:obj.y});
             this.traps.push(bt);
+            this.addObject(bt.bodyC) // add to universal rendering list
         })  
     }
     initDoors(mapJson){
@@ -60,6 +61,7 @@ export default class GameMap {
         doorsLayer.objects.forEach(obj => {
             let door = new Door(this, obj);
             this.doors.push(door);
+            this.addObject(door.sensorIn) // add to universal rendering list
         })  
     }
     getDoor(name){
@@ -79,13 +81,25 @@ export default class GameMap {
             }
             result.push(obj);
         })
+        // TODO: simplify getStatic and getDynamic objects
+        this.doors.map(door=> door.sensorIn).forEach((door) => {
+            let obj = {
+                id: door.id,
+                vertices: door.vertices.map(vertex => {
+                    return { x: vertex.x, y: vertex.y }
+                }),
+                tile_id: door.tile_id,
+                position: door.position
+            }
+            result.push(obj);
+        })
         return result
     }
 
     addObject(obj) {
         if (!this.objects) this.objects = [];
         this.objects.push(obj);
-        World.add(this.engine.world, obj);
+        // World.add(this.engine.world, obj);
     }
     // get a list of movable objects in the map (traps, enemies,...)
     getMovingObj() {

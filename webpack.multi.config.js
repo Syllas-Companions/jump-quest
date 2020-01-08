@@ -20,15 +20,15 @@ const common = {
 
 const frontend = {
   entry: {
-    'server-view': './src/index_multi_server.js',
+    // 'server-view': './src/index_multi_server.js',
     'client-view': './src/index_multi_client.js'
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      chunks: ['server-view'],
-      title: 'JumpQuest Development Server',
-      filename: 'server.html'
-    }),
+    // new HtmlWebpackPlugin({
+    //   chunks: ['server-view'],
+    //   title: 'JumpQuest Development Server',
+    //   filename: 'server.html'
+    // }),
     new HtmlWebpackPlugin({
       chunks: ['client-view'],
       title: 'JumpQuest Development Client',

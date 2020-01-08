@@ -117,6 +117,24 @@
                  "width":0,
                  "x":83.0040717840447,
                  "y":418.881013421807
+                }, 
+                {
+                 "gid":79, 
+                 "height":64,
+                 "id":6,
+                 "name":"door3",
+                 "properties":[
+                        {
+                         "name":"target",
+                         "type":"string",
+                         "value":"door1"
+                        }],
+                 "rotation":0,
+                 "type":"teleport",
+                 "visible":true,
+                 "width":64,
+                 "x":832,
+                 "y":636
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -125,10 +143,10 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":6,
+ "nextobjectid":7,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"2019.12.11",
+ "tiledversion":"2019.10.30",
  "tileheight":64,
  "tilesets":[
         {

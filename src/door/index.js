@@ -11,7 +11,7 @@ var Engine = Matter.Engine,
 export default class Door{
 
   constructor(map, doorJson){
-    this.sensorIn = Bodies.rectangle(doorJson.x, doorJson.y,40,40,{isStatic:true, isSensor: true});
+    this.sensorIn = Bodies.rectangle(doorJson.x, doorJson.y,40,40,{isStatic:true, isSensor: true, tile_id: doorJson.gid});
     this.map = map;
     this.name = doorJson.name;
     this.data = doorJson;

@@ -10,11 +10,12 @@ var Engine = Matter.Engine,
     Body = Matter.Body;
 
 export default class GameManager {
-    constructor() {
+    constructor(gmId) {
+        this.id = gmId;
         // create an engine
         this.engine = Engine.create();
 
-        this.loadDemoMap()
+        this.loadDemoMap() // MTODO: Load map based on gmId (more information in room_manager)
 
         // init character array
         this.character_map = new Map();
@@ -23,6 +24,12 @@ export default class GameManager {
 
     createRunner() {
         this.runner = Runner.create();
+    }
+    getCharacterIdList() {
+        return [...this.character_map.keys()]
+    }
+    isInGame(id){
+        return this.character_map.has(id);
     }
     createCharacter(id) {
         var character = new Character(this.engine, { x: 500, y: 500 });
@@ -33,6 +40,7 @@ export default class GameManager {
         if (this.character_map.has(id)) {
             this.character_map.get(id).character.destroy();
             this.character_map.delete(id);
+            // MTODO: return player's preferences (color, shape, tile?)
         }
     }
     loadDemoMap() {
@@ -54,6 +62,9 @@ export default class GameManager {
         // add some objects to the map
         this.currentMap.addObject(boxA);
         this.currentMap.addObject(boxB);
+        World.add(this.engine.world, boxA);
+        World.add(this.engine.world, boxB);
+
         // this.currentMap.addObject(ground);
         // this.currentMap.addObject(upBar);
         // this.currentMap.addObject(rightBar);

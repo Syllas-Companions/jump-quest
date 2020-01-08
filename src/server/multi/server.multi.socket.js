@@ -9,12 +9,12 @@ sockets.init = function (server) {
     // socket.io setup
     var io = require('socket.io')(server);
 
-    var serializer = Serializer.create();
+    // var serializer = Serializer.create();
 
     var game_manager = new GameManager();
     game_manager.start();
 
-    var server_view = null;
+    // var server_view = null;
     io.on('connection', function (socket) {
         socket.emit('hello');
         socket.on('pingRequest', function () {
@@ -30,10 +30,9 @@ sockets.init = function (server) {
             // send current map information for rendering on client
             socket.emit('mapData', { tilesets: game_manager.currentMap.tilesets, map: game_manager.currentMap.getStaticObj() });
         })
-        socket.on('requestServerView', function () {
-            server_view = socket;
-
-        })
+        // socket.on('requestServerView', function () {
+        //     server_view = socket;
+        // })
 
         /* UNUSED */
         // socket.on('getMapData', function () {
@@ -42,19 +41,19 @@ sockets.init = function (server) {
         // })
 
         socket.on('disconnect', function () {
-            if (!(server_view && socket.id == server_view.id)) {
+            // if (!(server_view && socket.id == server_view.id)) {
                 console.log('Client ' + socket.id + ' disconnected!');
                 game_manager.deleteCharacter(socket.id);
-            }
+            // }
         });
     });
 
     // send world to server view 10 times per sec
-    setInterval(function () {
-        if (server_view != null) {
-            server_view.emit('serverStateChanged', Serializer.serialise(serializer, game_manager.engine.world));
-        }
-    }, 1000 / 10);
+    // setInterval(function () {
+    //     if (server_view != null) {
+    //         server_view.emit('serverStateChanged', Serializer.serialise(serializer, game_manager.engine.world));
+    //     }
+    // }, 1000 / 10);
 
     // send world to client views 20 times per sec
     setInterval(function () {
