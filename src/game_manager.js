@@ -15,7 +15,7 @@ export default class GameManager {
         // create an engine
         this.engine = Engine.create();
 
-        this.loadDemoMap() // MTODO: Load map based on gmId (more information in room_manager)
+        this.loadDemoMap() // MTODO: Load map based on gmId (more information in room_manager). mapJson taken from level_manager
 
         // init character array
         this.character_map = new Map();
