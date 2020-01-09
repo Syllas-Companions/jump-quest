@@ -82,7 +82,7 @@ socket.on('worldUpdate', function (data) {
     });
 });
 
-var mapData = { tilesets: [], map: [] }
+var mapData = { name: "", tilesets: [], map: [] }
 socket.on('mapData', function (data) {
     mapData = data;
     // Load all tilesets
@@ -168,11 +168,13 @@ let sketch = function (p) {
     p.draw = function () {
         camera.update();
         p.background(0);
-        let scale = 2;
-        p.scale(scale)
-        p.translate(-camera.position.x + camera.width / 2 / scale,-camera.position.y + camera.height / 2 / scale)
+        p.scale(camera.scale)
+        let cam_min = camera.min()
+        p.translate(-cam_min.x, -cam_min.y)
         p.drawMap();
         p.drawMovingObjs();
+        p.fill(255)
+        p.text("Room: "+mapData.name, cam_min.x+20,cam_min.y+20);
     };
 };
 let p5_instance = new p5(sketch);

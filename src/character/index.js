@@ -9,7 +9,8 @@ var Engine = Matter.Engine,
 //class character
 export default class Character {
 
-	constructor(engine, pos) {
+	constructor(engine, pos,id ) {
+		this.id = id;
 		this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity ,objType: "character"});
 		this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 46, 0.001, { isSensor: true });
 		this.sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 0.01, 48, { isSensor: true});

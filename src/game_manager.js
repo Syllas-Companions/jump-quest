@@ -21,7 +21,11 @@ export default class GameManager {
         this.character_map = new Map();
 
     }
-
+    // MTODO: implement function for loading map
+    // load other map if room_manager not exist/uninitialized, call change room on room_manager if exist/initialized
+    changeMap(mapName){
+        
+    }
     createRunner() {
         this.runner = Runner.create();
     }
@@ -32,7 +36,7 @@ export default class GameManager {
         return this.character_map.has(id);
     }
     createCharacter(id) {
-        var character = new Character(this.engine, { x: 500, y: 500 });
+        var character = new Character(this.engine, { x: 500, y: 500 }, id);
         this.character_map.set(id, { input: {}, character: character })
         return character;
     }
@@ -48,28 +52,16 @@ export default class GameManager {
         // create two boxes and a ground
         var boxA = Bodies.rectangle(400, 200, 80, 80);
         var boxB = Bodies.rectangle(250, 50, 80, 80);
-        // var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true, objType: "ground" });
-        // var upBar = Bodies.rectangle(0, 0, 2000, 60, { isStatic: true, objType: "ground" });
-        // var rightBar = Bodies.rectangle(800, 400, 60, 810, { isStatic: true, objType: "ground" });
-        // var leftBar = Bodies.rectangle(0, 0, 60, 2000, { isStatic: true, objType: "ground" });
 
         var currentMapJson = require("../maps/demo.json");
-        // add all of the bodies to the world
-        //World.add(this.engine.world, [/*boxA, boxB,*/ ground, leftBar, rightBar, upBar]);
-
-        this.currentMap = new GameMap(this.engine, currentMapJson);
+        
+        this.currentMap = new GameMap(this, this.engine, currentMapJson);
 
         // add some objects to the map
         this.currentMap.addObject(boxA);
         this.currentMap.addObject(boxB);
         World.add(this.engine.world, boxA);
         World.add(this.engine.world, boxB);
-
-        // this.currentMap.addObject(ground);
-        // this.currentMap.addObject(upBar);
-        // this.currentMap.addObject(rightBar);
-        // this.currentMap.addObject(leftBar);
-
     }
 
     start() {
@@ -125,7 +117,6 @@ export default class GameManager {
     }
 
     beforeUpdate() {
-        // if(this.character_map)
         this.character_map.forEach((character_info, key, map) => {
             if (character_info.character && character_info.input) {
                 character_info.character.inputHandler(character_info.input);
@@ -136,7 +127,5 @@ export default class GameManager {
 
         this.currentMap.traps.forEach(trap => trap.update());
         this.currentMap.doors.forEach(door => door.update());
-        // this.BearTrap1.update();
-        // bearTrap2.update();
     }
 }

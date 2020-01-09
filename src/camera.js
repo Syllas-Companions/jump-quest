@@ -9,16 +9,15 @@ export default {
     },
     width: 600,
     height: 400,
-    ratio: 1,
-    // target: Matter.js' body
+    scale: 2,
     towards: function (x, y) {
         this.target = { x: x, y: y };
     },
     min: function () {
-        return { x: this.position.x - this.width / 2, y: this.position.y - this.height / 2 }
+        return { x: this.position.x - this.width / 2 / this.scale, y: this.position.y - this.height / 2 / this.scale}
     },
     max: function () {
-        return { x: this.position.x + this.width / 2, y: this.position.y + this.height / 2 }
+        return { x: this.position.x + this.width / 2 / this.scale, y: this.position.y + this.height / 2 / this.scale}
     },
     update: function () {
         // move camera toward target's position

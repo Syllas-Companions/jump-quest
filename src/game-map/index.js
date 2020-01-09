@@ -12,7 +12,8 @@ var Engine = Matter.Engine,
     Body = Matter.Body;
 
 export default class GameMap {
-    constructor(engine, mapJson) {
+    constructor(gm, engine, mapJson) {
+        this.gameManager = gm;
         this.engine = engine;
         this.tileWidth = mapJson.tilewidth;
         this.tileHeight = mapJson.tileheight;
