@@ -16,14 +16,13 @@ export default class Trap{
     this.composite = Body.create({
       parts: [this.bodyC, this.sensorUp],
       options: {objType: "bearTrap"}
-
     });
     this.engine = engine;
 
     World.add(engine.world, this.composite);
   }
 
-  sayHello() {
+  	sayHello() {
     console.log('hello');
   }
 	update() {

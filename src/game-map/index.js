@@ -2,6 +2,8 @@ import Matter from 'matter-js'
 import C from 'constants'
 import BearTrap from 'traps/BearTrap'
 import Door from 'door'
+import ItemBox from 'items/box'
+
 
 var Engine = Matter.Engine,
     Render = Matter.Render,
@@ -37,8 +39,25 @@ export default class GameMap {
             s.source = matched ? matched[0] : str
         })
         World.add(engine.world, this.tiles);
-        this.initTraps(mapJson)
-        this.initDoors(mapJson)
+        this.initTraps(mapJson);
+        this.initDoors(mapJson);
+        this.initItems(mapJson);
+    }
+    initItems(mapJson){
+        this.items = [];
+        this.createItemBoxs(mapJson);
+    }
+    createItemBoxs(mapJson){
+        let itemsLayer = mapJson.layers.find(layer => layer.name == "items");
+        if(!itemsLayer) return;
+        //itemsbox
+        let itemBoxs = itemsLayer.layers.find(layer => layer.name == "boxs");
+        if(!itemBoxs) return;
+        itemBoxs.objects.forEach(obj => {
+            let itemBox = new ItemBox(this.engine, {x: obj.x, y:obj.y});
+            this.items.push(itemBox);
+            this.addObject(itemBox.bodyC);
+        })
     }
     initTraps(mapJson){
         this.traps = [];

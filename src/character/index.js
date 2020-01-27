@@ -5,6 +5,7 @@ var Engine = Matter.Engine,
 	Events = Matter.Events,
 	World = Matter.World,
 	Bodies = Matter.Bodies,
+	Pair = Matter.Pair,
 	Body = Matter.Body;
 //class character
 export default class Character {
@@ -63,7 +64,7 @@ export default class Character {
 			this.isJumping = true;
 		}else
 		collisions.forEach((collision) => {
-
+			// console.log(collision);
 				if (collision.bodyA.id != collision.bodyB.id) {
 					// if the sensor is collided (landed) set isJumping to false
 					// if (collision.bodyA.objType == "ground" || collision.bodyB.objType == "ground") {
@@ -75,11 +76,17 @@ export default class Character {
 		else this.composite.friction = 0.1;
 		
 		//take item
-		let collisionTakeItem = Matter.Query.collides(this.sensorFace , this.engine.world.bodies);
+		let collisionsTakeItems = Matter.Query.collides(this.sensorFace , this.engine.world.bodies);
 		//change face
 		if(this.facing ==  1) Body.setPosition(this.sensorFace,{x: this.composite.position.x+27, y: this.composite.position.y});
 		if(this.facing == -1) Body.setPosition(this.sensorFace,{x: this.composite.position.x-27, y: this.composite.position.y});
 		
+		// query the list of collistions for take items
+		collisionsTakeItems.forEach((collisionItem) => {
+			// console.log(collisionItem);
+			if(collisionItem.bodyA.objType == "box") console.log("touched box");
+			
+		})
 
 	}
 	inputHandler(keyState) {
@@ -129,7 +136,8 @@ export default class Character {
 		}
 	}
 
-	effect() {
+	takeItem(){
+		
 
 	}
 	sayHello() {

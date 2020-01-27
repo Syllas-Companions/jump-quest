@@ -50,8 +50,8 @@ export default class GameManager {
     loadDemoMap() {
 
         // create two boxes and a ground
-        var boxA = Bodies.rectangle(400, 200, 80, 80);
-        var boxB = Bodies.rectangle(250, 50, 80, 80);
+        var boxA = Bodies.rectangle(400, 200, 80, 80 ,{objType: "box"});
+        var boxB = Bodies.rectangle(250, 50, 80, 80 ,{objType: "box"});
 
         var currentMapJson = require("../maps/demo.json");
         
@@ -62,6 +62,7 @@ export default class GameManager {
         this.currentMap.addObject(boxB);
         World.add(this.engine.world, boxA);
         World.add(this.engine.world, boxB);
+        
     }
 
     start() {
@@ -127,5 +128,6 @@ export default class GameManager {
 
         this.currentMap.traps.forEach(trap => trap.update());
         this.currentMap.doors.forEach(door => door.update());
+        this.currentMap.items.forEach(item => item.update());
     }
 }
