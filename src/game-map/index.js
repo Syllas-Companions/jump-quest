@@ -39,8 +39,15 @@ export default class GameMap {
             s.source = matched ? matched[0] : str
         })
         World.add(engine.world, this.tiles);
+
+        // bind callback functions 
+        this.cbMoveCharacter = this.cbMoveCharacter.bind(this);
+        this.cbNextMap = this.cbNextMap.bind(this);
+
+
         this.initTraps(mapJson);
         this.initDoors(mapJson);
+        this.initSpawnPoints(mapJson);
         // this.initItems(mapJson);
     }
     // initItems(mapJson){
@@ -59,33 +66,61 @@ export default class GameMap {
     //         this.addObject(itemBox.bodyC);
     //     })
     // }
-    initTraps(mapJson){
+    initTraps(mapJson) {
         this.traps = [];
         this.createBearTraps(mapJson);
     }
-    createBearTraps(mapJson){
+    createBearTraps(mapJson) {
         let trapsLayer = mapJson.layers.find(layer => layer.name == "traps");
-        if(!trapsLayer) return;
+        if (!trapsLayer) return;
         let bearTraps = trapsLayer.layers.find(layer => layer.name == "bearTraps");
-        if(!bearTraps) return;
+        if (!bearTraps) return;
         bearTraps.objects.forEach(obj => {
-            let bt = new BearTrap(this.engine, {x: obj.x, y:obj.y});
+            let bt = new BearTrap(this.engine, { x: obj.x, y: obj.y });
             this.traps.push(bt);
             this.addObject(bt.bodyC) // add to universal rendering list
-        })  
+        })
     }
-    initDoors(mapJson){
+
+    cbNextMap(character, door) {
+        this.gameManager.nextMap();
+    }
+    cbMoveCharacter(character, door) {
+        if (door.target) {
+            let doorTo = this.getDoor(door.target);
+            this.gameManager.moveCharacter(character, { x: doorTo.data.x, y: doorTo.data.y })
+        }
+    }
+    initDoors(mapJson) {
         this.doors = [];
         let doorsLayer = mapJson.layers.find(layer => layer.name == "doors");
-        if(!doorsLayer) return;
+        if (!doorsLayer) return;
         doorsLayer.objects.forEach(obj => {
-            let door = new Door(this, obj);
-            this.doors.push(door);
-            this.addObject(door.sensorIn) // add to universal rendering list
-        })  
+            let door = null;
+            if (obj.type == "change_map") {
+                door = new Door(this, obj, this.cbNextMap);
+            } else if (obj.type == "teleport") {
+                door = new Door(this, obj, this.cbMoveCharacter);
+            }
+            if (door) {
+                this.doors.push(door);
+                this.addObject(door.sensorIn) // add to universal rendering list
+            }
+        })
     }
-    getDoor(name){
-        return this.doors.find(door => door.name==name);
+    initSpawnPoints(mapJson) {
+        this.spawnPoints = [];
+        let spawnPointsLayer = mapJson.layers.find(layer => layer.name == "spawn_points");
+        if (!spawnPointsLayer) {
+            this.spawnPoints.push({ x: 0, y: 0 });
+            return;
+        }
+        spawnPointsLayer.objects.forEach(obj => {
+            this.spawnPoints.push({ x: obj.x, y: obj.y });
+        })
+    }
+    getDoor(name) {
+        return this.doors.find(door => door.name == name);
     }
     // get a list of static object (platforms)
     getStaticObj() {
@@ -102,7 +137,7 @@ export default class GameMap {
             result.push(obj);
         })
         // TODO: simplify getStatic and getDynamic objects
-        this.doors.map(door=> door.sensorIn).forEach((door) => {
+        this.doors.map(door => door.sensorIn).forEach((door) => {
             let obj = {
                 id: door.id,
                 vertices: door.vertices.map(vertex => {

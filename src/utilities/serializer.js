@@ -78,7 +78,7 @@ Serializer.serialise = function(serializer, object, indent) {
       var fixed = parseFloat(value.toFixed(3));
 
       // do not limit if limiting will cause value to zero
-      // TODO: this should ideally dynamically find the SF precision required
+      // this should ideally dynamically find the SF precision required
       if (fixed === 0 && value !== 0)
         return value;
 

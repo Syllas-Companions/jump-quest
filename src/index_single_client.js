@@ -23,8 +23,8 @@ Example.init = function () {
         element: document.body,
         engine: game_manager.engine,
         options: {
-            width: window.innerWidth-20,
-            height: window.innerHeight-20
+            width: window.innerWidth - 20,
+            height: window.innerHeight - 20
         }
     });
 
@@ -43,62 +43,69 @@ Example.init = function () {
     // var character = new Character(engine, { x: 500, y: 500 });
     // console.log(character);
 
-    var character = game_manager.createCharacter(1)
+    setTimeout(function () {
+        if(!game_manager.isMapReady){
+            setTimeout(this,500);
+            return;
+        }
+        var character = game_manager.createCharacter(1)
 
-    //create new traps
-    // var bearTrap1 = new BearTrap(engine, { x: 600, y: 600} );
-    // var bearTrap2 = new BearTrap(engine, { x: 700, y: 600} );
-    // console.log(bearTrap1);
-    //input to move character
-    var keyState = {}
-    window.addEventListener('keydown', function (e) {
-        keyState[e.keyCode || e.which] = true;
-        game_manager.updateInput(1, keyState);
-    }, true);
-    window.addEventListener('keyup', function (e) {
-        keyState[e.keyCode || e.which] = false;
-        game_manager.updateInput(1, keyState);
-    }, true);
-    // Events.on(engine, 'beforeUpdate', function () {
-    //     character.inputHandler(keyState);
-    //     character.update();
-    // bearTrap1.update();
-    // bearTrap2.update();
-    // })
+        //create new traps
+        // var bearTrap1 = new BearTrap(engine, { x: 600, y: 600} );
+        // var bearTrap2 = new BearTrap(engine, { x: 700, y: 600} );
+        // console.log(bearTrap1);
+        //input to move character
+        var keyState = {}
+        window.addEventListener('keydown', function (e) {
+            keyState[e.keyCode || e.which] = true;
+            game_manager.updateInput(1, keyState);
+        }, true);
+        window.addEventListener('keyup', function (e) {
+            keyState[e.keyCode || e.which] = false;
+            game_manager.updateInput(1, keyState);
+        }, true);
+        // Events.on(engine, 'beforeUpdate', function () {
+        //     character.inputHandler(keyState);
+        //     character.update();
+        // bearTrap1.update();
+        // bearTrap2.update();
+        // })
 
-    // var currentMap = null;
-    // fetch("/maps/demo.json")
-    //     .then(res => {
-    //         return res.json()
-    //     }).then(res => {
-    //         currentMap = new GameMap(engine, res)
-    //         console.log(engine.world)
-    //     })
+        // var currentMap = null;
+        // fetch("/maps/demo.json")
+        //     .then(res => {
+        //         return res.json()
+        //     }).then(res => {
+        //         currentMap = new GameMap(engine, res)
+        //         console.log(engine.world)
+        //     })
 
-    // add all of the bodies to the world
-    // World.add(engine.world, [boxA, boxB, ground, leftBar, rightBar, upBar]);
+        // add all of the bodies to the world
+        // World.add(engine.world, [boxA, boxB, ground, leftBar, rightBar, upBar]);
 
-    /*********************************************************** GAME CODE END ************************************************************/
-    // run the engine
-    // var runner = Runner.create();
-    // Runner.run(runner, engine);
+        /*********************************************************** GAME CODE END ************************************************************/
+        // run the engine
+        // var runner = Runner.create();
+        // Runner.run(runner, engine);
 
-    // run the renderer
-    // Render.lookAt(render,character.composite)
-    Render.run(render);
-    game_manager.start();
+        // run the renderer
+        // Render.lookAt(render,character.composite)
+        Render.run(render);
+        game_manager.start();
 
-    /* SINGLE MODE CAMERA UPDATE */
-    camera.width = render.canvas.width;
-    camera.height = render.canvas.height;
-    setInterval(function () {
-        camera.towards(character.composite.position.x, character.composite.position.y);
-        camera.update();
-        Render.lookAt(render, [{
-            min:camera.min(),
-            max:camera.max()
-        }])
-    }, 15)
+        /* SINGLE MODE CAMERA UPDATE */
+        camera.width = render.canvas.width;
+        camera.height = render.canvas.height;
+        setInterval(function () {
+            camera.towards(character.composite.position.x, character.composite.position.y);
+            camera.update();
+            Render.lookAt(render, [{
+                min: camera.min(),
+                max: camera.max()
+            }])
+        }, 15)
+
+    },500);
     // context for MatterTools.Demo
     return {
         engine: game_manager.engine,

@@ -130,7 +130,7 @@
                          "value":"door1"
                         }],
                  "rotation":0,
-                 "type":"teleport",
+                 "type":"change_map",
                  "visible":true,
                  "width":64,
                  "x":832,
@@ -179,7 +179,7 @@
  "nextobjectid":8,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"2020.01.22",
+ "tiledversion":"2019.10.30",
  "tileheight":64,
  "tilesets":[
         {

@@ -1,6 +1,7 @@
 import Matter from 'matter-js'
 import Character from 'character'
 import GameMap from 'game-map'
+import level_manager from 'level_manager'
 
 var Engine = Matter.Engine,
     Events = Matter.Events,
@@ -9,22 +10,55 @@ var Engine = Matter.Engine,
     Bodies = Matter.Bodies,
     Body = Matter.Body;
 
+function isNodejs() { return typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node !== 'undefined'; }
+
 export default class GameManager {
-    constructor(gmId) {
+    constructor(gmId, level = level_manager.getDefaultLevel()) {
         this.id = gmId;
         // create an engine
         this.engine = Engine.create();
 
-        this.loadDemoMap() // MTODO: Load map based on gmId (more information in room_manager). mapJson taken from level_manager
+        this.currentLevel = level;
+        let mapName = level_manager.getMapFilename(this.currentLevel);
+        this.loadMap(mapName);
 
         // init character array
         this.character_map = new Map();
-
+        this.nextMap = this.nextMap.bind(this);
+        this.createCharacter = this.createCharacter.bind(this);
+        this.moveCharacter = this.moveCharacter.bind(this);
     }
-    // MTODO: implement function for loading map
-    // load other map if room_manager not exist/uninitialized, call change room on room_manager if exist/initialized
-    changeMap(mapName){
-        
+    nextMap() {
+        // load next map
+        // next level's name stored in level_manager
+        let nextLevel = level_manager.getNextLevel(this.currentLevel);
+        if (nextLevel) {
+            this.currentLevel = nextLevel;
+            let mapName = level_manager.getMapFilename(this.currentLevel);
+            this.loadMap(mapName);
+            console.log("next map!")
+            
+            this.repositionCharacters();
+        } else {
+            console.log("player won!");
+        }
+    }
+    repositionCharacters(){
+        let spawnPoints = this.currentMap.spawnPoints;
+        let index = 0;
+        this.character_map.forEach((value,key)=>{
+            // positioning
+            value.character.teleport(spawnPoints[index]);
+            index+=1;
+            if(index>=spawnPoints.length){
+                index = 0;
+            }
+
+        })
+    }
+    moveCharacter(char_logics, position) {
+        // MTODO: if char_logics is object then execute, else find by character id
+        char_logics.teleport(position);
     }
     createRunner() {
         this.runner = Runner.create();
@@ -32,11 +66,13 @@ export default class GameManager {
     getCharacterIdList() {
         return [...this.character_map.keys()]
     }
-    isInGame(id){
+    isInGame(id) {
         return this.character_map.has(id);
     }
     createCharacter(id) {
-        var character = new Character(this.engine, { x: 500, y: 500 }, id);
+        console.log(this.currentMap)
+        let position = this.currentMap.spawnPoints[Math.floor(Math.random()*this.currentMap.spawnPoints.length)]
+        var character = new Character(this.engine, position, id);
         this.character_map.set(id, { input: {}, character: character })
         return character;
     }
@@ -47,22 +83,50 @@ export default class GameManager {
             // MTODO: return player's preferences (color, shape, tile?)
         }
     }
-    loadDemoMap() {
+    loadMap(mapName) {
 
         // create two boxes and a ground
-        var boxA = Bodies.rectangle(400, 200, 80, 80 ,{objType: "box"});
-        var boxB = Bodies.rectangle(250, 50, 80, 80 ,{objType: "box"});
+        var boxA = Bodies.rectangle(400, 200, 80, 80, { objType: "box" });
+        var boxB = Bodies.rectangle(250, 50, 80, 80, { objType: "box" });
 
-        var currentMapJson = require("../maps/demo.json");
-        
-        this.currentMap = new GameMap(this, this.engine, currentMapJson);
+        this.isMapReady = false;
+        // load using fs/request 
+        if (!isNodejs()) {
+            // using fetch
+            fetch("maps/" + mapName)
+                .then(response => response.json())
+                .then(currentMapJson => {
+                    this.currentMap = new GameMap(this, this.engine, currentMapJson);
+                    this.isMapReady = true;
+                    //DEBUG:
+                    window.currentLevel = this.currentLevel;
+                });
+            console.log("browser")
+        }
+        else {
+            // using fs
+            // TODO: change to async version
+            const fs = eval('require("fs")')
+            const fileContents = fs.readFileSync('maps/' + mapName, 'utf8')
+
+            try {
+                const currentMapJson = JSON.parse(fileContents)
+                this.currentMap = new GameMap(this, this.engine, currentMapJson);
+                this.isMapReady = true;
+            } catch (err) {
+                console.error(err)
+            }
+        }
+        // var currentMapJson = require("../maps/demo.json");
+
+        // this.currentMap = new GameMap(this, this.engine, currentMapJson);
 
         // add some objects to the map
-        this.currentMap.addObject(boxA);
-        this.currentMap.addObject(boxB);
-        World.add(this.engine.world, boxA);
-        World.add(this.engine.world, boxB);
-        
+        // this.currentMap.addObject(boxA);
+        // this.currentMap.addObject(boxB);
+        // World.add(this.engine.world, boxA);
+        // World.add(this.engine.world, boxB);
+
     }
 
     start() {
@@ -126,8 +190,10 @@ export default class GameManager {
 
         })
 
-        this.currentMap.traps.forEach(trap => trap.update());
-        this.currentMap.doors.forEach(door => door.update());
-        // this.currentMap.items.forEach(item => item.update());
+        if (this.currentMap) {
+            this.currentMap.traps.forEach(trap => trap.update());
+            this.currentMap.doors.forEach(door => door.update());
+            // this.currentMap.items.forEach(item => item.update());
+        }
     }
 }

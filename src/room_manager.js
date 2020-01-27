@@ -6,7 +6,7 @@ export default {
     rooms: new Map(),
     client_room_map: new Map(),
     changeRoom: function(charId, roomId){
-        // MTODO: find socket base on characterId then call joinRoom
+        // MTODO: find socket base on characterId then call joinRoom??
     },
     joinRoom: function(socket, roomId){
         let targetRoom;
@@ -16,7 +16,7 @@ export default {
         } else {
             if (!roomId) return;
             // client move to another room (managed by another GameManager)
-            if (!this.rooms.has(roomId)) { // if room not exists
+            if (!this.rooms.has(roomId)) { // if room not exists 
                 targetRoom = new GameManager(roomId);
                 targetRoom.start();
                 this.rooms.set(targetRoom.id, targetRoom)
@@ -43,6 +43,8 @@ export default {
 
         let lobby = new GameManager('lobby');
         lobby.start();
+        // MTODO: override lobby's nextMap function !!!
+        // lobby.nextMap = this.show msgbox ask for room number ,... 
 
         this.rooms.set(lobby.id, lobby);
 
