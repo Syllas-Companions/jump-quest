@@ -70,7 +70,7 @@ export default class GameManager {
         return this.character_map.has(id);
     }
     createCharacter(id) {
-        console.log(this.currentMap)
+        // console.log(this.currentMap)
         let position = this.currentMap.spawnPoints[Math.floor(Math.random()*this.currentMap.spawnPoints.length)]
         var character = new Character(this.engine, position, id);
         this.character_map.set(id, { input: {}, character: character })

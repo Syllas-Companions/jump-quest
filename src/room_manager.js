@@ -5,10 +5,10 @@ export default {
     lastRoomId: 0,
     rooms: new Map(),
     client_room_map: new Map(),
-    changeRoom: function(charId, roomId){
+    changeRoom: function (charId, roomId) {
         // MTODO: find socket base on characterId then call joinRoom??
     },
-    joinRoom: function(socket, roomId){
+    joinRoom: function (socket, roomId) {
         let targetRoom;
         if (!this.client_room_map.has(socket.id)) {
             console.log("NEW CLIENT: " + socket.id);
@@ -41,10 +41,17 @@ export default {
         this.lastRoomId = 100;
         let context = this;
 
+        let waitingResponseList = []
         let lobby = new GameManager('lobby');
         lobby.start();
         // MTODO: override lobby's nextMap function !!!
         // lobby.nextMap = this.show msgbox ask for room number ,... 
+        lobby.nextMap = (function (character, door) {
+            if (waitingResponseList.every(id => id != character.id)) {
+                io.to(character.id).emit('requestRoomName');
+                waitingResponseList.push(character.id);
+            }
+        }).bind(lobby);
 
         this.rooms.set(lobby.id, lobby);
 
@@ -58,9 +65,15 @@ export default {
                     context.rooms.get(context.client_room_map.get(socket.id)).updateInput(socket.id, data);
             });
 
+            socket.on('responseRoomName', (roomId) => {
+                waitingResponseList = waitingResponseList.filter(id => id != socket.id);
+                if (roomId != null && roomId != "")
+                    context.joinRoom(socket, roomId)
+            })
             /** data: {roomId} */
             socket.on('joinGame', function (roomId) {
-                context.joinRoom(socket, roomId)
+                if (roomId != null && roomId != "")
+                    context.joinRoom(socket, roomId)
             });
             socket.on('disconnect', function () {
                 console.log('DISCONNECTED: ' + socket.id);
@@ -84,13 +97,4 @@ export default {
             });
         }, 1000 / 20)
     },
-
 }
-
-// MTODO: AFTER TESTING MULTI ROOM w/ SAME MAP: (IDEA) room id might be in form a#b, where a is the room number and b is the 
-//                                              current level. This way, each level of each room is managed by a game manager.
-//                                              For example a player might go from lobby -> 001#0 (0 - wait room) -> 001#1 -> 001#2
-//                 Door should be able to activate room/level changing procedure (move to next level of the same room number)
-//                 or from lobby to a room of choice
-//                  => add 2 functions for Door
-

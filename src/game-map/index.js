@@ -83,7 +83,7 @@ export default class GameMap {
     }
 
     cbNextMap(character, door) {
-        this.gameManager.nextMap();
+        this.gameManager.nextMap(character, door);
     }
     cbMoveCharacter(character, door) {
         if (door.target) {

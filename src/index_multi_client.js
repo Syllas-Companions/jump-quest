@@ -7,7 +7,7 @@ import camera from 'camera'
 var socket = io.connect();
 socket.on('hello', function () {
     console.log("connected!");
-    socket.emit('joinGame');
+    socket.emit('joinGame', 'lobby');
 });
 // MTODO: pause rendering and show message when socket disconnected
 
@@ -21,9 +21,12 @@ setInterval(function () {
 
 socket.on('pongResponse', function () {
     latency = Date.now() - pingStartTime;
-    console.log(latency);
+    // console.log(latency);
 });
-
+socket.on('requestRoomName', function () {
+    var roomName = prompt("Please enter room name", "room001");
+    socket.emit('responseRoomName', roomName);
+})
 //input to move character
 var keyState = {}
 window.addEventListener('keydown', function (e) {
@@ -42,10 +45,18 @@ var MAX_SAVED_STATE = 4
 var objectData = new Map()
 socket.on('worldUpdate', function (data) {
     let timestamp = new Date().getTime() + 50; // TODO: might be better when considering ping in place of constant
-    
+
+    // remove objects which are not in this package (objects which are no longer exist)
+    objectData.forEach((val, key) => {
+        if (data.every(obj => obj.id != key)) {
+            objectData.delete(key);
+        }
+    })
     // (obj definition in game_manager.getCharactersRenderObj)
+    // transform the package for easier calculation
     data.forEach(obj => {
         if (objectData.has(obj.id)) {
+            // old object 
             let objState = objectData.get(obj.id)
             for (let i = 0; i < objState.vertices.length; i++) {
                 objState.vertices[i].x.push(obj.vertices[i].x);
@@ -64,6 +75,7 @@ socket.on('worldUpdate', function (data) {
                 objState.position.y.shift();
             }
         } else {
+            // newly created object
             // local states saved base on this skeleton
             objectData.set(obj.id, {
                 id: obj.id,
@@ -105,6 +117,7 @@ let sketch = function (p) {
             p.stroke(155, 155, 0);
             p.noFill();
             p.beginShape();
+            // draw borders of moving object
             obj.vertices.forEach(vertex => {
                 if (prediction) {
                     let x_prediction = polynomial(timestamp, obj.timestamp, vertex.x)[0];
@@ -115,6 +128,20 @@ let sketch = function (p) {
                 }
             })
             p.endShape(p.CLOSE);
+            // draw the client name on top (for players)
+            {
+                let x, y;
+                p.fill(255);
+                if (prediction) {
+                    x = polynomial(timestamp, obj.timestamp, obj.position.x)[0];
+                    y = polynomial(timestamp, obj.timestamp, obj.position.y)[0];
+
+                } else {
+                    x = obj.position.x[obj.position.x.length - 1]
+                    y = obj.position.y[obj.position.y.length - 1];
+                }
+                p.text(obj.client_id, x-70, y-35);
+            }
         })
         p.pop();
     }
@@ -124,10 +151,10 @@ let sketch = function (p) {
             // Render tiles using tilesheet's information (TileSet and tileset_manager)
             mapData.map.forEach(obj => {
                 let tileset = mapData.tilesets.find(ts => {
-                    return ts.firstgid < obj.tile_id+1;
+                    return ts.firstgid < obj.tile_id + 1;
                 })
                 if (tileset) {
-                    let res = tileset_manager.getTile(tileset.source, obj.tile_id-tileset.firstgid)
+                    let res = tileset_manager.getTile(tileset.source, obj.tile_id - tileset.firstgid)
                     if (res) {
                         // resource ready
                         p.imageMode(p.CENTER);
@@ -170,11 +197,14 @@ let sketch = function (p) {
         p.background(0);
         p.scale(camera.scale)
         let cam_min = camera.min()
+        let cam_max = camera.max()
         p.translate(-cam_min.x, -cam_min.y)
         p.drawMap();
         p.drawMovingObjs();
         p.fill(255)
-        p.text("Room: "+mapData.name, cam_min.x+20,cam_min.y+20);
+        p.text("Room: " + mapData.name, cam_min.x + 20, cam_min.y + 20);
+        p.text(latency, cam_max.x - 20, cam_min.y + 20);
+
     };
 };
 let p5_instance = new p5(sketch);
