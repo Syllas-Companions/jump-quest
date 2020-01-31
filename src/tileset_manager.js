@@ -3,6 +3,7 @@ export default {
         this.p_instance = p;
     },
     tilesets: new Map(),
+    backgrounds: new Map(),
     getTile: function (tilesetname, gid) {
         let tileset = this.getTileset(tilesetname);
         if (!tileset) return null; // if tileset is not finished loading
@@ -45,25 +46,16 @@ export default {
                 .then(imageName => {
                     // load image file
                     this.tilesets.get(name).image = this.p_instance.loadImage('/tilesets/' + imageName)
-                    // fetch('/tilesets/' + imageName)
-                    //     .then(response => {
-                    //         return response.blob();
-                    //     })
-                    //     .then(response => {
-                    //         var img = new Image();
-                    //         this.tilesets.get(name).ready = false;
-                    //         let that = this; // temporary assign context to that variable to use in anonymous function
-                    //         img.onload = function () {
-                    //             that.tilesets.get(name).ready = true;
-                    //             console.log("tileset loaded")
-                    //         }
-
-                    //         img.src = URL.createObjectURL(response);
-                    //         this.tilesets.get(name).image = img;
-
-                    //     })
                 })
         }
     },
-
+    getBackground: function (name) {
+        if (this.backgrounds.has(name)) {
+            return this.backgrounds.get(name)
+        } else {
+            if(this.p_instance)
+                this.backgrounds.set(name, this.p_instance.loadImage('/backgrounds/' + name))
+            return null;
+        }
+    },
 }

@@ -37,28 +37,37 @@ export default class GameManager {
             let mapName = level_manager.getMapFilename(this.currentLevel);
             this.loadMap(mapName);
             console.log("next map!")
-            
+
             this.repositionCharacters();
         } else {
             console.log("player won!");
         }
     }
-    repositionCharacters(){
+    repositionCharacters() {
         let spawnPoints = this.currentMap.spawnPoints;
         let index = 0;
-        this.character_map.forEach((value,key)=>{
+        this.character_map.forEach((value, key) => {
             // positioning
             value.character.teleport(spawnPoints[index]);
-            index+=1;
-            if(index>=spawnPoints.length){
+            index += 1;
+            if (index >= spawnPoints.length) {
                 index = 0;
             }
 
         })
     }
     moveCharacter(char_logics, position) {
-        // MTODO: if char_logics is object then execute, else find by character id
-        char_logics.teleport(position);
+        // if char_logics is object then execute, else find by character id
+        if (typeof char_logics == "object") {
+            char_logics.teleport(position);
+        }
+        else{
+            // char_logics as id
+            let char_logics_obj = this.character_map.get(char_logics).character;
+            if(char_logics_obj){
+                char_logics_obj.teleport(position);
+            }
+        }
     }
     createRunner() {
         this.runner = Runner.create();
@@ -69,19 +78,22 @@ export default class GameManager {
     isInGame(id) {
         return this.character_map.has(id);
     }
-    createCharacter(id) {
+    createCharacter(id, metadata) {
         // console.log(this.currentMap)
-        let position = this.currentMap.spawnPoints[Math.floor(Math.random()*this.currentMap.spawnPoints.length)]
-        var character = new Character(this.engine, position, id);
+        let position = this.currentMap.spawnPoints[Math.floor(Math.random() * this.currentMap.spawnPoints.length)]
+        var character = new Character(this.engine, position, id, metadata);
         this.character_map.set(id, { input: {}, character: character })
         return character;
     }
     deleteCharacter(id) {
         if (this.character_map.has(id)) {
+            let metadata = this.character_map.get(id).character.metadata;
             this.character_map.get(id).character.destroy();
             this.character_map.delete(id);
-            // MTODO: return player's preferences (color, shape, tile?)
+            // return player's preferences (color, shape, tile?)
+            return metadata;
         }
+        return null;
     }
     loadMap(mapName) {
 
@@ -105,9 +117,11 @@ export default class GameManager {
         }
         else {
             // using fs
-            // TODO: change to async version
+            // TODO: change to async version 
+            // (in GameManager will need action queue with Promise, 
+            //  since new character can't be create if map's not ready)
             const fs = eval('require("fs")')
-            const fileContents = fs.readFileSync('maps/' + mapName, 'utf8')
+            const fileContents = fs.readFileSync('resources/maps/' + mapName, 'utf8')
 
             try {
                 const currentMapJson = JSON.parse(fileContents)
@@ -163,6 +177,7 @@ export default class GameManager {
                 let c = character_info.character.bodyC;
                 let obj = {
                     id: c.id,
+                    metadata: character_info.character.metadata,
                     client_id: key,
                     vertices: c.vertices.map((vertex) => {
                         return { x: vertex.x, y: vertex.y };

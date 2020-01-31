@@ -1,12 +1,4 @@
 { "columns":14,
- "editorsettings":
-    {
-     "export":
-        {
-         "format":"",
-         "target":"."
-        }
-    },
  "image":"platformPack_tilesheet.png",
  "imageheight":448,
  "imagewidth":896,

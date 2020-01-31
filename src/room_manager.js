@@ -5,11 +5,8 @@ export default {
     lastRoomId: 0,
     rooms: new Map(),
     client_room_map: new Map(),
-    changeRoom: function (charId, roomId) {
-        // MTODO: find socket base on characterId then call joinRoom??
-    },
     joinRoom: function (socket, roomId) {
-        let targetRoom;
+        let targetRoom, character_metadata = null;
         if (!this.client_room_map.has(socket.id)) {
             console.log("NEW CLIENT: " + socket.id);
             targetRoom = this.rooms.get("lobby");
@@ -25,15 +22,22 @@ export default {
             }
             // remove character from the current room
             let curRoom = this.client_room_map.get(socket.id);
-            this.rooms.get(curRoom).deleteCharacter(socket.id);
+            // save character metadata when moving to new room
+            character_metadata = this.rooms.get(curRoom).deleteCharacter(socket.id);
             socket.leave(curRoom);
         }
         // add him to the target room
-        targetRoom.createCharacter(socket.id)
+        let character = targetRoom.createCharacter(socket.id,character_metadata)
         this.client_room_map.set(socket.id, targetRoom.id)
         socket.join(targetRoom.id);
         // send current map information for rendering on client
-        socket.emit('mapData', { name: targetRoom.id, tilesets: targetRoom.currentMap.tilesets, map: targetRoom.currentMap.getStaticObj() });
+        socket.emit('mapData',
+            {
+                name: targetRoom.id,
+                background: targetRoom.currentMap.background,
+                tilesets: targetRoom.currentMap.tilesets,
+                map: targetRoom.currentMap.getStaticObj()
+            });
     },
     init: function (server) {
         // socket.io setup
@@ -44,8 +48,7 @@ export default {
         let waitingResponseList = []
         let lobby = new GameManager('lobby');
         lobby.start();
-        // MTODO: override lobby's nextMap function !!!
-        // lobby.nextMap = this.show msgbox ask for room number ,... 
+        // override lobby's nextMap function
         lobby.nextMap = (function (character, door) {
             if (waitingResponseList.every(id => id != character.id)) {
                 io.to(character.id).emit('requestRoomName');
@@ -56,8 +59,7 @@ export default {
         this.rooms.set(lobby.id, lobby);
 
         io.on('connection', function (socket) {
-            socket.emit('hello');
-            socket.on('pingRequest', function () { // MTODO: should move somewhere else
+            socket.on('pingRequest', function () {
                 socket.emit('pongResponse');
             });
             socket.on('inputUpdate', function (data) {

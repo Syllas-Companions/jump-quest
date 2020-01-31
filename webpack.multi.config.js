@@ -21,7 +21,7 @@ const common = {
 const frontend = {
   entry: {
     // 'server-view': './src/index_multi_server.js',
-    'client-view': './src/index_multi_client.js'
+    'client-view': './src/multi-client/index.js'
   },
   plugins: [
     // new HtmlWebpackPlugin({

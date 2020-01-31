@@ -327,7 +327,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  for (var i = 0; i < constraints.length; i += 1) {
 	    var constraint = constraints[i];
 
-	    // TODO: need a better way than this
+	    // need a better way than this
 	    if (constraint.label === 'Mouse Constraint') {
 	      mouseConstraint = constraint;
 	      break;

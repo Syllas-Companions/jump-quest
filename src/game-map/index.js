@@ -44,7 +44,7 @@ export default class GameMap {
         this.cbMoveCharacter = this.cbMoveCharacter.bind(this);
         this.cbNextMap = this.cbNextMap.bind(this);
 
-
+        this.initBackground(mapJson)
         this.initTraps(mapJson);
         this.initDoors(mapJson);
         this.initSpawnPoints(mapJson);
@@ -78,7 +78,7 @@ export default class GameMap {
         bearTraps.objects.forEach(obj => {
             let bt = new BearTrap(this.engine, { x: obj.x, y: obj.y });
             this.traps.push(bt);
-            this.addObject(bt.bodyC) // add to universal rendering list
+            this.addObject(bt.bodyC) // NOTE: adding to this array will render collider on client view
         })
     }
 
@@ -90,6 +90,12 @@ export default class GameMap {
             let doorTo = this.getDoor(door.target);
             this.gameManager.moveCharacter(character, { x: doorTo.data.x, y: doorTo.data.y })
         }
+    }
+    initBackground(mapJson) {
+        let bgLayer = mapJson.layers.find(layer => layer.name == "background");
+        if (!bgLayer) return;
+        let matched = bgLayer.image.match(/([^/]*)$/);
+        this.background = matched ? matched[0] : bgLayer.image
     }
     initDoors(mapJson) {
         this.doors = [];
@@ -104,7 +110,7 @@ export default class GameMap {
             }
             if (door) {
                 this.doors.push(door);
-                this.addObject(door.sensorIn) // add to universal rendering list
+                this.addObject(door.sensorIn) // NOTE: adding to this array will render collider on client view 
             }
         })
     }
@@ -123,32 +129,22 @@ export default class GameMap {
         return this.doors.find(door => door.name == name);
     }
     // get a list of static object (platforms)
+    simplifyObj(obj){
+        let res = {
+            id: obj.id,
+            vertices: obj.vertices.map(vertex => {
+                return { x: vertex.x, y: vertex.y }
+            }),
+            tile_id: obj.tile_id,
+            position: obj.position
+        }
+        return res;
+    }
     getStaticObj() {
         let result = []
-        this.tiles.forEach((tile) => {
-            let obj = {
-                id: tile.id,
-                vertices: tile.vertices.map(vertex => {
-                    return { x: vertex.x, y: vertex.y }
-                }),
-                tile_id: tile.tile_id,
-                position: tile.position
-            }
-            result.push(obj);
-        })
-        // TODO: simplify getStatic and getDynamic objects
-        this.doors.map(door => door.sensorIn).forEach((door) => {
-            let obj = {
-                id: door.id,
-                vertices: door.vertices.map(vertex => {
-                    return { x: vertex.x, y: vertex.y }
-                }),
-                tile_id: door.tile_id,
-                position: door.position
-            }
-            result.push(obj);
-        })
-        return result
+        result = result.concat(this.tiles.map(this.simplifyObj))
+        result = result.concat(this.doors.map(door => door.sensorIn).map(this.simplifyObj))
+        return result;
     }
 
     addObject(obj) {
@@ -158,19 +154,10 @@ export default class GameMap {
     }
     // get a list of movable objects in the map (traps, enemies,...)
     getMovingObj() {
-        // MTODO: return traps', enemies' position, etc
+        // return non static object (object which can change position overtime)
         if (!this.objects) return [];
         let result = []
-        this.objects.forEach((obj) => {
-            result.push({
-                id: obj.id,
-                vertices: obj.vertices.map(vertex => {
-                    return { x: vertex.x, y: vertex.y }
-                }),
-                tile_id: obj.tile_id,
-                position: obj.position
-            })
-        })
+        result = result.concat(this.objects.map(this.simplifyObj));
         return result
     }
 }

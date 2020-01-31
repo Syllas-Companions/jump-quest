@@ -16,11 +16,11 @@ function clean_dist_folder() {
 function copy_dev_explorer() {
     return src(['./src/dev-explorer/**/*']).pipe(dest('./dist/explorer'));
 }
-async function wp() {
-    return src('./src/index_single_client.js')
-        .pipe(webpack(require('./webpack.single.config.js', compiler))).on('error', handleError)
-        .pipe(dest('dist/public/'))
-};
+// async function wp() {
+//     return src('./src/index_single_client.js')
+//         .pipe(webpack(require('./webpack.single.config.js', compiler))).on('error', handleError)
+//         .pipe(dest('dist/public/'))
+// };
 async function wp_single_front() {
     const config = require('./webpack.single.config.js');
     return src(['./src/index_single_client.js'])
@@ -77,7 +77,7 @@ async function sync_single() {
 
 async function wp_multi_front() {
     const config = require('./webpack.multi.config.js');
-    return src([/*'./src/index_multi_server.js',*/ './src/index_multi_client.js'])
+    return src([/*'./src/index_multi_server.js',*/ './src/multi-client/index.js'])
         .pipe(
             webpack(config[0],
                 compiler

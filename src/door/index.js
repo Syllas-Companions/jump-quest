@@ -9,15 +9,19 @@ var Engine = Matter.Engine,
 
 //class door
 export default class Door {
-
+// TODO: add exception list (trigger door only once for each player, until that player leave the door's trigger)
   constructor(map, doorJson, callback) {
+    doorJson.y = doorJson.y - doorJson.height;
+    let width = doorJson.width == 0 ? 40 : doorJson.width;
+    let height = doorJson.height == 0 ? 40 : doorJson.height;
+
     this.callback = callback
-    this.sensorIn = Bodies.rectangle(doorJson.x, doorJson.y, 40, 40, { isStatic: true, isSensor: true, tile_id: doorJson.gid });
+    this.sensorIn = Bodies.rectangle(doorJson.x, doorJson.y, width, height, { isStatic: true, isSensor: true, tile_id: doorJson.gid });
     this.map = map;
     this.name = doorJson.name;
     let t = doorJson.properties.find(prop => prop.name == 'target');
     this.target = t ? t.value : null;
-    
+
     this.data = doorJson;
     World.add(map.engine.world, this.sensorIn);
   }
