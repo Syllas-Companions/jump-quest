@@ -61,10 +61,10 @@ export default class GameManager {
         if (typeof char_logics == "object") {
             char_logics.teleport(position);
         }
-        else{
+        else {
             // char_logics as id
             let char_logics_obj = this.character_map.get(char_logics).character;
-            if(char_logics_obj){
+            if (char_logics_obj) {
                 char_logics_obj.teleport(position);
             }
         }
@@ -108,6 +108,7 @@ export default class GameManager {
             fetch("maps/" + mapName)
                 .then(response => response.json())
                 .then(currentMapJson => {
+                    console.log("map json: "+currentMapJson)
                     this.currentMap = new GameMap(this, this.engine, currentMapJson);
                     this.isMapReady = true;
                     //DEBUG:

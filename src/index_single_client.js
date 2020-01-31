@@ -45,6 +45,7 @@ Example.init = function () {
 
     setTimeout(function () {
         if(!game_manager.isMapReady){
+            console.log("waiting")
             setTimeout(this,500);
             return;
         }
