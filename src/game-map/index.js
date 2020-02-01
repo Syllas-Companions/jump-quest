@@ -3,7 +3,7 @@ import C from 'constants'
 import BearTrap from 'traps/BearTrap'
 import Door from 'door'
 import Rope from 'rope'
-// import ItemBox from 'items/box'
+import ItemBox from 'items/Box'
 
 
 var Engine = Matter.Engine,
@@ -50,24 +50,24 @@ export default class GameMap {
         this.initDoors(mapJson);
         this.initRopes(mapJson);
         this.initSpawnPoints(mapJson);
-        // this.initItems(mapJson);
+        this.initItems(mapJson);
     }
-    // initItems(mapJson){
-    //     this.items = [];
-    //     this.createItemBoxs(mapJson);
-    // }
-    // createItemBoxs(mapJson){
-    //     let itemsLayer = mapJson.layers.find(layer => layer.name == "items");
-    //     if(!itemsLayer) return;
-    //     //itemsbox
-    //     let itemBoxs = itemsLayer.layers.find(layer => layer.name == "boxs");
-    //     if(!itemBoxs) return;
-    //     itemBoxs.objects.forEach(obj => {
-    //         let itemBox = new ItemBox(this.engine, {x: obj.x, y:obj.y});
-    //         this.items.push(itemBox);
-    //         this.addObject(itemBox.bodyC);
-    //     })
-    // }
+    initItems(mapJson){
+        this.items = [];
+        this.createItemBoxs(mapJson);
+    }
+    createItemBoxs(mapJson){
+        let itemsLayer = mapJson.layers.find(layer => layer.name == "items");
+        if(!itemsLayer) return;
+        //itemsbox
+        let itemBoxs = itemsLayer.layers.find(layer => layer.name == "boxs");
+        if(!itemBoxs) return;
+        itemBoxs.objects.forEach(obj => {
+            let itemBox = new ItemBox(this.engine, {x: obj.x, y:obj.y});
+            this.items.push(itemBox);
+            this.addObject(itemBox.bodyC);
+        })
+    }
     initTraps(mapJson) {
         this.traps = [];
         this.createBearTraps(mapJson);
