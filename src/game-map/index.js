@@ -2,6 +2,7 @@ import Matter from 'matter-js'
 import C from 'constants'
 import BearTrap from 'traps/BearTrap'
 import Door from 'door'
+import Rope from 'rope'
 // import ItemBox from 'items/box'
 
 
@@ -47,6 +48,7 @@ export default class GameMap {
         this.initBackground(mapJson)
         this.initTraps(mapJson);
         this.initDoors(mapJson);
+        this.initRopes(mapJson);
         this.initSpawnPoints(mapJson);
         // this.initItems(mapJson);
     }
@@ -97,6 +99,18 @@ export default class GameMap {
         let matched = bgLayer.image.match(/([^/]*)$/);
         this.background = matched ? matched[0] : bgLayer.image
     }
+    initRopes(mapJson) {
+
+        this.ropes = [];
+        let ropesLayer = mapJson.layers.find(layer => layer.name == "ropes");
+        if (!ropesLayer) return;
+        ropesLayer.objects.forEach(obj => {
+            let rope = new Rope(this, obj)
+            this.ropes.push(rope);
+            // console.log(rope.composite.bodies)
+            this.addObject(rope.composite) // TODO: render rope/composite in general on client view 
+        })
+    }
     initDoors(mapJson) {
         this.doors = [];
         let doorsLayer = mapJson.layers.find(layer => layer.name == "doors");
@@ -110,6 +124,7 @@ export default class GameMap {
             }
             if (door) {
                 this.doors.push(door);
+                // console.log(door.sensorIn)
                 this.addObject(door.sensorIn) // NOTE: adding to this array will render collider on client view 
             }
         })
@@ -129,21 +144,13 @@ export default class GameMap {
         return this.doors.find(door => door.name == name);
     }
     // get a list of static object (platforms)
-    simplifyObj(obj){
-        let res = {
-            id: obj.id,
-            vertices: obj.vertices.map(vertex => {
-                return { x: vertex.x, y: vertex.y }
-            }),
-            tile_id: obj.tile_id,
-            position: obj.position
-        }
-        return res;
-    }
+
     getStaticObj() {
         let result = []
-        result = result.concat(this.tiles.map(this.simplifyObj))
-        result = result.concat(this.doors.map(door => door.sensorIn).map(this.simplifyObj))
+        this.tiles.reduce(simplifyObj, result);
+        this.doors.map(door => door.sensorIn).reduce(simplifyObj, result);
+        // result = result.concat(this.tiles.map(this.simplifyObj))
+        // result = result.concat(this.doors.map(door => door.sensorIn).map(this.simplifyObj))
         return result;
     }
 
@@ -156,8 +163,27 @@ export default class GameMap {
     getMovingObj() {
         // return non static object (object which can change position overtime)
         if (!this.objects) return [];
-        let result = []
-        result = result.concat(this.objects.map(this.simplifyObj));
+        // console.log(this.objects)
+        let result = this.objects.reduce(simplifyObj, []);
+        // result = result.concat(this.objects.map(this.simplifyObj));
         return result
     }
+}
+
+function simplifyObj(arr, obj) {
+    if (obj.type == 'body') {
+        let res = {
+            id: obj.id,
+            vertices: obj.vertices.map(vertex => {
+                return { x: vertex.x, y: vertex.y }
+            }),
+            tile_id: obj.tile_id,
+            position: obj.position
+        }
+        arr.push(res);
+    } 
+    else if (obj.type == 'composite') {
+        obj.bodies.reduce(simplifyObj, arr);
+    }
+    return arr;
 }

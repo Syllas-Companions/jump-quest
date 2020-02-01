@@ -143,8 +143,42 @@
                  "type":"change_map",
                  "visible":true,
                  "width":64,
-                 "x":898,
-                 "y":704
+                 "x":1022,
+                 "y":700
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":13,
+         "name":"ropes",
+         "objects":[
+                {
+                 "height":0,
+                 "id":12,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"length",
+                         "type":"string",
+                         "value":"8"
+                        }, 
+                        {
+                         "name":"seg_length",
+                         "type":"string",
+                         "value":"30"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":640,
+                 "y":384
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -185,8 +219,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":13,
- "nextobjectid":12,
+ "nextlayerid":14,
+ "nextobjectid":13,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"2019.10.30",
