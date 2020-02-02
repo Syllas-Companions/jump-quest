@@ -9,8 +9,9 @@ var Engine = Matter.Engine,
 
 //class door
 export default class Door {
-// TODO: add exception list (trigger door only once for each player, until that player leave the door's trigger)
+  // TODO: add exception list (trigger door only once for each player, until that player leave the door's trigger)
   constructor(map, doorJson, callback) {
+    this.ignoreList = []
     doorJson.y = doorJson.y - doorJson.height;
     let width = doorJson.width == 0 ? 40 : doorJson.width;
     let height = doorJson.height == 0 ? 40 : doorJson.height;
@@ -26,20 +27,25 @@ export default class Door {
     World.add(map.engine.world, this.sensorIn);
   }
 
-  sayHello() {
-    console.log('hello');
+  addIgnore(id){
+    this.ignoreList.push(id);
   }
   update() {
+    let curFrameChars = []
     Matter.Query.collides(this.sensorIn, this.map.engine.world.bodies)
       .forEach((collision) => {
 
         if (collision.bodyA.objType == 'character' || collision.bodyB.objType == 'character') {
           // console.log(collision);
-          console.log("door");
+          // console.log("door");
           let char_physics = collision.bodyA.objType == 'character' ? collision.bodyA : collision.bodyB;
           let char_logics = char_physics.character_logic;
-          if (this.callback) this.callback(char_logics, this);
-
+          curFrameChars.push(char_logics.id);
+          if (this.ignoreList.findIndex(id => (id==char_logics.id)) == -1) {
+            this.ignoreList.push(char_logics.id);
+            console.log(this.ignoreList)
+            if (this.callback) this.callback(char_logics, this);
+          }
           // NOTE: door's functionalities moved to creation step (in GameMap)
           // else {
           //   if (this.data.type == 'teleport') {
@@ -54,5 +60,7 @@ export default class Door {
           // }
         }
       })
+      // filter character which already left from ignorelist
+      this.ignoreList = this.ignoreList.filter(id => (curFrameChars.findIndex(e => e==id)!=-1))
   }
 }

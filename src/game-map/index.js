@@ -78,7 +78,7 @@ export default class GameMap {
         let bearTraps = trapsLayer.layers.find(layer => layer.name == "bearTraps");
         if (!bearTraps) return;
         bearTraps.objects.forEach(obj => {
-            let bt = new BearTrap(this.engine, { x: obj.x, y: obj.y });
+            let bt = new BearTrap(this, { x: obj.x, y: obj.y });
             this.traps.push(bt);
             this.addObject(bt.bodyC) // NOTE: adding to this array will render collider on client view
         })
@@ -90,6 +90,7 @@ export default class GameMap {
     cbMoveCharacter(character, door) {
         if (door.target) {
             let doorTo = this.getDoor(door.target);
+            doorTo.addIgnore(character.id);
             this.gameManager.moveCharacter(character, { x: doorTo.data.x, y: doorTo.data.y })
         }
     }

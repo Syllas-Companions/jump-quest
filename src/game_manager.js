@@ -43,29 +43,30 @@ export default class GameManager {
             console.log("player won!");
         }
     }
-    repositionCharacters() {
+    repositionCharacters(charId) {
         let spawnPoints = this.currentMap.spawnPoints;
         let index = 0;
         this.character_map.forEach((value, key) => {
-            // positioning
-            value.character.teleport(spawnPoints[index]);
-            index += 1;
-            if (index >= spawnPoints.length) {
-                index = 0;
+            if ((charId && charId == key) || !charId) {
+                // positioning
+                value.character.teleport(spawnPoints[index], true);
+                index += 1;
+                if (index >= spawnPoints.length) {
+                    index = 0;
+                }
             }
-
         })
     }
     moveCharacter(char_logics, position) {
         // if char_logics is object then execute, else find by character id
         if (typeof char_logics == "object") {
-            char_logics.teleport(position);
+            char_logics.teleport(position, false);
         }
         else {
             // char_logics as id
             let char_logics_obj = this.character_map.get(char_logics).character;
             if (char_logics_obj) {
-                char_logics_obj.teleport(position);
+                char_logics_obj.teleport(position, false);
             }
         }
     }
@@ -81,7 +82,7 @@ export default class GameManager {
     createCharacter(id, metadata) {
         // console.log(this.currentMap)
         let position = this.currentMap.spawnPoints[Math.floor(Math.random() * this.currentMap.spawnPoints.length)]
-        var character = new Character(this.engine, position, id, metadata);
+        var character = new Character(this, position, id, metadata);
         this.character_map.set(id, { input: {}, character: character })
         return character;
     }
@@ -108,7 +109,7 @@ export default class GameManager {
             fetch("maps/" + mapName)
                 .then(response => response.json())
                 .then(currentMapJson => {
-                    console.log("map json: "+currentMapJson)
+                    console.log("map json: " + currentMapJson)
                     this.currentMap = new GameMap(this, this.engine, currentMapJson);
                     this.isMapReady = true;
                     //DEBUG:

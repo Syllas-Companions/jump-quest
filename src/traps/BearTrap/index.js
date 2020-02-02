@@ -10,23 +10,19 @@ var Engine = Matter.Engine,
 //class trap
 export default class Trap{
 
-  constructor(engine, pos){
+  constructor(map, pos){
     this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 10, { inertia: Infinity ,objType: "bearTrap" });
     this.sensorUp = Bodies.rectangle(pos.x, pos.y-5,40,0.02,{ isSensor: true});
     this.composite = Body.create({
       parts: [this.bodyC, this.sensorUp],
       options: {objType: "bearTrap"}
     });
-    this.engine = engine;
-
-    World.add(engine.world, this.composite);
+    this.map = map
+    World.add(map.engine.world, this.composite);
   }
 
-  	sayHello() {
-    console.log('hello');
-  }
 	update() {
-		Matter.Query.collides(this.sensorUp, this.engine.world.bodies)
+		Matter.Query.collides(this.sensorUp, this.map.engine.world.bodies)
 		.forEach((collision) => {
 			// console.log(collision.bodyA.objType);
 			// console.log(collision.bodyB.objType);

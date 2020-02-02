@@ -10,7 +10,7 @@ var Engine = Matter.Engine,
 //class character
 export default class Character {
 
-	constructor(engine, pos, id, metadata) {
+	constructor(gm, pos, id, metadata) {
 		this.id = id;
 		this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity, objType: "character" });
 		this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 46, 0.001, { isSensor: true });
@@ -19,10 +19,10 @@ export default class Character {
 			parts: [this.bodyC, this.sensorDown, this.sensorFace],
 			options: { objType: "character" }
 		});
-		this.engine = engine;
+		this.gm = gm;
 
 		this.bodyC.character_logic = this;
-		World.add(engine.world, this.composite);
+		World.add(gm.engine.world, this.composite);
 		// this.isJumping = true;
 		// this.isChanneling = true;
 
@@ -54,19 +54,21 @@ export default class Character {
 	}
 
 	destroy() {
-		World.remove(this.engine.world, this.composite, true);
+		World.remove(this.gm.engine.world, this.composite, true);
 	}
 	die() {
-		Body.setPosition(this.composite, { x: 500, y: 500 });
+		// Body.setPosition(this.composite, { x: 500, y: 500 });
+		(this.gm.repositionCharacters.bind(this.gm))(this.id)
 	}
-	teleport(posTo) {
-		Body.setPosition(this.composite, { x: posTo.x + 60, y: posTo.y });
-		Body.setVelocity(this.composite, { x: 0, y: 0 });
+	teleport(posTo, resetVel = false) {
+		Body.setPosition(this.composite, { x: posTo.x, y: posTo.y });
+		if (resetVel)
+			Body.setVelocity(this.composite, { x: 0, y: 0 });
 	}
 	// added update function that get called from main index.js every "beforeUpdate" event
 	update() {
 		// query the list of collisions
-		let collisions = Matter.Query.collides(this.sensorDown, this.engine.world.bodies);
+		let collisions = Matter.Query.collides(this.sensorDown, this.gm.engine.world.bodies);
 		// not jumping but collided with no object (incl platform)
 		// => falling from the edge of the platform
 		if (collisions.length == 1 && this.isJumping == false) {
@@ -85,7 +87,7 @@ export default class Character {
 		else this.composite.friction = 0.1;
 
 		//take item
-		let collisionsTakeItems = Matter.Query.collides(this.sensorFace, this.engine.world.bodies);
+		let collisionsTakeItems = Matter.Query.collides(this.sensorFace, this.gm.engine.world.bodies);
 		//change face
 		if (this.facing == 1) Body.setPosition(this.sensorFace, { x: this.composite.position.x + 27, y: this.composite.position.y });
 		if (this.facing == -1) Body.setPosition(this.sensorFace, { x: this.composite.position.x - 27, y: this.composite.position.y });
