@@ -6,6 +6,7 @@ var Engine = Matter.Engine,
 	World = Matter.World,
 	Bodies = Matter.Bodies,
 	Pair = Matter.Pair,
+	Constraint = Matter.Constraint,
 	Body = Matter.Body;
 //class character
 export default class Character {
@@ -48,9 +49,14 @@ export default class Character {
 		this.maxJumpFlyV = 5.0;
 		this.maxMoveSpeed = 5.0;
 
-		//filed for use velocity (setVelocity)
+		//field for use velocity (setVelocity)
 		this.moveVelocity = 1;
 		this.jumpVelocity = 1;
+
+		//constraint
+		this.bodyBring ={};
+		this.isBringItem = false;
+		
 	}
 
 	destroy() {
@@ -63,6 +69,7 @@ export default class Character {
 		Body.setPosition(this.composite, { x: posTo.x + 60, y: posTo.y });
 		Body.setVelocity(this.composite, { x: 0, y: 0 });
 	}
+
 	// added update function that get called from main index.js every "beforeUpdate" event
 	update() {
 		// query the list of collisions
@@ -77,7 +84,11 @@ export default class Character {
 				if (collision.bodyA.id != collision.bodyB.id) {
 					// if the sensor is collided (landed) set isJumping to false
 					// if (collision.bodyA.objType == "ground" || collision.bodyB.objType == "ground") {
-					this.isJumping = false;
+					
+					//fix for item
+					if(collision.bodyA.objType !=="ItemBox"||collision.bodyB.objType !== "ItemBox"){
+						this.isJumping = false;
+					}
 					// }
 				}
 			})
@@ -93,12 +104,25 @@ export default class Character {
 		// query the list of collistions for take items
 		collisionsTakeItems.forEach((collisionItem) => {
 			// console.log(collisionItem);
-			if (collisionItem.bodyA.objType == "box") console.log("touched box");
-
+			if (collisionItem.bodyA.objType == "ItemBox") {
+				console.log("touched box");
+				let item_physics = collisionItem.bodyA.objType == 'ItemBox'?collisionItem.bodyA:collisionItem.bodyB;
+				let item_logics = item_physics.item_logic;
+				console.log(item_logics.composite);
+				this.bodyBring = item_logics.composite;
+			}
 		})
 
 	}
 	inputHandler(keyState) {
+		//take item
+		if (keyState[84]){
+			this.takeItem(this.bodyBring);
+		}
+		//drop item
+		if (keyState[89]){
+			this.dropItem(this.bodyBring);
+		}
 		if (keyState[38]) {
 			this.jump();
 		}
@@ -145,9 +169,38 @@ export default class Character {
 		}
 	}
 
-	takeItem() {
-
-
+	takeItem(bodyBring) {
+		if(!this.isBringItem){
+			var optionsConstraint = {
+				bodyA: this.composite,
+				bodyB: bodyBring,
+				length: 60,
+				stiffness: 0.4,
+				render: {type: 'line'}
+				
+			}
+			if(!this.constraint)
+			this.constraint = Constraint.create(optionsConstraint);
+			
+			World.add(this.engine.world, this.constraint);
+			console.log(this.constraint);
+			this.isBringItem = true;
+		}
+		//phai bam nhanh
+		else{
+			console.log(this.constraint);
+			World.remove(this.engine.world, this.constraint, true);
+			this.constraint = null;
+			this.isBringItem = false;
+		}
+	}
+	dropItem(bodyBring){
+		if(this.isBringItem){
+			console.log(this.constraint);
+			World.remove(this.engine.world, this.constraint, true);
+			this.constraint = null;
+			this.isBringItem = false;
+		}
 	}
 	sayHello() {
 		console.log('hello');
