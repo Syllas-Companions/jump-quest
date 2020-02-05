@@ -173,9 +173,21 @@ export default class Character {
                 this.attachedTo.key_start = null;
         }
         // LEFT
-        if (keyState[37]) this.move(-1);
+        if (keyState[37]) {
+            if (this.attachedTo) { 
+                Body.applyForce(this.composite, this.composite.position, {x:-0.002, y:0});
+            }
+            else
+                this.move(-1);
+        }
         // RIGHT
-        if (keyState[39]) this.move(1);
+        if (keyState[39]) {
+            if (this.attachedTo) { 
+                Body.applyForce(this.composite, this.composite.position, {x:0.002, y:0});
+            }
+            else
+                this.move(1);
+        }
     }
     move(dir) {
         // TODO: try reimplement force-based movement to fix rope's behaviour
