@@ -32,6 +32,7 @@ export default class Trap{
 				console.log("u dead");
 				let char_physics = collision.bodyA.objType == 'character'?collision.bodyA:collision.bodyB;
 				let char_logics = char_physics.character_logic;
+				console.log(char_logics);
 				char_logics.die();
 			}
 		})
