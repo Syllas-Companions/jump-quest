@@ -1,5 +1,4 @@
 import Matter from 'matter-js'
-// import room_manager from 'room_manager'
 var Engine = Matter.Engine,
     Render = Matter.Render,
     Constraint = Matter.Constraint,
@@ -9,8 +8,6 @@ var Engine = Matter.Engine,
     Bodies = Matter.Bodies,
     Bodies = Matter.Bodies,
     Body = Matter.Body;
-
-//class door
 export default class Rope {
     constructor(map, json) {
         this.map = map;
