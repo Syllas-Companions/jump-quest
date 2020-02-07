@@ -29,7 +29,12 @@ export default class GameMap {
                         tilesLayer.x + j * this.tileWidth,
                         tilesLayer.y + i * this.tileHeight,
                         this.tileWidth, this.tileHeight,
-                        { isStatic: true, objLayer: C.LAYER_MAP_TILES, tile_id: tilesLayer.data[i * tilesLayer.width + j] });
+                        {
+                            isStatic: true,
+                            objLayer: C.LAYER_MAP_TILES,
+                            objType: "tile",
+                            tile_id: tilesLayer.data[i * tilesLayer.width + j]
+                        });
                     this.tiles.push(tile);
                 }
             }

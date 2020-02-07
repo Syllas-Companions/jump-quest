@@ -15,8 +15,8 @@ class Character {
     constructor(gm, pos, id, metadata) {
         this.id = id;
         this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity, objType: "character" });
-        this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 46, 0.001, { isSensor: true });
-        this.sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 0.01, 48, { isSensor: true });
+        this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 25, 0.001, { isSensor: true });
+        this.sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 0.01, 48, { isSensor: true, objType: "character-face" });
         this.composite = Body.create({
             parts: [this.bodyC, this.sensorDown, this.sensorFace],
             options: { objType: "character" }
@@ -24,6 +24,8 @@ class Character {
         this.gm = gm;
 
         this.bodyC.character_logic = this;
+        this.sensorFace.character_logic = this;
+
         World.add(gm.engine.world, this.composite);
         // this.isJumping = true;
         // this.isChanneling = true;
@@ -53,17 +55,6 @@ class Character {
         //field for use velocity (setVelocity)
         this.moveVelocity = 1;
         this.jumpVelocity = 1;
-
-        //constraint
-		this.bodyBring = {};
-		this.isBringItem = false;
-		this.optionsConstraint = {
-			bodyA: this.composite,
-			bodyB: this.bodyBring,
-			length: 40,
-			stiffness: 0.4,
-			render: {type: 'line'}	
-		};
 
     }
 
@@ -101,36 +92,17 @@ class Character {
                 // console.log(collision);
                 if (collision.bodyA.id != collision.bodyB.id) {
                     // if the sensor is collided (landed) set isJumping to false
-                    // if (collision.bodyA.objType == "ground" || collision.bodyB.objType == "ground") {
-
-                    //fix for item
-                    if (collision.bodyA.objType !== "ItemBox" || collision.bodyB.objType !== "ItemBox") {
+                    // if (collision.bodyA.objType == "tile" || collision.bodyB.objType == "tile") {
                         this.isJumping = false;
-                    }
                     // }
                 }
             })
         if (this.isJumping) this.composite.friction = 0;
         else this.composite.friction = 0.1;
 
-        //take item
-        let collisionsTakeItems = Matter.Query.collides(this.sensorFace, this.gm.engine.world.bodies);
         //change face
         if (this.facing == 1) Body.setPosition(this.sensorFace, { x: this.composite.position.x + 27, y: this.composite.position.y });
         if (this.facing == -1) Body.setPosition(this.sensorFace, { x: this.composite.position.x - 27, y: this.composite.position.y });
-
-        // query the list of collistions for take items
-        collisionsTakeItems.forEach((collisionItem) => {
-            // console.log(collisionItem);
-            if (collisionItem.bodyA.objType == "ItemBox") {
-                // console.log("touched box");
-                let item_physics = collisionItem.bodyA.objType == 'ItemBox' ? collisionItem.bodyA : collisionItem.bodyB;
-                let item_logics = item_physics.item_logic;
-                // console.log(item_logics.composite);
-                this.bodyBring = item_logics.composite;
-            }
-        })
-
     }
 
     inputHandler(keyState) {
@@ -142,42 +114,8 @@ class Character {
                 }
             })
         } else console.log("chain empty");
-        // TODO: separate item to its module
-		//take item
-		if (keyState[84]){
-			if(this.bodyBring)
-            this.takeItem(this.bodyBring);
-        }else
-		//drop item
-		{
-			this.dropItem(this.bodyBring);
-		}
+
     }
-	takeItem(bodyBring) {
-		if(!this.isBringItem){
-			this.optionsConstraint.bodyB = bodyBring;
-			if(!this.constraint)
-			this.constraint = Constraint.create(this.optionsConstraint);
-			
-			World.add(this.gm.engine.world, this.constraint);
-			// console.log(this.constraint);
-			this.isBringItem = true;
-		}
-		
-
-	}
-	dropItem(bodyBring){
-		this.bodyBring = null;
-		this.optionsConstraint.bodyB = null;
-		if(this.isBringItem){
-			// console.log(this.constraint);
-			World.remove(this.gm.engine.world, this.constraint, true);
-			this.constraint = null;
-			this.isBringItem = false;
-		}
-		
-	}
-
 }
 
 
