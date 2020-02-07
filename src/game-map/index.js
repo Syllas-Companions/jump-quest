@@ -52,20 +52,20 @@ export default class GameMap {
         this.initSpawnPoints(mapJson);
         this.initItems(mapJson);
     }
-    initItems(mapJson){
+    initItems(mapJson) {
         this.items = [];
         this.createItemBoxs(mapJson);
     }
-    createItemBoxs(mapJson){
+    createItemBoxs(mapJson) {
         let itemsLayer = mapJson.layers.find(layer => layer.name == "items");
-        if(!itemsLayer) return;
+        if (!itemsLayer) return;
         //itemsbox
         let itemBoxs = itemsLayer.layers.find(layer => layer.name == "boxs");
-        if(!itemBoxs) return;
+        if (!itemBoxs) return;
         itemBoxs.objects.forEach(obj => {
-            let itemBox = new ItemBox(this.engine, {x: obj.x, y:obj.y});
+            let itemBox = new ItemBox(this.engine, { x: obj.x, y: obj.y });
             this.items.push(itemBox);
-            this.addObject(itemBox.bodyC);
+            this.addObject(itemBox.body);
         })
     }
     initTraps(mapJson) {
@@ -172,19 +172,21 @@ export default class GameMap {
 }
 
 function simplifyObj(arr, obj) {
-    if (obj.type == 'body') {
-        let res = {
-            id: obj.id,
-            vertices: obj.vertices.map(vertex => {
-                return { x: vertex.x, y: vertex.y }
-            }),
-            tile_id: obj.tile_id,
-            position: obj.position
+    if (obj) {
+        if (obj.type == 'body') {
+            let res = {
+                id: obj.id,
+                vertices: obj.vertices.map(vertex => {
+                    return { x: vertex.x, y: vertex.y }
+                }),
+                tile_id: obj.tile_id,
+                position: obj.position
+            }
+            arr.push(res);
         }
-        arr.push(res);
-    } 
-    else if (obj.type == 'composite') {
-        obj.bodies.reduce(simplifyObj, arr);
+        else if (obj.type == 'composite') {
+            obj.bodies.reduce(simplifyObj, arr);
+        }
     }
     return arr;
 }

@@ -123,10 +123,10 @@ class Character {
         collisionsTakeItems.forEach((collisionItem) => {
             // console.log(collisionItem);
             if (collisionItem.bodyA.objType == "ItemBox") {
-                console.log("touched box");
+                // console.log("touched box");
                 let item_physics = collisionItem.bodyA.objType == 'ItemBox' ? collisionItem.bodyA : collisionItem.bodyB;
                 let item_logics = item_physics.item_logic;
-                console.log(item_logics.composite);
+                // console.log(item_logics.composite);
                 this.bodyBring = item_logics.composite;
             }
         })
@@ -160,7 +160,7 @@ class Character {
 			this.constraint = Constraint.create(this.optionsConstraint);
 			
 			World.add(this.gm.engine.world, this.constraint);
-			console.log(this.constraint);
+			// console.log(this.constraint);
 			this.isBringItem = true;
 		}
 		
@@ -170,7 +170,7 @@ class Character {
 		this.bodyBring = null;
 		this.optionsConstraint.bodyB = null;
 		if(this.isBringItem){
-			console.log(this.constraint);
+			// console.log(this.constraint);
 			World.remove(this.gm.engine.world, this.constraint, true);
 			this.constraint = null;
 			this.isBringItem = false;
