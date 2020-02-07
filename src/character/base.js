@@ -55,8 +55,15 @@ class Character {
         this.jumpVelocity = 1;
 
         //constraint
-        this.bodyBring = {};
-        this.isBringItem = false;
+		this.bodyBring = {};
+		this.isBringItem = false;
+		this.optionsConstraint = {
+			bodyA: this.composite,
+			bodyB: this.bodyBring,
+			length: 40,
+			stiffness: 0.4,
+			render: {type: 'line'}	
+		};
 
     }
 
@@ -136,51 +143,40 @@ class Character {
             })
         } else console.log("chain empty");
         // TODO: separate item to its module
-        // //take item
-        // if (keyState[84]) {
-        //     this.takeItem(this.bodyBring);
-        // }
-        // //drop item
-        // if (keyState[89]) {
-        //     this.dropItem(this.bodyBring);
-        // }
+		//take item
+		if (keyState[84]){
+			if(this.bodyBring)
+            this.takeItem(this.bodyBring);
+        }else
+		//drop item
+		{
+			this.dropItem(this.bodyBring);
+		}
     }
-    takeItem(bodyBring) {
-        if (!this.isBringItem) {
-            var optionsConstraint = {
-                bodyA: this.composite,
-                bodyB: bodyBring,
-                length: 60,
-                stiffness: 0.4,
-                render: { type: 'line' }
+	takeItem(bodyBring) {
+		if(!this.isBringItem){
+			this.optionsConstraint.bodyB = bodyBring;
+			if(!this.constraint)
+			this.constraint = Constraint.create(this.optionsConstraint);
+			
+			World.add(this.gm.engine.world, this.constraint);
+			console.log(this.constraint);
+			this.isBringItem = true;
+		}
+		
 
-            }
-            if (!this.constraint)
-                this.constraint = Constraint.create(optionsConstraint);
-
-            World.add(this.gm.engine.world, this.constraint);
-            console.log(this.constraint);
-            this.isBringItem = true;
-        }
-        //phai bam nhanh
-        else {
-            console.log(this.constraint);
-            World.remove(this.gm.engine.world, this.constraint, true);
-            this.constraint = null;
-            this.isBringItem = false;
-        }
-    }
-    dropItem(bodyBring) {
-        if (this.isBringItem) {
-            console.log(this.constraint);
-            World.remove(this.gm.engine.world, this.constraint, true);
-            this.constraint = null;
-            this.isBringItem = false;
-        }
-    }
-    sayHello() {
-        console.log('hello');
-    }
+	}
+	dropItem(bodyBring){
+		this.bodyBring = null;
+		this.optionsConstraint.bodyB = null;
+		if(this.isBringItem){
+			console.log(this.constraint);
+			World.remove(this.gm.engine.world, this.constraint, true);
+			this.constraint = null;
+			this.isBringItem = false;
+		}
+		
+	}
 
 }
 
