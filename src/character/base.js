@@ -14,9 +14,9 @@ class Character {
 
     constructor(gm, pos, id, metadata) {
         this.id = id;
-        this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity, objType: "character" });
-        this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 25, 0.001, { isSensor: true });
-        this.sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 1, 48, { isSensor: true, objType: "character-face" });
+        this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity, objType: "character-body" });
+        this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 48, 0.001, { isSensor: true, objType: "character-base" });
+        this.sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 3, 52, { isSensor: true, objType: "character-face" });
         this.composite = Body.create({
             parts: [this.bodyC, this.sensorDown, this.sensorFace],
             options: { objType: "character" }
@@ -93,7 +93,7 @@ class Character {
                 if (collision.bodyA.id != collision.bodyB.id) {
                     // if the sensor is collided (landed) set isJumping to false
                     // if (collision.bodyA.objType == "tile" || collision.bodyB.objType == "tile") {
-                        this.isJumping = false;
+                    this.isJumping = false;
                     // }
                 }
             })
@@ -101,20 +101,20 @@ class Character {
         else this.composite.friction = 0.1;
 
         //change face
-        if (this.facing == 1) Body.setPosition(this.sensorFace, { x: this.composite.position.x + 27, y: this.composite.position.y });
-        if (this.facing == -1) Body.setPosition(this.sensorFace, { x: this.composite.position.x - 27, y: this.composite.position.y });
+        if (this.facing == 1) Body.setPosition(this.sensorFace, { x: this.composite.position.x + 25, y: this.composite.position.y });
+        if (this.facing == -1) Body.setPosition(this.sensorFace, { x: this.composite.position.x - 28, y: this.composite.position.y });
     }
 
     inputHandler(keyState) {
         if (Character.controlChain) {
             Character.controlChain.forEach((fChain, key) => {
-                // console.log(this)
+                let isChanged = this.prevFrameKeyState && (keyState[key] != this.prevFrameKeyState[key]);
                 for (const func of fChain) {
-                    if (func.call(this, keyState[key])) break;
+                    if (func.call(this, keyState[key], isChanged)) break;
                 }
             })
         } else console.log("chain empty");
-
+        this.prevFrameKeyState = JSON.parse(JSON.stringify(keyState));
     }
 }
 

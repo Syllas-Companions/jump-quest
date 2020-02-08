@@ -4,6 +4,7 @@ import BearTrap from 'traps/BearTrap'
 import Door from 'door'
 import Rope from 'rope'
 import ItemBox from 'items/Box'
+import Tile from 'tileBlock/basicTile'
 
 
 var Engine = Matter.Engine,
@@ -20,42 +21,49 @@ export default class GameMap {
         this.engine = engine;
         this.tileWidth = mapJson.tilewidth;
         this.tileHeight = mapJson.tileheight;
-        let tilesLayer = mapJson.layers.find(layer => layer.name == "tiles");
-        this.tiles = []
-        for (let i = 0; i < tilesLayer.height; i++) {
-            for (let j = 0; j < tilesLayer.width; j++) {
-                if (tilesLayer.data[i * tilesLayer.width + j] != 0) {
-                    let tile = Bodies.rectangle(
-                        tilesLayer.x + j * this.tileWidth,
-                        tilesLayer.y + i * this.tileHeight,
-                        this.tileWidth, this.tileHeight,
-                        {
-                            isStatic: true,
-                            objLayer: C.LAYER_MAP_TILES,
-                            objType: "tile",
-                            tile_id: tilesLayer.data[i * tilesLayer.width + j]
-                        });
-                    this.tiles.push(tile);
-                }
-            }
-        }
+
         this.tilesets = mapJson.tilesets.reverse();
         this.tilesets.forEach(s => {
             let matched = s.source.match(/([^/]*)$/);
             s.source = matched ? matched[0] : str
         })
-        World.add(engine.world, this.tiles);
+
 
         // bind callback functions 
         this.cbMoveCharacter = this.cbMoveCharacter.bind(this);
         this.cbNextMap = this.cbNextMap.bind(this);
 
+        this.initTiles(mapJson);
         this.initBackground(mapJson)
         this.initTraps(mapJson);
         this.initDoors(mapJson);
         this.initRopes(mapJson);
         this.initSpawnPoints(mapJson);
         this.initItems(mapJson);
+    }
+    update(){
+        this.tiles.forEach(ele => ele.update());
+        this.traps.forEach(ele => ele.update());
+        this.doors.forEach(ele => ele.update());
+        this.ropes.forEach(ele => ele.update());
+        this.items.forEach(item => item.update());
+    }
+    initTiles(mapJson){
+        let tilesLayer = mapJson.layers.find(layer => layer.name == "tiles");
+        this.tiles = []
+        for (let i = 0; i < tilesLayer.height; i++) {
+            for (let j = 0; j < tilesLayer.width; j++) {
+                if (tilesLayer.data[i * tilesLayer.width + j] != 0) {
+                    let tile = new Tile(this,
+                        tilesLayer.x + j * this.tileWidth,
+                        tilesLayer.y + i * this.tileHeight,
+                        this.tileWidth, this.tileHeight,
+                        tilesLayer.data[i * tilesLayer.width + j]
+                    )
+                    this.tiles.push(tile);
+                }
+            }
+        }
     }
     initItems(mapJson) {
         this.items = [];
@@ -153,7 +161,7 @@ export default class GameMap {
 
     getStaticObj() {
         let result = []
-        this.tiles.reduce(simplifyObj, result);
+        this.tiles.map(e => e.body).reduce(simplifyObj, result);
         this.doors.map(door => door.sensorIn).reduce(simplifyObj, result);
         // result = result.concat(this.tiles.map(this.simplifyObj))
         // result = result.concat(this.doors.map(door => door.sensorIn).map(this.simplifyObj))

@@ -15,6 +15,7 @@ var Engine = Matter.Engine,
 function jumpFromRope(isKeyDown) {
     if (isKeyDown) {
         if (this.attachedTo) {
+            Body.setVelocity(this.composite, { x: this.composite.velocity.x, y: -10 });
             Composite.remove(this.gm.engine.world, this.attachedTo.constraint)
             this.attachedTo = null;
             return true;
@@ -31,7 +32,8 @@ function upRope(isKeyDown) {
                 bodyA: this.composite,
                 bodyB: this.attachedTo.rope.getSeg(this.attachedTo.seg_no),
                 length: 2,
-                stiffness: 0.5
+                stiffness: 0.1,
+                damping: 1
             })
             this.attachedTo.constraint = constraint;
             Composite.add(this.gm.engine.world, constraint);
@@ -43,7 +45,7 @@ function upRope(isKeyDown) {
                 if (!this.attachedTo.key_start)
                     this.attachedTo.key_start = Date.now();
                 // check if hold for enough time
-                if ((Date.now() - this.attachedTo.key_start) > 500) {
+                if ((Date.now() - this.attachedTo.key_start) > 250) {
                     // move up 1 segment if possible
                     let destination = this.attachedTo.rope.getSeg(this.attachedTo.seg_no - 1);
                     if (destination) {
@@ -71,7 +73,7 @@ function downRope(isKeyDown) {
             if (!this.attachedTo.key_start)
                 this.attachedTo.key_start = Date.now();
             // check if hold for enough time
-            if (Date.now() - this.attachedTo.key_start > 500) {
+            if (Date.now() - this.attachedTo.key_start > 250) {
                 // move down 1 segment if possible
                 let destination = this.attachedTo.rope.getSeg(this.attachedTo.seg_no + 1);
                 if (destination) {

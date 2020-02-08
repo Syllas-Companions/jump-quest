@@ -5,16 +5,18 @@ var World = Matter.World,
     Body = Matter.Body,
     Constraint = Matter.Constraint;
 
-function holdItem(isKeyDown) {
+function holdItem(isKeyDown, isChanged) {
+    // console.log(isChanged)
     // try add to composite method
     if (isKeyDown) {
         if (!this.itemConstraint && this.bodyBring) {
             this.itemConstraint = Constraint.create({
                 bodyA: this.composite,
                 bodyB: this.bodyBring,
-                pointA: { x: 0, y: 20 },
-                length: 45,
-                stiffness: 1,
+                pointA: { x: 0, y: 0 },
+                length: 50,
+                stiffness: 0.1,
+                damping:1,
                 render: { type: 'line' }
             });
 
@@ -24,8 +26,9 @@ function holdItem(isKeyDown) {
                 bodyA: this.composite,
                 bodyB: this.bodyBring,
                 pointA: { x: 0, y: -20 },
-                length: 45,
-                stiffness: 1,
+                length: 50,
+                stiffness: 0.1,
+                damping:1,
                 render: { type: 'line' }
             });
 
@@ -50,8 +53,9 @@ function holdItem(isKeyDown) {
 function characterTurn(isKeyDown) {
     if (isKeyDown) {
         if (this.itemConstraint && this.isTurned) {
-            if (this.facing == 1) Body.setPosition(this.itemConstraint.bodyB, { x: this.composite.position.x + 27, y: this.composite.position.y });
-            if (this.facing == -1) Body.setPosition(this.itemConstraint.bodyB, { x: this.composite.position.x - 27, y: this.composite.position.y });
+            //TODO: use (width character + width item) /2 instead of constant
+            if (this.facing == 1) Body.setPosition(this.itemConstraint.bodyB, { x: this.composite.position.x + 25, y: this.composite.position.y });
+            if (this.facing == -1) Body.setPosition(this.itemConstraint.bodyB, { x: this.composite.position.x - 28, y: this.composite.position.y });
         }
     }
     return false;

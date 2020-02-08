@@ -47,17 +47,6 @@ export default class Door {
             if (this.callback) this.callback(char_logics, this);
           }
           // NOTE: door's functionalities moved to creation step (in GameMap)
-          // else {
-          //   if (this.data.type == 'teleport') {
-          //     let doorTo = this.map.getDoor(target.value);
-          //     char_logics.teleport(doorTo.data);
-          //     // room_manager.hello();
-          //   }
-          //   if (this.data.type == 'change_map') {
-          //     // target might be map name
-          //     this.map.gameManager.changeMap(char_logics.id, target.value)
-          //   }
-          // }
         }
       })
       // filter character which already left from ignorelist

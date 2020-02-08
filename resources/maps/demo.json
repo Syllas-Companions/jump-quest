@@ -166,12 +166,12 @@
                         {
                          "name":"length",
                          "type":"string",
-                         "value":"8"
+                         "value":"12"
                         }, 
                         {
                          "name":"seg_length",
                          "type":"string",
-                         "value":"30"
+                         "value":"15"
                         }],
                  "rotation":0,
                  "type":"",
