@@ -5,8 +5,10 @@ var Body = Matter.Body;
 
 function move(dir) {
     // TODO: try reimplement force-based movement to fix rope's behaviour
+    let oldFacing = this.facing
     if (dir > 0) this.facing = 1;
     else if (dir < 0) this.facing = -1;
+    this.isTurned = (oldFacing!=this.facing) ;
 
     let coeff = this.isJumping ? 0.05 : 1;
     // if(Math.abs(this.composite.velocity.x) <=this.maxMoveSpeed){

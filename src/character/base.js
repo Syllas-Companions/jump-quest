@@ -16,7 +16,7 @@ class Character {
         this.id = id;
         this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity, objType: "character" });
         this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 25, 0.001, { isSensor: true });
-        this.sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 0.01, 48, { isSensor: true, objType: "character-face" });
+        this.sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 1, 48, { isSensor: true, objType: "character-face" });
         this.composite = Body.create({
             parts: [this.bodyC, this.sensorDown, this.sensorFace],
             options: { objType: "character" }
