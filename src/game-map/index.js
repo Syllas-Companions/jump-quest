@@ -4,7 +4,7 @@ import BearTrap from 'traps/BearTrap'
 import Door from 'door'
 import Rope from 'rope'
 import ItemBox from 'items/Box'
-import Tile from 'tileBlock/basicTile'
+import {Tile, TileWDurability, MovablePlatform, HookableWall} from 'tileBlock'
 
 
 var Engine = Matter.Engine,
@@ -62,8 +62,8 @@ export default class GameMap {
             let type = Tile;
             switch (layer.name) {
                 case 'basic': type = Tile; break;
-                case 'destructible': type = Tile; break;
-                case 'hookable': type = Tile; break;
+                case 'destructible': type = TileWDurability; break;
+                case 'hookable': type = HookableWall; break;
             }
             this.initPlatformsLayer(layer, type);
         })

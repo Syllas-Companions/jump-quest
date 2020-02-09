@@ -29,6 +29,7 @@ export default class Tile {
     }
     destroy(){
         World.remove(this.map.engine.world, this.body);
+        this.body = null;
     }
     update() {
         // let curFrameChars = []

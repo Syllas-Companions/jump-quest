@@ -1,3 +1,4 @@
+import Matter from 'matter-js'
 import Tile from "../basicTile";
 import './character-behaviour'
 var Engine = Matter.Engine,
@@ -14,3 +15,5 @@ class MovablePlatform extends Tile {
     }
     update() { }
 }
+
+export default MovablePlatform;
