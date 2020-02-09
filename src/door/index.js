@@ -30,6 +30,9 @@ export default class Door {
   addIgnore(id){
     this.ignoreList.push(id);
   }
+  destroy(){
+    World.remove(this.map.engine.world, this.sensorIn, true);
+}
   update() {
     let curFrameChars = []
     Matter.Query.collides(this.sensorIn, this.map.engine.world.bodies)

@@ -33,7 +33,7 @@ export default class GameMap {
         this.cbMoveCharacter = this.cbMoveCharacter.bind(this);
         this.cbNextMap = this.cbNextMap.bind(this);
 
-        this.initTiles(mapJson);
+        this.initPlatforms(mapJson);
         this.initBackground(mapJson)
         this.initTraps(mapJson);
         this.initDoors(mapJson);
@@ -41,28 +41,63 @@ export default class GameMap {
         this.initSpawnPoints(mapJson);
         this.initItems(mapJson);
     }
-    update(){
+    destroy() {
+        this.tiles.forEach(ele => ele.destroy());
+        this.traps.forEach(ele => ele.destroy());
+        this.doors.forEach(ele => ele.destroy());
+        this.ropes.forEach(ele => ele.destroy());
+        this.items.forEach(ele => ele.destroy());
+    }
+    update() {
         this.tiles.forEach(ele => ele.update());
         this.traps.forEach(ele => ele.update());
         this.doors.forEach(ele => ele.update());
         this.ropes.forEach(ele => ele.update());
         this.items.forEach(item => item.update());
     }
-    initTiles(mapJson){
-        let tilesLayer = mapJson.layers.find(layer => layer.name == "tiles");
+    initPlatforms(mapJson) {
+        let platformLayers = mapJson.layers.find(layer => layer.name == "platforms");
         this.tiles = []
-        for (let i = 0; i < tilesLayer.height; i++) {
-            for (let j = 0; j < tilesLayer.width; j++) {
-                if (tilesLayer.data[i * tilesLayer.width + j] != 0) {
-                    let tile = new Tile(this,
-                        tilesLayer.x + j * this.tileWidth,
-                        tilesLayer.y + i * this.tileHeight,
-                        this.tileWidth, this.tileHeight,
-                        tilesLayer.data[i * tilesLayer.width + j]
-                    )
-                    this.tiles.push(tile);
+        platformLayers.layers.forEach(layer => {
+            let type = Tile;
+            switch (layer.name) {
+                case 'basic': type = Tile; break;
+                case 'destructible': type = Tile; break;
+                case 'hookable': type = Tile; break;
+            }
+            this.initPlatformsLayer(layer, type);
+        })
+        // for (let i = 0; i < tilesLayer.height; i++) {
+        //     for (let j = 0; j < tilesLayer.width; j++) {
+        //         if (tilesLayer.data[i * tilesLayer.width + j] != 0) {
+        //             let tile = new Tile(this,
+        //                 tilesLayer.x + j * this.tileWidth,
+        //                 tilesLayer.y + i * this.tileHeight,
+        //                 this.tileWidth, this.tileHeight,
+        //                 tilesLayer.data[i * tilesLayer.width + j]
+        //             )
+        //             this.tiles.push(tile);
+        //         }
+        //     }
+        // }
+    }
+    initPlatformsLayer(layerJson, type) {
+        if (layerJson.type == 'tilelayer') {
+            for (let i = 0; i < layerJson.height; i++) {
+                for (let j = 0; j < layerJson.width; j++) {
+                    if (layerJson.data[i * layerJson.width + j] != 0) {
+                        let tile = new type(this,
+                            layerJson.x + j * this.tileWidth,
+                            layerJson.y + i * this.tileHeight,
+                            this.tileWidth, this.tileHeight,
+                            layerJson.data[i * layerJson.width + j]
+                        )
+                        this.tiles.push(tile);
+                    }
                 }
             }
+        } else if (layerJson.type == 'objectgroup' && layerJson.name == 'movable') {
+
         }
     }
     initItems(mapJson) {
@@ -76,7 +111,7 @@ export default class GameMap {
         let itemBoxs = itemsLayer.layers.find(layer => layer.name == "boxs");
         if (!itemBoxs) return;
         itemBoxs.objects.forEach(obj => {
-            let itemBox = new ItemBox(this.engine, { x: obj.x, y: obj.y });
+            let itemBox = new ItemBox(this, { x: obj.x, y: obj.y });
             this.items.push(itemBox);
             this.addObject(itemBox.body);
         })

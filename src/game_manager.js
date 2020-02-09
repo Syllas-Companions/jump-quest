@@ -110,6 +110,8 @@ export default class GameManager {
                 .then(response => response.json())
                 .then(currentMapJson => {
                     console.log("map json: " + currentMapJson)
+                    if (this.currentMap)
+                        this.currentMap.destroy();
                     this.currentMap = new GameMap(this, this.engine, currentMapJson);
                     this.isMapReady = true;
                     //DEBUG:
@@ -127,6 +129,8 @@ export default class GameManager {
 
             try {
                 const currentMapJson = JSON.parse(fileContents)
+                if (this.currentMap)
+                    this.currentMap.destroy();
                 this.currentMap = new GameMap(this, this.engine, currentMapJson);
                 this.isMapReady = true;
             } catch (err) {

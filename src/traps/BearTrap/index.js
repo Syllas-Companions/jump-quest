@@ -20,7 +20,9 @@ export default class Trap{
     this.map = map
     World.add(map.engine.world, this.composite);
   }
-
+  destroy(){
+    World.remove(this.map.engine.world, this.composite, true);
+}
 	update() {
 		Matter.Query.collides(this.sensorUp, this.map.engine.world.bodies)
 		.forEach((collision) => {

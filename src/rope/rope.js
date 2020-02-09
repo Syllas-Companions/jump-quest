@@ -49,7 +49,9 @@ export default class Rope {
 
         World.add(map.engine.world, this.composite);
     }
-
+    destroy(){
+        World.remove(this.map.engine.world, this.composite, true);
+    }
     getSeg(seg_no){
         return this.composite.bodies.find(ele => ele.seg_no == seg_no)
     }

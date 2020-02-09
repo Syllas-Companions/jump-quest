@@ -27,7 +27,9 @@ export default class Tile {
         
         World.add(map.engine.world, this.body);
     }
-
+    destroy(){
+        World.remove(this.map.engine.world, this.body);
+    }
     update() {
         // let curFrameChars = []
         // Matter.Query.collides(this.sensorIn, this.map.engine.world.bodies)

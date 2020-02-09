@@ -11,23 +11,26 @@ var Engine = Matter.Engine,
 //class items
 export default class Item {
 
-    constructor(engine, pos) {
+    constructor(map, pos) {
         this.body = Bodies.rectangle(pos.x, pos.y, 40, 40, { inertia: Infinity, objType: "ItemBox" });
         // this.sensor = Bodies.rectangle(pos.x, pos.y, 40, 40, { isSensor: true });
         // this.composite = Body.create({
         //     parts: [this.body, this.sensor]
         // });
-        this.engine = engine;
+        this.map = map;
 
         this.body.item_logic = this;
-        World.add(engine.world, this.body);
+        World.add(map.engine.world, this.body);
         this.isPickedUp = false;
 
+    }
+    destroy(){
+        World.remove(this.map.engine.world, this.body, true);
     }
     //function update beforce update
     update() {
         if (!this.associated_char) {
-            Matter.Query.collides(this.body, this.engine.world.bodies)
+            Matter.Query.collides(this.body, this.map.engine.world.bodies)
                 .forEach((collision) => {
                     // console.log(collision.bodyA.objType+"   "+collision.bodyB.objType)
                     if (collision.bodyA.objType == 'character-face' || collision.bodyB.objType == 'character-face') {
