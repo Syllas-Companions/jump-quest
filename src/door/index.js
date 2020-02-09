@@ -35,10 +35,10 @@ export default class Door {
     Matter.Query.collides(this.sensorIn, this.map.engine.world.bodies)
       .forEach((collision) => {
 
-        if (collision.bodyA.objType == 'character' || collision.bodyB.objType == 'character') {
+        if (collision.bodyA.objType == 'character-body' || collision.bodyB.objType == 'character-body') {
           // console.log(collision);
           // console.log("door");
-          let char_physics = collision.bodyA.objType == 'character' ? collision.bodyA : collision.bodyB;
+          let char_physics = collision.bodyA.objType == 'character-body' ? collision.bodyA : collision.bodyB;
           let char_logics = char_physics.character_logic;
           curFrameChars.push(char_logics.id);
           if (this.ignoreList.findIndex(id => (id==char_logics.id)) == -1) {
