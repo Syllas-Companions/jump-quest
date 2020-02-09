@@ -6,7 +6,7 @@ var Engine = Matter.Engine,
     World = Matter.World,
     Bodies = Matter.Bodies,
     Body = Matter.Body;
-// TODO: implement
+
 const DEFAULT_DURABILITY = 10000
 class TileWDurability extends Tile {
     constructor(map, x, y, width, height, tile_id) {
@@ -15,17 +15,20 @@ class TileWDurability extends Tile {
         this.timestamp = Date.now();
     }
     update() {
-        let lastTimestamp = this.timestamp;
-        this.timestamp = Date.now();
-        let touched = Matter.Query.ray(this.map.engine.world.bodies, { x: this.x, y: this.y }, { x: this.x, y: this.y - this.height }, this.width - 10)
-            .filter(collision => (collision.bodyA.objType == 'character-body' || collision.bodyB.objType == 'character-body'))
-            .length > 0;
-        if (touched) {
-            this.durability -= (this.timestamp - lastTimestamp);
-            console.log(this.durability);
-            if (this.durability < 0) {
-                this.isDestroyed = true;
-                this.destroy();
+        if (!this.isDestroyed) {
+            let lastTimestamp = this.timestamp;
+            this.timestamp = Date.now();
+            let touched = Matter.Query.ray(this.map.engine.world.bodies, { x: this.x, y: this.y }, { x: this.x, y: this.y - this.height }, this.width - 10)
+                .filter(collision => (collision.bodyA.objType == 'character-body' || collision.bodyB.objType == 'character-body'))
+                .length > 0;
+            if (touched) {
+                this.durability -= (this.timestamp - lastTimestamp);
+                this.body.render.opacity = this.durability / DEFAULT_DURABILITY
+                console.log(this.durability);
+                if (this.durability < 0) {
+                    this.isDestroyed = true;
+                    this.destroy();
+                }
             }
         }
     }

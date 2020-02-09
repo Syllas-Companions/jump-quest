@@ -24,7 +24,24 @@ Example.init = function () {
         engine: game_manager.engine,
         options: {
             width: window.innerWidth - 20,
-            height: window.innerHeight - 20
+            height: window.innerHeight - 20,
+            wireframes: false,
+            showSleeping: true,
+            showDebug: false,
+            showBroadphase: false,
+            showBounds: false,
+            showVelocity: false,
+            showCollisions: false,
+            showSeparations: false,
+            showAxes: false,
+            showPositions: false,
+            showAngleIndicator: false,
+            showIds: false,
+            showShadows: false,
+            showVertexNumbers: false,
+            showConvexHulls: false,
+            showInternalEdges: false,
+            showMousePosition: false
         }
     });
 

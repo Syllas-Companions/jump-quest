@@ -26,7 +26,7 @@ export default class Rope {
         let seg_no = -1;
         this.composite = Composites.stack(json.x - map.tileWidth / 2 - r_rope / 2, json.y - map.tileHeight / 2, 1, this.length, 0, 2, function (x, y) {
             seg_no += 1;
-            return Bodies.rectangle(x, y, r_rope, seg_length, { objType: 'rope_seg', seg_no: seg_no, isSensor: true, collisionFilter: { group: group } });
+            return Bodies.rectangle(x, y, r_rope, seg_length, { objType: 'rope_seg', render: { fillStyle: '#669999' }, seg_no: seg_no, isSensor: true, collisionFilter: { group: group } });
         });
         // let last = this.composite.bodies[this.composite.bodies.length - 1]
         Composites.chain(this.composite, 0, 0.5, 0, -0.5, { stiffness: 1, length: 2, render: { type: 'line' } });
