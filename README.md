@@ -1,5 +1,7 @@
 # Jump Quest
 
+The game uses matter-js as physics engine and development/single mode renderer, and p5-js for drawing on client side (in multiplayer mode)
+
 (Remember to run 'npm install' to install the necessary packages after cloning the repository)
 ## Command List
 npm start             -   Run the project
