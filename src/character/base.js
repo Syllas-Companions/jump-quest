@@ -14,6 +14,7 @@ class Character {
 
     constructor(gm, pos, id, metadata) {
         this.id = id;
+        this.hp = 10;
         this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity, objType: "character-body" });
         this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 48, 0.001, { isSensor: true, objType: "character-base" });
         this.sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 3, 52, { isSensor: true, objType: "character-face" });
@@ -23,7 +24,7 @@ class Character {
         });
         this.gm = gm;
 
-        this.bodyC.character_logic = this;
+        this.bodyC.character_logic = this;  
         this.sensorFace.character_logic = this;
 
         World.add(gm.engine.world, this.composite);
@@ -56,6 +57,7 @@ class Character {
         this.moveVelocity = 1;
         this.jumpVelocity = 1;
 
+        this.velocityReverse = 5;
     }
 
     static registerAction(keyCode, func) {
@@ -115,6 +117,14 @@ class Character {
             })
         } else console.log("chain empty");
         this.prevFrameKeyState = JSON.parse(JSON.stringify(keyState));
+    }
+
+    forceReverse() {
+        if (this.facing == 1)
+        Body.setVelocity(this.composite, {x: -this.velocityReverse, y: -this.velocityReverse});
+        if (this.facing == -1)
+        Body.setVelocity(this.composite, {x: this.velocityReverse, y: -this.velocityReverse});
+        
     }
 }
 
