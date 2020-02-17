@@ -120,8 +120,8 @@
                  "type":"spawn_point",
                  "visible":true,
                  "width":0,
-                 "x":670.666666666667,
-                 "y":792
+                 "x":772.380737113079,
+                 "y":822.137502354492
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -146,8 +146,8 @@
                          "type":"",
                          "visible":true,
                          "width":0,
-                         "x":870.045407636739,
-                         "y":688.514816452897
+                         "x":878.682384694769,
+                         "y":675.559350865852
                         }],
                  "opacity":1,
                  "type":"objectgroup",
@@ -235,7 +235,7 @@
                 {
                  "height":0,
                  "id":12,
-                 "name":"",
+                 "name":"ropes",
                  "point":true,
                  "properties":[
                         {
@@ -293,12 +293,57 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "id":18,
+         "layers":[
+                {
+                 "draworder":"topdown",
+                 "id":19,
+                 "name":"creeps",
+                 "objects":[
+                        {
+                         "height":0,
+                         "id":18,
+                         "name":"creep1",
+                         "polygon":[
+                                {
+                                 "x":45.7867628294279,
+                                 "y":16.7790146242013
+                                }, 
+                                {
+                                 "x":-147.367251541785,
+                                 "y":141.371862203834
+                                }, 
+                                {
+                                 "x":47.3319949443976,
+                                 "y":139.484091785961
+                                }],
+                         "rotation":0,
+                         "type":"enemy",
+                         "visible":true,
+                         "width":0,
+                         "x":660.144579477007,
+                         "y":689.380229640306
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
+                }],
+         "name":"enemys",
+         "opacity":1,
+         "type":"group",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":18,
- "nextobjectid":14,
+ "nextlayerid":20,
+ "nextobjectid":19,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"2019.10.30",
+ "tiledversion":"2020.01.22",
  "tileheight":64,
  "tilesets":[
         {

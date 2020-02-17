@@ -4,6 +4,7 @@ import BearTrap from 'traps/BearTrap'
 import Door from 'door'
 import Rope from 'rope'
 import ItemBox from 'items/Box'
+import CreepEnemy from 'enemy/CreepEnemy'
 import {Tile, TileWDurability, MovablePlatform, HookableWall} from 'tileBlock'
 
 
@@ -40,6 +41,7 @@ export default class GameMap {
         this.initRopes(mapJson);
         this.initSpawnPoints(mapJson);
         this.initItems(mapJson);
+        this.initEnemys(mapJson);
     }
     destroy() {
         this.tiles.forEach(ele => ele.destroy());
@@ -47,6 +49,7 @@ export default class GameMap {
         this.doors.forEach(ele => ele.destroy());
         this.ropes.forEach(ele => ele.destroy());
         this.items.forEach(ele => ele.destroy());
+        this.enemys.forEach(enemy => enemy.destroy());
     }
     update() {
         this.tiles.forEach(ele => ele.update());
@@ -54,6 +57,7 @@ export default class GameMap {
         this.doors.forEach(ele => ele.update());
         this.ropes.forEach(ele => ele.update());
         this.items.forEach(item => item.update());
+        this.enemys.forEach(enemy => enemy.update());
     }
     initPlatforms(mapJson) {
         let platformLayers = mapJson.layers.find(layer => layer.name == "platforms");
@@ -100,6 +104,8 @@ export default class GameMap {
 
         }
     }
+
+    //items
     initItems(mapJson) {
         this.items = [];
         this.createItemBoxs(mapJson);
@@ -116,6 +122,8 @@ export default class GameMap {
             this.addObject(itemBox.body);
         })
     }
+
+    //traps
     initTraps(mapJson) {
         this.traps = [];
         this.createBearTraps(mapJson);
@@ -132,6 +140,24 @@ export default class GameMap {
         })
     }
 
+    //enemy
+    initEnemys(mapJson){
+        this.enemys =[];
+        this.createCreepEnemys(mapJson);
+    }
+    createCreepEnemys(mapJson) {
+        let enemysLayer = mapJson.layers.find(layer => layer.name == "enemys");
+        if (!enemysLayer) return;
+        let creepEnemys = enemysLayer.layers.find(layer => layer.name == "creeps");
+        if (!creepEnemys) return;
+        creepEnemys.objects.forEach(obj => {
+            let ce = new CreepEnemy(this, { x: obj.x, y: obj.y },obj.polygon);
+            this.enemys.push(ce);
+            this.addObject(ce.body) // NOTE: adding to this array will render collider on client view
+        });
+        
+
+    }
     cbNextMap(character, door) {
         this.gameManager.nextMap(character, door);
     }
