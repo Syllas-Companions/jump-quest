@@ -27,7 +27,10 @@ export default class Enemys {
         Body.setStatic(this.composite, true);
         console.log(this.composite.position);
         console.log(this.polygon);
-        
+        this.targetPoint = this.polygon[2];
+        this.prePoint = this.polygon[1];
+        this.distance = 0;
+        this.findPoint = 0;
     }
     destroy(){
         World.remove(this.map.engine.world, this.body, true);
@@ -49,13 +52,29 @@ export default class Enemys {
                 // Body.applyForce(this.composite,this.composite.position,{x:0,y:-0.1});
 			}
         })
-        this.circle();
+        this.move(this.targetPoint.x,this.targetPoint.y);
+        //move
+        this.distance =  Math.sqrt(Math.pow(this.targetPoint.x -this.composite.position.x,2) 
+                    +Math.pow(this.targetPoint.y -this.composite.position.y,2));
+                    console.log(this.distance);
+        if(this.distance < 30) {
+            // Body.setPosition(this.composite, this.targetPoint);
+            this.prePoint = this.targetPoint;
+            this.getNextPoint(this.prePoint);
+        }
+
+    }
+    getNextPoint(pre){
+        this.findPoint = this.polygon.indexOf(pre);
+        if(this.findPoint == 2) this.findPoint = -1;
+        this.targetPoint = this.polygon[this.findPoint+1];
+        console.log(this.findPoint);
     }
     //x,y vi tri den
     move(x,y){
         let xTo = x-this.composite.position.x;
         let yTo = y-this.composite.position.y;
-        console.log(xTo);
+        // console.log(xTo);
         // di chuyen enemy 
         Body.setStatic(this.composite,false);
         //cần chuyển sang xTo yTo
@@ -71,41 +90,25 @@ export default class Enemys {
     }
 
     solve(){
-        Body.setPosition(this.composite,this.polygon[0]);
-        
-        // for(var i = 0 ;i < this.polygon.length ;i++){
-        //     var loading = 0;
-        //     if(loading <98){
-        //         console.log(i);
-        //         if(!this.polygon[i+1]) i=0;
-        //         console.log(this.polygon);
-        //         // this.move(this.polygon[i+1].x,this.polygon.[i+1].y);
-        //         this.distance = Math.sqrt(Math.pow(this.polygon[i+1].x -this.polygon[i].x,2) 
-        //                 +Math.pow(this.polygon[i+1].y -this.polygon[i].y,2)); //khoang cach
-        //         }
-        //     else Body.setPosition(this.composite,this.polygon[i+1]);
-        // }
-    }
-    circle(){
-        var loading = 0;
-        for(var i = 0 ; i< this.polygon.length -1; i++){
-            if(loading < 98){
-                console.log(this.polygon[i+1]);
-                if(!this.polygon[i+1]) this.move(this.polygon[0]);
-                else{
-                    this.move(this.polygon[i+1].x,this.polygon.[i+1].y);
-                    this.distance = Math.sqrt(Math.pow(this.polygon[i+1].x -this.polygon[i].x,2) 
-                                +Math.pow(this.polygon[i+1].y -this.polygon[i].y,2)); //khoang cach
-                    this.distanceAway = Math.sqrt(Math.pow(this.composite.position.x -this.polygon[i].x,2) 
-                    +Math.pow(this.composite.position.y -this.polygon[i].y,2)); //khoang cach da di
-                    loading = this.distanceAway / this.distance;
-                }
-            }
-            else{
-                if(!this.polygon[i+1]) Body.setPosition(this.composite,this.polygon[0]);
-                Body.setPosition(this.composite,this.polygon[i+1]);
-            }
-        }
+    //     var loading = 0;
+    //     for(var i = 0 ; i< this.polygon.length -1; i++){
+    //         if(loading < 98){
+    //             console.log(this.polygon[i+1]);
+    //             if(!this.polygon[i+1]) this.move(this.polygon[0]);
+    //             else{
+    //                 this.move(this.polygon[i+1].x,this.polygon.[i+1].y);
+    //                 this.distance = Math.sqrt(Math.pow(this.polygon[i+1].x -this.polygon[i].x,2) 
+    //                             +Math.pow(this.polygon[i+1].y -this.polygon[i].y,2)); //khoang cach
+    //                 this.distanceAway = Math.sqrt(Math.pow(this.composite.position.x -this.polygon[i].x,2) 
+    //                 +Math.pow(this.composite.position.y -this.polygon[i].y,2)); //khoang cach da di
+    //                 loading = this.distanceAway / this.distance;
+    //             }
+    //         }
+    //         else{
+    //             if(!this.polygon[i+1]) Body.setPosition(this.composite,this.polygon[0]);
+    //             Body.setPosition(this.composite,this.polygon[i+1]);
+    //         }
+    //     }
     }
 
 }
