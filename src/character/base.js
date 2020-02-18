@@ -63,9 +63,9 @@ class Character {
     static registerAction(keyCode, func) {
         if (!Character.controlChain) Character.controlChain = new Map();
         if (Character.controlChain.has(keyCode)) {
-            Character.controlChain.get(keyCode).unshift(func)
+            Character.controlChain.get(keyCode).unshift(func);
         } else {
-            Character.controlChain.set(keyCode, [func])
+            Character.controlChain.set(keyCode, [func]);
         }
     }
 
