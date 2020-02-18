@@ -7,7 +7,7 @@ var World = Matter.World,
 
 function hookable(isKeyDown, isChanged){
     if(isKeyDown) {
-        if(!this.tileContraint && !this.bodyBring){
+        if(!this.tileContraint && this.bodyBring){
             this.tileContraint = Constraint.create({
                 bodyA: this.composite,
                 bodyB: this.bodyBring,
@@ -42,4 +42,4 @@ function characterTurn(isKeyDown) {
 }
 // Character.registerAction(39, characterTurn);
 // Character.registerAction(37, characterTurn);
-// Character.registerAction(39, hookable);
+Character.registerAction(38, hookable);
