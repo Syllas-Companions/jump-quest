@@ -146,12 +146,18 @@ export default class GameMap {
         this.createCreepEnemys(mapJson);
     }
     createCreepEnemys(mapJson) {
+        let speed = [] ;
         let enemysLayer = mapJson.layers.find(layer => layer.name == "enemys");
         if (!enemysLayer) return;
         let creepEnemys = enemysLayer.layers.find(layer => layer.name == "creeps");
+        // console.log(creepEnemys.properties[0].value);
         if (!creepEnemys) return;
+        creepEnemys.properties.forEach(properties =>{
+            speed.push(properties.value);
+        });
         creepEnemys.objects.forEach(obj => {
-            let ce = new CreepEnemy(this, { x: obj.x, y: obj.y },obj.polygon);
+            console.log(obj);
+            let ce = new CreepEnemy(this, { x: obj.x, y: obj.y },obj.polygon,speed);
             this.enemys.push(ce);
             this.addObject(ce.body) // NOTE: adding to this array will render collider on client view
         });
