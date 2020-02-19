@@ -7,7 +7,6 @@ var World = Matter.World,
 
 function hookable(isKeyDown, isChanged){
     if(isKeyDown) {
-        console.log(this.tileConstraint);
         if(!this.tileConstraint && this.bodyBring){
             this.tileConstraint = Constraint.create({
                 bodyA: this.composite,
@@ -15,7 +14,7 @@ function hookable(isKeyDown, isChanged){
                 pointA: { x: 0, y: 0 },
                 length: 50,
                 stiffness: 0.1,
-                damping:1,
+                damping: 1,
                 render: { type: 'line' }
             });
             console.log(this.bodyBring);
@@ -25,7 +24,6 @@ function hookable(isKeyDown, isChanged){
         }
     }
     else {
-        console.log(this.tileConstraint);
         if(this.tileConstraint) {
             World.remove(this.gm.engine.world, this.tileConstraint);
             this.tileConstraint = null;
