@@ -327,6 +327,12 @@
                          "y":631.380229640306
                         }],
                  "opacity":1,
+                 "properties":[
+                        {
+                         "name":"speed",
+                         "type":"string",
+                         "value":"0.01"
+                        }],
                  "type":"objectgroup",
                  "visible":true,
                  "x":0,
@@ -342,6 +348,12 @@
  "nextlayerid":20,
  "nextobjectid":19,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"speed",
+         "type":"string",
+         "value":"0.03"
+        }],
  "renderorder":"right-down",
  "tiledversion":"2020.01.22",
  "tileheight":64,
