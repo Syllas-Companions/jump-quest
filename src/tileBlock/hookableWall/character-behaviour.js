@@ -7,8 +7,9 @@ var World = Matter.World,
 
 function hookable(isKeyDown, isChanged){
     if(isKeyDown) {
-        if(!this.tileContraint && this.bodyBring){
-            this.tileContraint = Constraint.create({
+        console.log(this.tileConstraint);
+        if(!this.tileConstraint && this.bodyBring){
+            this.tileConstraint = Constraint.create({
                 bodyA: this.composite,
                 bodyB: this.bodyBring,
                 pointA: { x: 0, y: 0 },
@@ -17,16 +18,17 @@ function hookable(isKeyDown, isChanged){
                 damping:1,
                 render: { type: 'line' }
             });
+            console.log(this.bodyBring);
 
-            World.add(this.gm.engine.world,this.tileContraint);
+            World.add(this.gm.engine.world,this.tileConstraint);
             return true;
         }
     }
     else {
-        if(this.tileContraint) {
-            World.remove(this.gm.engine.world, this.tileContraint);
+        console.log(this.tileConstraint);
+        if(this.tileConstraint) {
+            World.remove(this.gm.engine.world, this.tileConstraint);
             this.tileConstraint = null;
-            return true;
         }
     }
 }
