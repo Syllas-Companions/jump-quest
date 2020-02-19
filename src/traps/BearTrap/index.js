@@ -10,7 +10,7 @@ var Engine = Matter.Engine,
 //class trap
 export default class Trap{
 
-  constructor(map, pos){
+  	constructor(map, pos){
     this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 10, { inertia: Infinity ,objType: "bearTrap" });
     this.sensorUp = Bodies.rectangle(pos.x, pos.y-5,40,0.02,{ isSensor: true});
     this.composite = Body.create({
@@ -20,7 +20,7 @@ export default class Trap{
     this.map = map
     World.add(map.engine.world, this.composite);
   }
-  destroy(){
+  	destroy(){
     World.remove(this.map.engine.world, this.composite, true);
 }
 	update() {

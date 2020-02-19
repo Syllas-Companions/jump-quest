@@ -25,7 +25,7 @@ Example.init = function () {
         options: {
             width: window.innerWidth - 20,
             height: window.innerHeight - 20,
-            wireframes: false,
+            wireframes: true,
             showSleeping: true,
             showDebug: false,
             showBroadphase: false,
