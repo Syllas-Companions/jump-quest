@@ -345,8 +345,13 @@
          "x":0,
          "y":0
         }],
+<<<<<<< 10659a4a78c65f534ecb43c2bc71c35958ece7be
  "nextlayerid":20,
  "nextobjectid":19,
+=======
+ "nextlayerid":21,
+ "nextobjectid":20,
+>>>>>>> viet lai composite va body(
  "orientation":"orthogonal",
  "properties":[
         {
