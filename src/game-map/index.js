@@ -149,13 +149,20 @@ export default class GameMap {
         let speed = [] ;
         let enemysLayer = mapJson.layers.find(layer => layer.name == "enemys");
         if (!enemysLayer) return;
-        let creepEnemys = enemysLayer.layers.find(layer => layer.name == "creeps");
-        // console.log(creepEnemys.properties[0].value);
-        if (!creepEnemys) return;
-        creepEnemys.properties.forEach(properties =>{
+        let creepsLayer = enemysLayer.layers.find(layer => layer.name == "creeps");
+        if (!creepsLayer) return;
+        let creepPolygon = creepsLayer.layers.find(layer => layer.name == "creepsPolygon");
+        if (!creepPolygon) return;
+        let creepTile = creepsLayer.layers.find(layer => layer.name == "creepsTile");
+        if (!creepPolygon) return;
+        console.log(creepTile);
+        // console.log(creepPolygon);
+        
+        
+        creepPolygon.properties.forEach(properties =>{
             speed.push(properties.value);
         });
-        creepEnemys.objects.forEach(obj => {
+        creepPolygon.objects.forEach(obj => {
             console.log(obj);
             let ce = new CreepEnemy(this, { x: obj.x, y: obj.y },obj.polygon,speed);
             this.enemys.push(ce);

@@ -51,7 +51,7 @@ export default class Enemys {
 				// console.log("u dead");
 				let char_physics = collision.bodyA.objType == 'character-body'?collision.bodyA:collision.bodyB;
 				let char_logics = char_physics.character_logic;
-				// console.log(char_logics);
+				console.log(char_logics);
                 char_logics.forceReverse();
                 // Body.applyForce(this.composite,this.composite.position,{x:0,y:-0.1});
 			}
