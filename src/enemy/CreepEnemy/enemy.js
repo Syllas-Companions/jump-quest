@@ -60,7 +60,7 @@ export default class Enemys {
         //move
         this.distance =  Math.sqrt(Math.pow(this.targetPoint.x -this.composite.position.x,2) 
                     +Math.pow(this.targetPoint.y -this.composite.position.y,2));
-                    console.log(this.distance);
+                    // console.log(this.distance);
         if(this.distance < 30) {
             // Body.setPosition(this.composite, this.targetPoint);
             this.prePoint = this.targetPoint;
