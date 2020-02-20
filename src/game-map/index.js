@@ -81,6 +81,38 @@ export default class GameMap {
         })
     }
 
+<<<<<<< cad1c9dd587e3635a25add667cd5a5504aa263b2
+=======
+    //enemy
+    initEnemys(mapJson){
+        this.enemys =[];
+        this.createCreepEnemys(mapJson);
+    }
+    createCreepEnemys(mapJson) {
+        let speed = [] ;
+        let enemysLayer = mapJson.layers.find(layer => layer.name == "enemys");
+        if (!enemysLayer) return;
+        let creepsLayer = enemysLayer.layers.find(layer => layer.name == "creeps");
+        if (!creepsLayer) return;
+        let creepPolygon = creepsLayer.layers.find(layer => layer.name == "creepsPolygon");
+        if (!creepPolygon) return;
+        let creepTile = creepsLayer.layers.find(layer => layer.name == "creepsTile");
+        if (!creepPolygon) return;
+        console.log(creepTile);
+        // console.log(creepPolygon);
+        
+        
+        creepPolygon.properties.forEach(properties =>{
+            speed.push(properties.value);
+        });
+        creepPolygon.objects.forEach(obj => {
+            console.log(obj);
+            let ce = new CreepEnemy(this, { x: obj.x, y: obj.y },obj.polygon,speed);
+            this.enemys.push(ce);
+            this.addObject(ce.body) // NOTE: adding to this array will render collider on client view
+        });
+        
+>>>>>>> add tile for enemy basic creep
 
     cbNextMap(character, door) {
         this.gameManager.nextMap(character, door);
