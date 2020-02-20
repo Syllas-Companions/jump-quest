@@ -11,9 +11,11 @@ var Engine = Matter.Engine,
 class MovablePlatform extends Tile {
     constructor(map, x, y, width, height, tile_id) {
         super(map, x, y, width, height, tile_id);
-
+        
     }
-    update() { }
+    update() { 
+        console.log("check update");
+    }
 }
 
 export default MovablePlatform;
