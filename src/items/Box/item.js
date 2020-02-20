@@ -13,43 +13,41 @@ export default class Item {
 
     constructor(map, pos) {
         this.body = Bodies.rectangle(pos.x, pos.y, 40, 40, { inertia: Infinity, objType: "ItemBox" });
-        // this.sensor = Bodies.rectangle(pos.x, pos.y, 40, 40, { isSensor: true });
-        // this.composite = Body.create({
-        //     parts: [this.body, this.sensor]
-        // });
+        this.sensor = Bodies.rectangle(pos.x, pos.y, 42, 42, { isSensor: true });
+        this.composite = Body.create({
+            parts: [this.body, this.sensor]
+        });
         this.map = map;
 
-        this.body.item_logic = this;
-        World.add(map.engine.world, this.body);
+        this.composite.item_logic = this;
+        World.add(map.engine.world, this.composite);
         this.isPickedUp = false;
 
     }
     destroy(){
-        World.remove(this.map.engine.world, this.body, true);
+        World.remove(this.map.engine.world, this.composite, true);
     }
     //function update beforce update
     update() {
         if (!this.associated_char) {
-            Matter.Query.collides(this.body, this.map.engine.world.bodies)
+            Matter.Query.collides(this.composite, this.map.engine.world.bodies)
                 .forEach((collision) => {
                     // console.log(collision.bodyA.objType+"   "+collision.bodyB.objType)
                     if (collision.bodyA.objType == 'character-face' || collision.bodyB.objType == 'character-face') {
                         let char_physics = collision.bodyA.objType == 'character-face' ? collision.bodyA : collision.bodyB;
                         let char_logics = char_physics.character_logic;
-                        // console.log(item_logics.composite);
-                        char_logics.bodyBring = this.body;
+                        char_logics.bodyBring = this.composite;
                         this.associated_char = char_logics;
                     }
                 })
         }else{
-            if(Matter.Query.collides(this.body, this.associated_char.composite.parts).length==0){
+            if(Matter.Query.collides(this.composite, this.associated_char.composite.parts).length==0){
                 this.associated_char.bodyBring = null;;
                 this.associated_char = null;
             }
         }
     }
     pickedUp() {
-        // if(!this.isPickedUp) this.isPickedUp = true ;
         console.log("picked Up");
     }
 }
