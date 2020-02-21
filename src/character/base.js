@@ -14,17 +14,16 @@ class Character {
 
     constructor(gm, pos, id, metadata) {
         this.id = id;
-        this.hp = 10;
-        this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity, objType: "character-body" });
+        this.body = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity, objType: "character-body" });
         this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 48, 0.001, { isSensor: true, objType: "character-base" });
         this.sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 3, 52, { isSensor: true, objType: "character-face" });
         this.composite = Body.create({
-            parts: [this.bodyC, this.sensorDown, this.sensorFace],
+            parts: [this.body, this.sensorDown, this.sensorFace],
             options: { objType: "character" }
         });
         this.gm = gm;
 
-        this.bodyC.character_logic = this;  
+        this.body.character_logic = this;
         this.sensorFace.character_logic = this;
 
         World.add(gm.engine.world, this.composite);
@@ -56,16 +55,16 @@ class Character {
         //field for use velocity (setVelocity)
         this.moveVelocity = 1;
         this.jumpVelocity = 1;
-
         this.velocityReverse = 5;
+
     }
 
     static registerAction(keyCode, func) {
         if (!Character.controlChain) Character.controlChain = new Map();
         if (Character.controlChain.has(keyCode)) {
-            Character.controlChain.get(keyCode).unshift(func);
+            Character.controlChain.get(keyCode).unshift(func)
         } else {
-            Character.controlChain.set(keyCode, [func]);
+            Character.controlChain.set(keyCode, [func])
         }
     }
 
@@ -118,7 +117,6 @@ class Character {
         } else console.log("chain empty");
         this.prevFrameKeyState = JSON.parse(JSON.stringify(keyState));
     }
-
     forceReverse() {
         if (this.facing == 1)
         Body.setVelocity(this.composite, {x: -this.velocityReverse, y: -this.velocityReverse});

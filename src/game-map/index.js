@@ -81,7 +81,6 @@ export default class GameMap {
         })
     }
 
-
     cbNextMap(character, door) {
         this.gameManager.nextMap(character, door);
     }

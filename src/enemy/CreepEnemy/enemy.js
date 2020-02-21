@@ -9,11 +9,13 @@ var Engine = Matter.Engine,
     Body = Matter.Body;
 
 //class enemys
+const DEFAULT_SPEED = 0.01;
 export default class Enemys {
 
-    constructor(map, pos, polygon) {
-        this.body = Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, objType: "enemy" });
-        this.sensorShield = Bodies.circle(pos.x, pos.y, 41, { isSensor: true, objType: "enemy-shield" });
+    
+    constructor(map, pos, polygon,speed) {
+        this.body = Bodies.circle(pos.x, pos.y, 40 , {inertia: Infinity, objType: "enemy"});
+        this.sensorShield = Bodies.circle(pos.x, pos.y, 41, {isSensor: true, objType: "enemy-shield"});
         //sensor vision for enemys when catch character
         // this.sensorVision 
         this.map = map;
@@ -31,6 +33,8 @@ export default class Enemys {
         this.prePoint = this.polygon[1];
         this.distance = 0;
         this.findPoint = 0;
+        console.log('speed '+speed);
+        this.speed = speed;
     }
     destroy() {
         World.remove(this.map.engine.world, this.body, true);
@@ -78,7 +82,8 @@ export default class Enemys {
         // di chuyen enemy 
         Body.setStatic(this.composite, false);
         //cần chuyển sang xTo yTo
-        Body.setVelocity(this.composite, { x: xTo * 0.01, y: yTo * 0.01 });
+        // console.log(this.speed);
+        Body.setVelocity(this.composite,{x: xTo*this.speed, y: yTo*this.speed});
     }
     //return true pos
     getDirection() {
@@ -89,26 +94,5 @@ export default class Enemys {
         })
     }
 
-    solve() {
-        //     var loading = 0;
-        //     for(var i = 0 ; i< this.polygon.length -1; i++){
-        //         if(loading < 98){
-        //             console.log(this.polygon[i+1]);
-        //             if(!this.polygon[i+1]) this.move(this.polygon[0]);
-        //             else{
-        //                 this.move(this.polygon[i+1].x,this.polygon.[i+1].y);
-        //                 this.distance = Math.sqrt(Math.pow(this.polygon[i+1].x -this.polygon[i].x,2) 
-        //                             +Math.pow(this.polygon[i+1].y -this.polygon[i].y,2)); //khoang cach
-        //                 this.distanceAway = Math.sqrt(Math.pow(this.composite.position.x -this.polygon[i].x,2) 
-        //                 +Math.pow(this.composite.position.y -this.polygon[i].y,2)); //khoang cach da di
-        //                 loading = this.distanceAway / this.distance;
-        //             }
-        //         }
-        //         else{
-        //             if(!this.polygon[i+1]) Body.setPosition(this.composite,this.polygon[0]);
-        //             Body.setPosition(this.composite,this.polygon[i+1]);
-        //         }
-        //     }
-    }
 
 }
