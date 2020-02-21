@@ -23,7 +23,7 @@ class HookableWall extends Tile {
                     if (collision.bodyA.objType == 'character-body' || collision.bodyB.objType == 'character-body') {
                         let char_physics = collision.bodyA.objType == 'character-body' ? collision.bodyA : collision.bodyB;
                         let char_logics = char_physics.character_logic;
-                        char_logics.bodyBring = this.body;
+                        char_logics.hw_touch = this.body;
                         this.associated_char = char_logics;
                         //for duration break
                         this.timestamp = Date.now();
@@ -31,7 +31,7 @@ class HookableWall extends Tile {
                 });
         } else {
             if (Matter.Query.collides(this.body, this.associated_char.composite.parts).length == 0) {
-                this.associated_char.bodyBring = null;;
+                this.associated_char.hw_touch = null;;
                 this.associated_char = null;
             }
         }

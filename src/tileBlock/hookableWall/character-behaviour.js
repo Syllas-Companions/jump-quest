@@ -7,17 +7,17 @@ var World = Matter.World,
 
 function hookable(isKeyDown, isChanged){
     if(isKeyDown) {
-        if(!this.tileConstraint && this.bodyBring){
+        if(!this.tileConstraint && this.hw_touch){
             this.tileConstraint = Constraint.create({
                 bodyA: this.composite,
-                bodyB: this.bodyBring,
+                bodyB: this.hw_touch,
                 pointA: { x: 0, y: 0 },
                 length: 50,
                 stiffness: 0.1,
                 damping: 1,
                 render: { type: 'line' }
             });
-            console.log(this.bodyBring);
+            console.log(this.hw_touch);
 
             World.add(this.gm.engine.world,this.tileConstraint);
             return true;
@@ -34,6 +34,9 @@ function hookable(isKeyDown, isChanged){
     }
     return false;
 }
+
+
+
 function characterTurn(isKeyDown) {
     if (isKeyDown) {
         if (this.itemConstraint && this.isTurned) {
@@ -44,6 +47,21 @@ function characterTurn(isKeyDown) {
     }
     return false;
 }
+
+// TODO: add wall jump by pressing space
+function wallJump(isKeyDown, isChanged) {
+    if (isKeyDown && isChanged) {
+        if (this.tileConstraint) {
+            Body.setVelocity(this.composite, { x: this.composite.velocity.x, y: -10 });
+            Composite.remove(this.gm.engine.world, this.tileConstraint)
+            this.tileConstraint = null;
+            return true;
+        }
+        return false;
+    }
+    return false;
+}
+Character.registerAction(32, wallJump);
 // Character.registerAction(39, characterTurn);
 // Character.registerAction(37, characterTurn);
 Character.registerAction(38, hookable);
