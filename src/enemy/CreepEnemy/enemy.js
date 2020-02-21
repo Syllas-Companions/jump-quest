@@ -10,16 +10,22 @@ var Engine = Matter.Engine,
 
 //class enemys
 const DEFAULT_SPEED = 0.01;
-export default class Enemys {
+export default class Enemy {
 
-    
-    constructor(map, pos, polygon,speed) {
-        this.body = Bodies.circle(pos.x, pos.y, 40 , {inertia: Infinity, objType: "enemy"});
-        this.sensorShield = Bodies.circle(pos.x, pos.y, 41, {isSensor: true, objType: "enemy-shield"});
+
+    constructor(map, json) {//pos, polygon,speed) {
+        let path = json.objects.find(obj => obj.name == "path");
+        let tile = json.objects.find(obj => obj.name == "tile");
+        if (tile) {
+            this.gid = tile.gid;
+        }
+        let pos = { x: path.x, y: path.y };
+        this.body = Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, objType: "enemy" });
+        this.sensorShield = Bodies.circle(pos.x, pos.y, 41, { isSensor: true, objType: "enemy-shield" });
         //sensor vision for enemys when catch character
         // this.sensorVision 
         this.map = map;
-        this.polygon = polygon;
+        this.polygon = path.polygon;
         this.composite = Body.create({
             parts: [this.body, this.sensorShield]
         });
@@ -33,8 +39,9 @@ export default class Enemys {
         this.prePoint = this.polygon[1];
         this.distance = 0;
         this.findPoint = 0;
-        console.log('speed '+speed);
-        this.speed = speed;
+        this.speed = json.properties.find(prop => prop.name == 'speed');
+        if (this.speed) this.speed = parseFloat(this.speed.value);
+        else this.speed = 0.1
     }
     destroy() {
         World.remove(this.map.engine.world, this.body, true);
@@ -56,6 +63,7 @@ export default class Enemys {
                     // Body.applyForce(this.composite,this.composite.position,{x:0,y:-0.1});
                 }
             })
+        this.move(this.targetPoint.x, this.targetPoint.y);
         //move
         this.distance = Math.sqrt(Math.pow(this.targetPoint.x - this.composite.position.x, 2)
             + Math.pow(this.targetPoint.y - this.composite.position.y, 2));
@@ -82,7 +90,7 @@ export default class Enemys {
         Body.setStatic(this.composite, false);
         //cần chuyển sang xTo yTo
         // console.log(this.speed);
-        Body.setVelocity(this.composite,{x: xTo*this.speed, y: yTo*this.speed});
+        Body.setVelocity(this.composite, { x: xTo * this.speed, y: yTo * this.speed });
     }
     //return true pos
     getDirection() {

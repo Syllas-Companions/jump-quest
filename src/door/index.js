@@ -1,58 +1,22 @@
-import Matter from 'matter-js'
-// import room_manager from 'room_manager'
-var Engine = Matter.Engine,
-  Render = Matter.Render,
-  Events = Matter.Events,
-  World = Matter.World,
-  Bodies = Matter.Bodies,
-  Body = Matter.Body;
+import GameMap from 'game-map/base'
+import Door from './base'
 
-//class door
-export default class Door {
-  // TODO: add exception list (trigger door only once for each player, until that player leave the door's trigger)
-  constructor(map, doorJson, callback) {
-    this.ignoreList = []
-    doorJson.y = doorJson.y - doorJson.height;
-    let width = doorJson.width == 0 ? 40 : doorJson.width;
-    let height = doorJson.height == 0 ? 40 : doorJson.height;
-
-    this.callback = callback
-    this.sensorIn = Bodies.rectangle(doorJson.x, doorJson.y, width, height, { isStatic: true, isSensor: true, tile_id: doorJson.gid });
-    this.map = map;
-    this.name = doorJson.name;
-    let t = doorJson.properties.find(prop => prop.name == 'target');
-    this.target = t ? t.value : null;
-
-    this.data = doorJson;
-    World.add(map.engine.world, this.sensorIn);
-  }
-
-  addIgnore(id){
-    this.ignoreList.push(id);
-  }
-  destroy(){
-    World.remove(this.map.engine.world, this.sensorIn, true);
-}
-  update() {
-    let curFrameChars = []
-    Matter.Query.collides(this.sensorIn, this.map.engine.world.bodies)
-      .forEach((collision) => {
-
-        if (collision.bodyA.objType == 'character-body' || collision.bodyB.objType == 'character-body') {
-          // console.log(collision);
-          // console.log("door");
-          let char_physics = collision.bodyA.objType == 'character-body' ? collision.bodyA : collision.bodyB;
-          let char_logics = char_physics.character_logic;
-          curFrameChars.push(char_logics.id);
-          if (this.ignoreList.findIndex(id => (id==char_logics.id)) == -1) {
-            this.ignoreList.push(char_logics.id);
-            console.log(this.ignoreList)
-            if (this.callback) this.callback(char_logics, this);
-          }
-          // NOTE: door's functionalities moved to creation step (in GameMap)
+function initDoors(layerJson) {
+    let createdObjects = []
+    if (!layerJson) return createdObjects;
+    layerJson.objects.forEach(obj => {
+        let door = null;
+        if (obj.type == "change_map") {
+            door = new Door(this, obj, this.cbNextMap);
+        } else if (obj.type == "teleport") {
+            door = new Door(this, obj, this.cbMoveCharacter);
         }
-      })
-      // filter character which already left from ignorelist
-      this.ignoreList = this.ignoreList.filter(id => (curFrameChars.findIndex(e => e==id)!=-1))
-  }
+        if (door) {
+            createdObjects.push(door);
+        }
+    })
+    return createdObjects;
 }
+GameMap.registerObjType('doors', true, initDoors);
+
+export default Door
