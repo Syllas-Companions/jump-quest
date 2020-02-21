@@ -44,7 +44,7 @@ export default class Enemy {
         else this.speed = 0.1
     }
     destroy() {
-        World.remove(this.map.engine.world, this.body, true);
+        World.remove(this.map.engine.world, this.composite, true);
     }
     //function update beforce update
     update() {

@@ -35,6 +35,7 @@ function initPlatforms(layerJson) {
         }
         initPlatformsLayer.call(this, layer, type, createdObjects);
     })
+    return createdObjects
 }
 GameMap.registerObjType('platforms', true, initPlatforms);
 

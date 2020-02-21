@@ -20,8 +20,8 @@ class HookableWall extends Tile {
         if (!this.associated_char) {
             Matter.Query.collides(this.body, this.map.engine.world.bodies)
                 .forEach((collision) => {
-                    if (collision.bodyA.objType == 'character-face' || collision.bodyB.objType == 'character-face') {
-                        let char_physics = collision.bodyA.objType == 'character-face' ? collision.bodyA : collision.bodyB;
+                    if (collision.bodyA.objType == 'character-body' || collision.bodyB.objType == 'character-body') {
+                        let char_physics = collision.bodyA.objType == 'character-body' ? collision.bodyA : collision.bodyB;
                         let char_logics = char_physics.character_logic;
                         char_logics.bodyBring = this.body;
                         this.associated_char = char_logics;

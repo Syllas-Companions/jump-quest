@@ -22,6 +22,9 @@ function hookable(isKeyDown, isChanged){
             World.add(this.gm.engine.world,this.tileConstraint);
             return true;
         }
+        if(this.tileConstraint) {
+            return true;
+        }
     }
     else {
         if(this.tileConstraint) {
