@@ -35,8 +35,8 @@ export default class GameMap {
         this.cbNextMap = this.cbNextMap.bind(this);
 
         this.init(mapJson)
-<<<<<<< HEAD
     }
+
     init(mapJson) {
         this.objects = {};
         if (GameMap.objTypes) {
@@ -72,58 +72,7 @@ export default class GameMap {
             })
         })
     }
-    update() {
-        Object.values(this.objects).forEach(val => {
-            val.list.forEach(obj => {
-                if (obj.update) {
-                    obj.update();
-=======
-    }
-    init(mapJson) {
-        this.objects = {};
-        if (GameMap.objTypes) {
-            mapJson.layers.forEach(layer => {
-                if (GameMap.objTypes.has(layer.name)) {
-                    let { initFunc, isStatic } = GameMap.objTypes.get(layer.name);
 
-                    // create the new objects base on layer's json using initFunc
-                    let createdObjects = initFunc.call(this, layer);
-
-                    if (createdObjects && createdObjects.length > 0)
-                        // push the created objects to objects array of this GameMap
-                        if (this.objects.hasOwnProperty(layer.name)) {
-                            let originalList = this.objects[layer.name].list;
-                            this.objects[layer.name].list = [...originalList, ...createdObjects]
-                        } else {
-                            this.objects[layer.name] = { isStatic, list: createdObjects };
-                        }
-                }
-            })
-        } else console.log("no objType registered");
-    }
-    static registerObjType(name, isStatic, initFunc) {
-        if (!GameMap.objTypes) GameMap.objTypes = new Map();
-        GameMap.objTypes.set(name, { isStatic, initFunc });
-    }
-    destroy() {
-        Object.values(this.objects).forEach(val => {
-            val.list.forEach(obj => {
-                if (obj.destroy) {
-                    obj.destroy();
->>>>>>> 62c72c5dfcd60632c4d41dc7bd461af40d0c4ec6
-                }
-            })
-        })
-    }
-<<<<<<< HEAD
-
-<<<<<<< cad1c9dd587e3635a25add667cd5a5504aa263b2
-=======
-    //enemy
-    initEnemys(mapJson){
-        this.enemys =[];
-        this.createCreepEnemys(mapJson);
-=======
     update() {
         Object.values(this.objects).forEach(val => {
             val.list.forEach(obj => {
@@ -132,34 +81,7 @@ export default class GameMap {
                 }
             })
         })
->>>>>>> 62c72c5dfcd60632c4d41dc7bd461af40d0c4ec6
     }
-    createCreepEnemys(mapJson) {
-        let speed = [] ;
-        let enemysLayer = mapJson.layers.find(layer => layer.name == "enemys");
-        if (!enemysLayer) return;
-        let creepsLayer = enemysLayer.layers.find(layer => layer.name == "creeps");
-        if (!creepsLayer) return;
-        let creepPolygon = creepsLayer.layers.find(layer => layer.name == "creepsPolygon");
-        if (!creepPolygon) return;
-        let creepTile = creepsLayer.layers.find(layer => layer.name == "creepsTile");
-        if (!creepPolygon) return;
-        console.log(creepTile);
-        // console.log(creepPolygon);
-        
-        
-        creepPolygon.properties.forEach(properties =>{
-            speed.push(properties.value);
-        });
-        creepPolygon.objects.forEach(obj => {
-            console.log(obj);
-            let ce = new CreepEnemy(this, { x: obj.x, y: obj.y },obj.polygon,speed);
-            this.enemys.push(ce);
-            this.addObject(ce.body) // NOTE: adding to this array will render collider on client view
-        });
-        
->>>>>>> add tile for enemy basic creep
-
     cbNextMap(character, door) {
         this.gameManager.nextMap(character, door);
     }

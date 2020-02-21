@@ -46,10 +46,6 @@ export default class Enemys {
                 // console.log(collision.bodyA.objType);
                 // console.log(collision.bodyB.objType);
 
-<<<<<<< HEAD
-<<<<<<< cad1c9dd587e3635a25add667cd5a5504aa263b2
-=======
->>>>>>> 62c72c5dfcd60632c4d41dc7bd461af40d0c4ec6
                 if (collision.bodyA.objType == 'character-body' || collision.bodyB.objType == 'character-body') {
                     // console.log(collision);
                     // console.log("u dead");
@@ -60,23 +56,6 @@ export default class Enemys {
                     // Body.applyForce(this.composite,this.composite.position,{x:0,y:-0.1});
                 }
             })
-        this.move(this.targetPoint.x, this.targetPoint.y);
-<<<<<<< HEAD
-=======
-			if(collision.bodyA.objType == 'character-body' || collision.bodyB.objType == 'character-body') {
-				// console.log(collision);
-				// console.log("u dead");
-				let char_physics = collision.bodyA.objType == 'character-body'?collision.bodyA:collision.bodyB;
-				let char_logics = char_physics.character_logic;
-				console.log(char_logics);
-                char_logics.forceReverse();
-                // Body.applyForce(this.composite,this.composite.position,{x:0,y:-0.1});
-			}
-        })
-        this.move(this.targetPoint.x,this.targetPoint.y);
->>>>>>> add tile for enemy basic creep
-=======
->>>>>>> 62c72c5dfcd60632c4d41dc7bd461af40d0c4ec6
         //move
         this.distance = Math.sqrt(Math.pow(this.targetPoint.x - this.composite.position.x, 2)
             + Math.pow(this.targetPoint.y - this.composite.position.y, 2));
