@@ -54,7 +54,6 @@ class GameMap {
     static registerObjType(name, isStatic, initFunc) {
         if (!GameMap.objTypes) GameMap.objTypes = new Map();
         GameMap.objTypes.set(name, { isStatic, initFunc });
-        console.log(GameMap.objTypes.size)
     }
     destroy() {
         Object.values(this.objects).forEach(val => {

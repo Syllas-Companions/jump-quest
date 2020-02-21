@@ -29,6 +29,7 @@ function hookable(isKeyDown, isChanged){
             this.tileConstraint = null;
         }
     }
+    return false;
 }
 function characterTurn(isKeyDown) {
     if (isKeyDown) {

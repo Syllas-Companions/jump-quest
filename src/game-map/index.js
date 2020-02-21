@@ -4,7 +4,7 @@ import GameMap from './base.js'
 import BearTrap from 'traps/BearTrap'
 import Door from 'door'
 import Rope from 'rope'
-import ItemBox from 'items/Box'
+// import ItemBox from 'items/Box'
 import CreepEnemy from 'enemy/CreepEnemy'
 import {Tile, TileWDurability, MovablePlatform, HookableWall} from 'tileBlock'
 
