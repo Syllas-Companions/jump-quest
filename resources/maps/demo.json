@@ -367,6 +367,7 @@
          "x":0,
          "y":0
         }],
+<<<<<<< HEAD
 <<<<<<< cad1c9dd587e3635a25add667cd5a5504aa263b2
 <<<<<<< 10659a4a78c65f534ecb43c2bc71c35958ece7be
  "nextlayerid":20,
@@ -379,6 +380,10 @@
  "nextlayerid":24,
  "nextobjectid":20,
 >>>>>>> add tile for enemy basic creep
+=======
+ "nextlayerid":24,
+ "nextobjectid":20,
+>>>>>>> 62c72c5dfcd60632c4d41dc7bd461af40d0c4ec6
  "orientation":"orthogonal",
  "properties":[
         {
