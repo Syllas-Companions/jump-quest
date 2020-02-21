@@ -367,8 +367,13 @@
          "x":0,
          "y":0
         }],
+<<<<<<< HEAD
  "nextlayerid":24,
  "nextobjectid":20,
+=======
+ "nextlayerid":20,
+ "nextobjectid":19,
+>>>>>>> origin/hookableWall
  "orientation":"orthogonal",
  "properties":[
         {

@@ -39,6 +39,7 @@ export default class Item {
                         // console.log(item_logics.composite);
                         char_logics.bodyBring = this.body;
                         this.associated_char = char_logics;
+                        this.associated_char.isJumping = false;
                     }
                 })
         }else{
