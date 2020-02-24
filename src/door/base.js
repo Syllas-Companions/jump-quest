@@ -6,7 +6,6 @@ var Engine = Matter.Engine,
   Bodies = Matter.Bodies,
   Body = Matter.Body;
 export default class Door {
-    // TODO: add exception list (trigger door only once for each player, until that player leave the door's trigger)
     constructor(map, doorJson, callback) {
       this.ignoreList = []
       doorJson.y = doorJson.y - doorJson.height;
@@ -15,7 +14,10 @@ export default class Door {
   
       this.callback = callback
       this.body = Bodies.rectangle(doorJson.x, doorJson.y, width, height, { isStatic: true, isSensor: true });
+      if(doorJson.gid)
       this.body.render.tile_id = doorJson.gid
+else this.body.render.fillStyle = "#a86d32"
+console.log(doorJson.gid)
       this.map = map;
       this.name = doorJson.name;
       let t = doorJson.properties.find(prop => prop.name == 'target');

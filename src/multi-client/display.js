@@ -4,6 +4,7 @@ import tileset_manager from 'tileset_manager'
 import camera from 'camera'
 import C from 'constants'
 
+// TODO: uniform function to draw static/dynamic function (meaning, if position turn out to be array -> use array method, else use number method)
 export default function (clientState) {
     let sketch = function (p) {
         //MTODO: currently only static objects will have tile graphic rendered, need to implement for moving object

@@ -53,7 +53,7 @@ class GameMap {
                     })
                 }
             })
-            console.log(this.objects)
+            // console.log(this.objects)
         } else console.log("no objType registered");
     }
     static registerObjType(name, isStatic, initFunc, collectionName) {

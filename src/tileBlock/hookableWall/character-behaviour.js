@@ -18,7 +18,7 @@ function hookable(isKeyDown, isChanged){
                 damping: 1,
                 render: { type: 'line' }
             });
-            console.log(this.hw_touch);
+            // console.log(this.hw_touch);
 
             World.add(this.gm.engine.world,this.tileConstraint);
             return true;
