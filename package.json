@@ -1,52 +1,52 @@
 {
-  "name": "jump-quest",
-  "version": "1.0.0",
-  "description": "multiplayer javascript online game",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build-front": "webpack",
-    "start": "gulp multi",
-    "dev": "gulp",
-    "dev-multi": "gulp multi"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/levi218/jump-quest.git"
-  },
-  "author": "",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/levi218/jump-quest/issues"
-  },
-  "homepage": "https://github.com/levi218/jump-quest#readme",
-  "dependencies": {
-    "@babel/core": "^7.7.7",
-    "@babel/preset-env": "^7.7.7",
-    "babel-loader": "^8.0.6",
-    "esm": "^3.2.25",
-    "everpolate": "0.0.3",
-    "express": "^4.17.1",
-    "matter-js": "^0.14.2",
-    "p5": "^0.10.2",
-    "resurrect-js": "^1.0.1",
-    "socket.io": "^2.3.0",
-    "socket.io-client": "^2.3.0",
-    "uws": "^10.148.2"
-  },
-  "devDependencies": {
-    "browser-sync": "^2.26.7",
-    "clean-webpack-plugin": "^3.0.0",
-    "del": "^5.1.0",
-    "gulp": "^4.0.2",
-    "gulp-nodemon": "^2.4.2",
-    "html-webpack-plugin": "^3.2.0",
-    "merge-stream": "^2.0.0",
-    "nodemon": "^2.0.2",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0",
-    "webpack-node-externals": "^1.7.2",
-    "webpack-stream": "^5.2.1"
-  }
+    "name": "jump-quest",
+    "version": "1.0.0",
+    "description": "multiplayer javascript online game",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build-front": "webpack",
+        "start": "node ./node_modules/gulp/bin/gulp deploy",
+        "dev": "gulp",
+        "dev-multi": "gulp multi"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/levi218/jump-quest.git"
+    },
+    "author": "",
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/levi218/jump-quest/issues"
+    },
+    "homepage": "https://github.com/levi218/jump-quest#readme",
+    "dependencies": {
+        "@babel/core": "^7.7.7",
+        "@babel/preset-env": "^7.7.7",
+        "babel-loader": "^8.0.6",
+        "esm": "^3.2.25",
+        "everpolate": "0.0.3",
+        "express": "^4.17.1",
+        "matter-js": "^0.14.2",
+        "p5": "^0.10.2",
+        "resurrect-js": "^1.0.1",
+        "socket.io": "^2.3.0",
+        "socket.io-client": "^2.3.0",
+        "uws": "^10.148.2",
+        
+        "browser-sync": "^2.26.7",
+        "clean-webpack-plugin": "^3.0.0",
+        "del": "^5.1.0",
+        "gulp": "^4.0.2",
+        "gulp-nodemon": "^2.4.2",
+        "html-webpack-plugin": "^3.2.0",
+        "merge-stream": "^2.0.0",
+        "nodemon": "^2.0.2",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.10",
+        "webpack-dev-server": "^3.9.0",
+        "webpack-node-externals": "^1.7.2",
+        "webpack-stream": "^5.2.1"
+    },
+    "devDependencies": {}
 }

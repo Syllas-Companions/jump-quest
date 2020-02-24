@@ -125,6 +125,8 @@ async function sync_multi() {
     }, 4500)
 };
 exports.multi = series(clean_dist_folder, parallel(wp_multi, nodemon_multi, sync_multi));
+exports.deploy = series(clean_dist_folder, parallel(wp_multi, nodemon_multi));
+
 exports.single = series(clean_dist_folder, copy_dev_explorer, parallel(wp_single, nodemon_single, sync_single));
 
 exports.default = exports.single;
