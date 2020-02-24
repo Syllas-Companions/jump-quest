@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build-front": "webpack",
-    "start": "node server.js",
+    "start": "gulp multi",
     "dev": "gulp",
     "dev-multi": "gulp multi"
   },
