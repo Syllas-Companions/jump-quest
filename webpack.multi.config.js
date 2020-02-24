@@ -17,7 +17,19 @@ const common = {
     }]
   }
 };
-
+const common_production = {
+    mode: 'production',
+    resolve: {
+      modules: [path.resolve(__dirname, 'src'), 'node_modules']
+    },
+    module: {
+      rules: [{
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: ['babel-loader']
+      }]
+    }  
+}
 const frontend = {
   entry: {
     // 'server-view': './src/index_multi_server.js',
@@ -56,5 +68,7 @@ const backend = {
 
 module.exports = [
   Object.assign({}, common, frontend),
-  Object.assign({}, common, backend)
+  Object.assign({}, common, backend),
+  Object.assign({}, common_production, frontend),
+  Object.assign({}, common_production, backend),
 ];
