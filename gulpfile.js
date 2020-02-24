@@ -125,8 +125,41 @@ async function sync_multi() {
     }, 4500)
 };
 exports.multi = series(clean_dist_folder, parallel(wp_multi, nodemon_multi, sync_multi));
-exports.deploy = series(clean_dist_folder, parallel(wp_multi, nodemon_multi));
 
 exports.single = series(clean_dist_folder, copy_dev_explorer, parallel(wp_single, nodemon_single, sync_single));
 
 exports.default = exports.single;
+
+
+function wp_deploy_front() {
+    const config = require('./webpack.multi.config.js');
+    return src([/*'./src/index_multi_server.js',*/ './src/multi-client/index.js'])
+        .pipe(
+            webpack(config[2],
+                compiler
+            )
+        ).on('error', handleError)
+        .pipe(dest('dist/public/'))
+}
+function wp_deploy_back() {
+    const config = require('./webpack.multi.config.js');
+    return src(['./src/server/multi/server.multi.js'])
+        .pipe(
+            webpack(config[3],
+                compiler
+            )
+        ).on('error', handleError)
+        .pipe(dest('dist/'))
+};
+async function nodemon_deploy() {
+    setTimeout(function () {
+        nodemon({
+            script: './dist/server.js', //this is where express server is
+            watch: ['./dist/server.js'],
+            nodeArgs: ['-r', 'esm'],
+            ext: 'js html css', //nodemon watches *.js, *.html and *.css files
+            env: { 'NODE_ENV': 'development' }
+        })
+    }, 4000)
+}
+exports.deploy = series(wp_deploy_front, wp_deploy_back, nodemon_deploy);
