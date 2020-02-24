@@ -30,7 +30,7 @@ class HookableWall extends Tile {
                     }
                 });
         } else {
-            if (Matter.Query.collides(this.body, this.associated_char.composite.parts).length == 0) {
+            if (Matter.Query.collides(this.body, this.associated_char.body.parts).length == 0) {
                 this.associated_char.hw_touch = null;;
                 this.associated_char = null;
             }

@@ -13,11 +13,11 @@ function move(dir) {
     let coeff = this.isJumping ? 0.05 : 1;
     // if(Math.abs(this.composite.velocity.x) <=this.maxMoveSpeed){
     // Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: dir * this.forceMoveX * coeff, y: 0.00 });
-    let curVelX = this.composite.velocity.x;
+    let curVelX = this.body.velocity.x;
     curVelX += (2 * dir * coeff);
     if (curVelX > this.maxMoveSpeed) curVelX = this.maxMoveSpeed;
     if (curVelX < -this.maxMoveSpeed) curVelX = -this.maxMoveSpeed;
-    Body.setVelocity(this.composite, { x: curVelX, y: this.composite.velocity.y });
+    Body.setVelocity(this.body, { x: curVelX, y: this.body.velocity.y });
     // }
 }
 function moveLeft(isKeyDown) {
@@ -41,7 +41,7 @@ function jump(isKeyDown) {
             // if(this.composite.speed <= this.maxJumpLandingV){
             // Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: 0.00, y: this.forceJumpLandingY });
 
-            Body.setVelocity(this.composite, { x: this.composite.velocity.x, y: -10 });
+            Body.setVelocity(this.body, { x: this.body.velocity.x, y: -10 });
             // }
             //set status in jump
             this.isJumping = true;
@@ -50,7 +50,7 @@ function jump(isKeyDown) {
             if (new Date() - this.timeStartJump < this.maxJumpTime) {
                 // if(this.composite.speed <= this.maxJumpFlyV){
                 // Body.applyForce(this.composite, { x: this.bodyC.position.x, y: this.bodyC.position.y }, { x: 0.00, y: this.forceJumpFlyY });
-                Body.setVelocity(this.composite, { x: this.composite.velocity.x, y: -10 });
+                Body.setVelocity(this.body, { x: this.body.velocity.x, y: -10 });
                 // }
             }
         }

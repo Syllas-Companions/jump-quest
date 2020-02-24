@@ -14,25 +14,26 @@ export default class Door {
       let height = doorJson.height == 0 ? 40 : doorJson.height;
   
       this.callback = callback
-      this.sensorIn = Bodies.rectangle(doorJson.x, doorJson.y, width, height, { isStatic: true, isSensor: true, tile_id: doorJson.gid });
+      this.body = Bodies.rectangle(doorJson.x, doorJson.y, width, height, { isStatic: true, isSensor: true });
+      this.body.render.tile_id = doorJson.gid
       this.map = map;
       this.name = doorJson.name;
       let t = doorJson.properties.find(prop => prop.name == 'target');
       this.target = t ? t.value : null;
   
       this.data = doorJson;
-      World.add(map.engine.world, this.sensorIn);
+      World.add(map.engine.world, this.body);
     }
   
     addIgnore(id){
       this.ignoreList.push(id);
     }
     destroy(){
-      World.remove(this.map.engine.world, this.sensorIn, true);
+      World.remove(this.map.engine.world, this.body, true);
   }
     update() {
       let curFrameChars = []
-      Matter.Query.collides(this.sensorIn, this.map.engine.world.bodies)
+      Matter.Query.collides(this.body, this.map.engine.world.bodies)
         .forEach((collision) => {
   
           if (collision.bodyA.objType == 'character-body' || collision.bodyB.objType == 'character-body') {

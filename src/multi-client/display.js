@@ -2,50 +2,77 @@ import p5 from 'p5'
 import { polynomial } from 'everpolate'
 import tileset_manager from 'tileset_manager'
 import camera from 'camera'
+import C from 'constants'
 
 export default function (clientState) {
     let sketch = function (p) {
         //MTODO: currently only static objects will have tile graphic rendered, need to implement for moving object
+        // MTODO: currently moving object refered to only characters
         p.drawMovingObjs = function () {
             let timestamp = new Date().getTime();
             p.push();
             clientState.dynamicData.forEach((obj, id) => {
-                if (clientState.id == obj.client_id) {
+                if (clientState.id == obj.client_id && obj.type == C.LAYER_CHARACTER) {
                     camera.towards(obj.position.x[obj.position.x.length - 1], obj.position.y[obj.position.y.length - 1]);
                     window.camera = camera;
                 }
                 let prediction = (obj.timestamp.length >= 3);
-                p.stroke(155, 155, 0);
-                if (obj.metadata && obj.metadata.color) {
-                    p.fill(obj.metadata.color.r, obj.metadata.color.g, obj.metadata.color.b);
-                } else {
-                    p.noFill();
-                }
-                p.beginShape();
-                // draw borders of moving object
-                obj.vertices.forEach(vertex => {
-                    if (prediction) {
-                        let x_prediction = polynomial(timestamp, obj.timestamp, vertex.x)[0];
-                        let y_prediction = polynomial(timestamp, obj.timestamp, vertex.y)[0];
-                        p.vertex(x_prediction, y_prediction);
-                    } else {
-                        p.vertex(vertex.x[vertex.x.length - 1], vertex.y[vertex.y.length - 1]);
-                    }
-                })
-                p.endShape(p.CLOSE);
-                // draw the client name on top (for players)
-                if (obj.client_id) {
-                    let x, y;
-                    p.fill(255);
-                    if (prediction) {
-                        x = polynomial(timestamp, obj.timestamp, obj.position.x)[0];
-                        y = polynomial(timestamp, obj.timestamp, obj.position.y)[0];
+                let x, y;
+                p.fill(255);
+                if (prediction) {
+                    x = polynomial(timestamp, obj.timestamp, obj.position.x)[0];
+                    y = polynomial(timestamp, obj.timestamp, obj.position.y)[0];
 
-                    } else {
-                        x = obj.position.x[obj.position.x.length - 1]
-                        y = obj.position.y[obj.position.y.length - 1];
+                } else {
+                    x = obj.position.x[obj.position.x.length - 1]
+                    y = obj.position.y[obj.position.y.length - 1];
+                }
+                // TODO: render obj.opacity as hp-bar if value != 1 due to performance when changing tint value
+                if (obj.tile_id) {
+                    // draw tile // TODO: move to function to reuse code below
+                    let tileset = clientState.mapData.tilesets.find(ts => {
+                        return ts.firstgid < obj.tile_id + 1;
+                    })
+                    if (tileset) {
+                        let res = tileset_manager.getTile(tileset.source, obj.tile_id - tileset.firstgid)
+                        if (res) {
+                            // resource ready
+                            p.imageMode(p.CENTER);
+                            p.image(res.tileset.image, x, y, 64, 64, res.x, res.y, res.width, res.height);
+
+                        } else {
+                            console.log("not ready yet")
+                        }
                     }
-                    p.text(obj.client_id, x - 70, y - 35);
+                } else {
+                    if (obj.metadata && obj.metadata.color) {
+                        p.noStroke()
+                        p.fill(obj.metadata.color.r, obj.metadata.color.g, obj.metadata.color.b);
+                    } else if (obj.color) {
+                        p.noStroke()
+                        p.fill(obj.color);
+                    }else {
+                        p.stroke(155, 155, 0);
+                        p.noFill();
+                    }
+                    p.beginShape();
+                    // draw borders of moving object
+                    obj.vertices.forEach(vertex => {
+                        if (prediction) {
+                            let x_prediction = polynomial(timestamp, obj.timestamp, vertex.x)[0];
+                            let y_prediction = polynomial(timestamp, obj.timestamp, vertex.y)[0];
+                            p.vertex(x_prediction, y_prediction);
+                        } else {
+                            p.vertex(vertex.x[vertex.x.length - 1], vertex.y[vertex.y.length - 1]);
+                        }
+                    })
+                    p.endShape(p.CLOSE);
+                }
+                // draw the client name on top (for players)
+                if (obj.type == C.LAYER_CHARACTER) {
+                    if (obj.client_id) {
+                        p.text(obj.client_id, x - 70, y - 35);
+                    }
                 }
             })
             p.pop();
@@ -122,16 +149,16 @@ export default function (clientState) {
                 p.translate(-cam_min.x, -cam_min.y)
                 p.drawBackground();
                 p.drawMap();
-                p.drawMovingObjs(); 
+                p.drawMovingObjs();
                 p.fill(255)
                 p.text("Room: " + clientState.mapData.name, cam_min.x + 20, cam_min.y + 20);
                 p.text(clientState.latency, cam_max.x - 20, cam_min.y + 20);
                 p.pop();
-            }else{
+            } else {
                 p.push();
                 p.textAlign(p.CENTER);
                 p.textSize(30);
-                p.text("DISCONNECTED",p.windowWidth/2,p.windowHeight/2)
+                p.text("DISCONNECTED", p.windowWidth / 2, p.windowHeight / 2)
                 p.pop();
             }
         };

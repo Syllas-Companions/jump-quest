@@ -15,7 +15,7 @@ var Engine = Matter.Engine,
 function jumpFromRope(isKeyDown) {
     if (isKeyDown) {
         if (this.attachedTo) {
-            Body.setVelocity(this.composite, { x: this.composite.velocity.x, y: -10 });
+            Body.setVelocity(this.body, { x: this.body.velocity.x, y: -10 });
             Composite.remove(this.gm.engine.world, this.attachedTo.constraint)
             this.attachedTo = null;
             return true;
@@ -29,7 +29,7 @@ function upRope(isKeyDown) {
         if (this._touching_rope && !this.attachedTo) {
             this.attachedTo = this._touching_rope;
             let constraint = Constraint.create({
-                bodyA: this.composite,
+                bodyA: this.body,
                 bodyB: this.attachedTo.rope.getSeg(this.attachedTo.seg_no),
                 length: 2,
                 stiffness: 0.1,
@@ -94,7 +94,7 @@ function leftRope(isKeyDown) {
     // LEFT
     if (isKeyDown) {
         if (this.attachedTo) {
-            Body.applyForce(this.composite, this.composite.position, { x: -0.002, y: 0 });
+            Body.applyForce(this.body, this.body.position, { x: -0.002, y: 0 });
             return true;
         }
     }
@@ -104,7 +104,7 @@ function rightRope(isKeyDown) {
     // RIGHT
     if (isKeyDown) {
         if (this.attachedTo) {
-            Body.applyForce(this.composite, this.composite.position, { x: 0.002, y: 0 });
+            Body.applyForce(this.body, this.body.position, { x: 0.002, y: 0 });
             return true;
         }
     }

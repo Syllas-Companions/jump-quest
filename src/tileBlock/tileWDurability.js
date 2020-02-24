@@ -7,7 +7,7 @@ var Engine = Matter.Engine,
     Bodies = Matter.Bodies,
     Body = Matter.Body;
 
-const DEFAULT_DURABILITY = 10000
+const DEFAULT_DURABILITY = 10000.0
 class TileWDurability extends Tile {
     constructor(map, x, y, width, height, tile_id) {
         super(map, x, y, width, height, tile_id);
@@ -24,7 +24,8 @@ class TileWDurability extends Tile {
             if (touched) {
                 this.durability -= (this.timestamp - lastTimestamp);
                 this.body.render.opacity = this.durability / DEFAULT_DURABILITY
-                console.log(this.durability);
+                // console.log(this.body.render.opacity)
+                // console.log(this.durability);
                 if (this.durability < 0) {
                     this.isDestroyed = true;
                     this.destroy();

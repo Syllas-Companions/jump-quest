@@ -11,7 +11,7 @@ function holdItem(isKeyDown, isChanged) {
     if (isKeyDown) {
         if (!this.itemConstraint && this.bodyBring) {
             this.itemConstraint = Constraint.create({
-                bodyA: this.composite,
+                bodyA: this.body,
                 bodyB: this.bodyBring,
                 pointA: { x: 0, y: 0 },
                 length: 50,
@@ -23,7 +23,7 @@ function holdItem(isKeyDown, isChanged) {
             World.add(this.gm.engine.world, this.itemConstraint);
 
             this.itemConstraint2 = Constraint.create({
-                bodyA: this.composite,
+                bodyA: this.body,
                 bodyB: this.bodyBring,
                 pointA: { x: 0, y: -20 },
                 length: 50,
@@ -54,8 +54,8 @@ function characterTurn(isKeyDown) {
     if (isKeyDown) {
         if (this.itemConstraint && this.isTurned) {
             //TODO: use (width character + width item) /2 instead of constant
-            if (this.facing == 1) Body.setPosition(this.itemConstraint.bodyB, { x: this.composite.position.x + 25, y: this.composite.position.y });
-            if (this.facing == -1) Body.setPosition(this.itemConstraint.bodyB, { x: this.composite.position.x - 28, y: this.composite.position.y });
+            if (this.facing == 1) Body.setPosition(this.itemConstraint.bodyB, { x: this.body.position.x + 25, y: this.body.position.y });
+            if (this.facing == -1) Body.setPosition(this.itemConstraint.bodyB, { x: this.body.position.x - 28, y: this.body.position.y });
         }
     }
     return false;

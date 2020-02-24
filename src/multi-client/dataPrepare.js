@@ -101,20 +101,20 @@ socket.on('worldUpdate', function (data) {
         } else {
             // newly created object
             // local states saved base on this skeleton
-            clientState.dynamicData.set(obj.id, {
-                id: obj.id,
+            clientState.dynamicData.set(obj.id, Object.assign({},obj,{
+//                id: obj.id,
                 timestamp: [timestamp],
-                metadata: obj.metadata,
-                client_id: obj.client_id,
+//                metadata: obj.metadata,
+//                client_id: obj.client_id,
                 vertices: obj.vertices.map(vertex => {
                     return { x: [vertex.x], y: [vertex.y] }
                 }),
-                tile_id: obj.tile_id,
+//                tile_id: obj.tile_id,
                 position: {
                     x: [obj.position.x],
                     y: [obj.position.y]
                 }
-            })
+            }))
         }
     });
 });

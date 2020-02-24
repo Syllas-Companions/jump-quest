@@ -20,19 +20,19 @@ export default class Enemy {
             this.gid = tile.gid;
         }
         let pos = { x: path.x, y: path.y };
-        this.body = Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, objType: "enemy" });
-        this.sensorShield = Bodies.circle(pos.x, pos.y, 41, { isSensor: true, objType: "enemy-shield" });
+        this.body = Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, isStatic:true, objType: "enemy" });
+        // this.sensorShield = Bodies.circle(pos.x, pos.y, 41, { isSensor: true, objType: "enemy-shield" });
         //sensor vision for enemys when catch character
         // this.sensorVision 
         this.map = map;
         this.polygon = path.polygon;
-        this.composite = Body.create({
-            parts: [this.body, this.sensorShield]
-        });
+        // this.composite = Body.create({
+        //     parts: [this.body, this.sensorShield]
+        // });
         this.body.enemy_logic = this;
-        World.add(map.engine.world, this.composite);
+        World.add(map.engine.world, this.body);
         this.getDirection();
-        Body.setStatic(this.composite, true);
+        // Body.setStatic(this.body, true);
         // console.log(this.composite.position);
         // console.log(this.polygon);
         this.targetPoint = this.polygon[2];
@@ -44,11 +44,11 @@ export default class Enemy {
         else this.speed = 0.1
     }
     destroy() {
-        World.remove(this.map.engine.world, this.composite, true);
+        World.remove(this.map.engine.world, this.body, true);
     }
     //function update beforce update
     update() {
-        Matter.Query.collides(this.sensorShield, this.map.engine.world.bodies)
+        Matter.Query.collides(this.body, this.map.engine.world.bodies)
             .forEach((collision) => {
                 // console.log(collision.bodyA.objType);
                 // console.log(collision.bodyB.objType);
@@ -65,8 +65,8 @@ export default class Enemy {
             })
         this.move(this.targetPoint.x, this.targetPoint.y);
         //move
-        this.distance = Math.sqrt(Math.pow(this.targetPoint.x - this.composite.position.x, 2)
-            + Math.pow(this.targetPoint.y - this.composite.position.y, 2));
+        this.distance = Math.sqrt(Math.pow(this.targetPoint.x - this.body.position.x, 2)
+            + Math.pow(this.targetPoint.y - this.body.position.y, 2));
         // console.log(this.distance);
         if (this.distance < 30) {
             // Body.setPosition(this.composite, this.targetPoint);
@@ -83,21 +83,21 @@ export default class Enemy {
     }
     //x,y vi tri den
     move(x, y) {
-        let xTo = x - this.composite.position.x;
-        let yTo = y - this.composite.position.y;
+        let xTo = x - this.body.position.x;
+        let yTo = y - this.body.position.y;
         // console.log(xTo);
         // di chuyen enemy 
-        Body.setStatic(this.composite, false);
+        Body.setStatic(this.body, false);
         //cần chuyển sang xTo yTo
         // console.log(this.speed);
-        Body.setVelocity(this.composite, { x: xTo * this.speed, y: yTo * this.speed });
+        Body.setVelocity(this.body, { x: xTo * this.speed, y: yTo * this.speed });
     }
     //return true pos
     getDirection() {
         //input point 
         this.polygon.forEach((position) => {
-            position.x += this.composite.position.x;
-            position.y += this.composite.position.y;
+            position.x += this.body.position.x;
+            position.y += this.body.position.y;
         })
     }
 

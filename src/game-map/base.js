@@ -34,27 +34,36 @@ class GameMap {
         if (GameMap.objTypes) {
             mapJson.layers.forEach(layer => {
                 if (GameMap.objTypes.has(layer.name)) {
-                    let { initFunc, isStatic } = GameMap.objTypes.get(layer.name);
+                    GameMap.objTypes.get(layer.name).forEach(typeInfo => {
+                        let { initFunc, isStatic, collectionName } = typeInfo;
 
-                    // create the new objects base on layer's json using initFunc
-                    let createdObjects = initFunc.call(this, layer);
+                        // create the new objects base on layer's json using initFunc
+                        let createdObjects = initFunc.call(this, layer);
 
-                    if (createdObjects && createdObjects.length > 0)
-                        // push the created objects to objects array of this GameMap
-                        if (this.objects.hasOwnProperty(layer.name)) {
-                            let originalList = this.objects[layer.name].list;
-                            this.objects[layer.name].list = [...originalList, ...createdObjects]
-                        } else {
-                            this.objects[layer.name] = { isStatic, list: createdObjects };
+                        if (createdObjects && createdObjects.length > 0) {
+                            // push the created objects to objects array of this GameMap
+                            let propName = collectionName ? collectionName : layer.name;
+                            if (this.objects.hasOwnProperty(propName)) {
+                                let originalList = this.objects[propName].list;
+                                this.objects[propName].list = [...originalList, ...createdObjects]
+                            } else {
+                                this.objects[propName] = { isStatic, list: createdObjects };
+                            }
                         }
+                    })
                 }
             })
             console.log(this.objects)
         } else console.log("no objType registered");
     }
-    static registerObjType(name, isStatic, initFunc) {
+    static registerObjType(name, isStatic, initFunc, collectionName) {
         if (!GameMap.objTypes) GameMap.objTypes = new Map();
-        GameMap.objTypes.set(name, { isStatic, initFunc });
+        if (GameMap.objTypes.has(name)) {
+            GameMap.objTypes.get(name).unshift({ isStatic, initFunc, collectionName })
+        } else {
+            GameMap.objTypes.set(name, [{ isStatic, initFunc, collectionName }])
+        }
+        // GameMap.objTypes.set(name, { isStatic, initFunc, collectionName });
     }
     destroy() {
         Object.values(this.objects).forEach(val => {
@@ -127,9 +136,12 @@ function simplifyObj(arr, obj) {
                 vertices: obj.vertices.map(vertex => {
                     return { x: vertex.x, y: vertex.y }
                 }),
-                tile_id: obj.tile_id,
+                tile_id: obj.render.tile_id, // TODO: put in movable platform
+                opacity: obj.render.opacity,
+                color: obj.render.fillStyle,
                 position: obj.position
             }
+            // console.log(obj.render.opacity)
             arr.push(res);
         }
         else if (obj.type == 'composite') {

@@ -14,19 +14,19 @@ class Character {
 
     constructor(gm, pos, id, metadata) {
         this.id = id;
-        this.body = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity, objType: "character-body" });
+        this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity, objType: "character-body" });
         this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 48, 0.001, { isSensor: true, objType: "character-base" });
         this.sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 3, 52, { isSensor: true, objType: "character-face" });
-        this.composite = Body.create({
-            parts: [this.body, this.sensorDown, this.sensorFace],
+        this.body = Body.create({
+            parts: [this.bodyC, this.sensorDown, this.sensorFace],
             options: { objType: "character" }
         });
         this.gm = gm;
 
-        this.body.character_logic = this;
+        this.bodyC.character_logic = this;
         this.sensorFace.character_logic = this;
 
-        World.add(gm.engine.world, this.composite);
+        World.add(gm.engine.world, this.body);
         // this.isJumping = true;
         // this.isChanneling = true;
 
@@ -69,16 +69,16 @@ class Character {
     }
 
     destroy() {
-        World.remove(this.gm.engine.world, this.composite, true);
+        World.remove(this.gm.engine.world, this.body, true);
     }
     die() {
         // Body.setPosition(this.composite, { x: 500, y: 500 });
         (this.gm.repositionCharacters.bind(this.gm))(this.id)
     }
     teleport(posTo, resetVel = false) {
-        Body.setPosition(this.composite, { x: posTo.x, y: posTo.y });
+        Body.setPosition(this.body, { x: posTo.x, y: posTo.y });
         if (resetVel)
-            Body.setVelocity(this.composite, { x: 0, y: 0 });
+            Body.setVelocity(this.body, { x: 0, y: 0 });
     }
     // added update function that get called from main index.js every "beforeUpdate" event
     update() {
@@ -98,12 +98,12 @@ class Character {
                     // }
                 }
             })
-        if (this.isJumping) this.composite.friction = 0;
-        else this.composite.friction = 0.1;
+        if (this.isJumping) this.body.friction = 0;
+        else this.body.friction = 0.1;
 
         //change face
-        if (this.facing == 1) Body.setPosition(this.sensorFace, { x: this.composite.position.x + 25, y: this.composite.position.y });
-        if (this.facing == -1) Body.setPosition(this.sensorFace, { x: this.composite.position.x - 28, y: this.composite.position.y });
+        if (this.facing == 1) Body.setPosition(this.sensorFace, { x: this.body.position.x + 25, y: this.body.position.y });
+        if (this.facing == -1) Body.setPosition(this.sensorFace, { x: this.body.position.x - 28, y: this.body.position.y });
     }
 
     inputHandler(keyState) {
@@ -119,9 +119,9 @@ class Character {
     }
     forceReverse() {
         if (this.facing == 1)
-        Body.setVelocity(this.composite, {x: -this.velocityReverse, y: -this.velocityReverse});
+        Body.setVelocity(this.body, {x: -this.velocityReverse, y: -this.velocityReverse});
         if (this.facing == -1)
-        Body.setVelocity(this.composite, {x: this.velocityReverse, y: -this.velocityReverse});
+        Body.setVelocity(this.body, {x: this.velocityReverse, y: -this.velocityReverse});
         
     }
 }

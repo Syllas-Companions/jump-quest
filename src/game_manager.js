@@ -1,6 +1,7 @@
 import Matter from 'matter-js'
 import Character from 'character'
 import GameMap from 'game-map'
+import C from 'constants'
 import level_manager from 'level_manager'
 
 var Engine = Matter.Engine,
@@ -12,6 +13,7 @@ var Engine = Matter.Engine,
 
 function isNodejs() { return typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node !== 'undefined'; }
 
+// TODO: control party's total HP and provide function to decrease, function then passed to character objects
 export default class GameManager {
     constructor(gmId, level = level_manager.getDefaultLevel()) {
         this.id = gmId;
@@ -137,16 +139,6 @@ export default class GameManager {
                 console.error(err)
             }
         }
-        // var currentMapJson = require("../maps/demo.json");
-
-        // this.currentMap = new GameMap(this, this.engine, currentMapJson);
-
-        // add some objects to the map
-        // this.currentMap.addObject(boxA);
-        // this.currentMap.addObject(boxB);
-        // World.add(this.engine.world, boxA);
-        // World.add(this.engine.world, boxB);
-
     }
 
     start() {
@@ -180,9 +172,10 @@ export default class GameManager {
         let objects = []
         this.character_map.forEach((character_info, key, map) => {
             if (character_info.character) {
-                let c = character_info.character.bodyC;
+                let c = character_info.character.body;
                 let obj = {
                     id: c.id,
+                    type: C.LAYER_CHARACTER, // TODO: move to constant file, and use integer
                     metadata: character_info.character.metadata,
                     client_id: key,
                     vertices: c.vertices.map((vertex) => {
