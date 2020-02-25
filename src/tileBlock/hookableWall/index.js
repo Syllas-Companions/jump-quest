@@ -1,5 +1,6 @@
 import Matter from 'matter-js'
 import Tile from "../basicTile"
+import C from 'myConstants'
 import Character from 'character'
 import './character-behaviour'
 var Engine = Matter.Engine,
@@ -13,7 +14,8 @@ class HookableWall extends Tile {
     constructor(map, x, y, width, height, tile_id) {
         super(map, x, y, width, height, tile_id);
         this.durability = DEFAULT_DURABILITY;
-        this.timestamp = Date.now();
+        // this.timestamp = Date.now();
+        // console.log(C)
     }
     update() {
         if (!this.associated_char) {
@@ -25,7 +27,7 @@ class HookableWall extends Tile {
                         char_logics.hw_touch = this.body;
                         this.associated_char = char_logics;
                         //for duration break
-                        this.timestamp = Date.now();
+                        // this.timestamp = Date.now();
                     }
                 });
         } else {
@@ -35,18 +37,19 @@ class HookableWall extends Tile {
             }
         }
         // console.log(this.associated_char)
-        this.breakByDuraction();
+        this.breakByDuration();
     }
-    breakByDuraction() {
+    breakByDuration() {
         if (this.associated_char) {
-            this.timeHookedWall = Date.now();
-            this.duration = this.durability - (this.timeHookedWall - this.timestamp)
-            if (this.duration < 0) {
+            // this.duration = this.durability - (this.timeHookedWall - this.timestamp)
+            if (Date.now()-this.associated_char.hw_timestamp_hooked >DEFAULT_DURABILITY && this.associated_char.tileConstraint) {
                 World.remove(this.associated_char.gm.engine.world, this.associated_char.tileConstraint);
-                this.tileConstraint = null;
-
+                this.associated_char.hw_timestamp_break = Date.now();
+                this.associated_char.tileConstraint = null;
+                Body.setVelocity(this.associated_char.body, { x: 3*-this.associated_char.facing, y: 0 });
+                this.associated_char.timeStartJump = new Date();
             }
-            console.log(this.duration);
+            // console.log(this.duration);
         }
     }
 }

@@ -4,6 +4,7 @@ var path = require('path');
 var app = express();
 
 app.use("/",express.static('dist/public'));
+app.use("/explorer",express.static('dist/explorer'));
 app.use("/maps", express.static('resources/maps'));
 // app.use("/tilesets", express.static('resources/tilesets'));
 // app.use("/backgrounds", express.static('resources/backgrounds'));

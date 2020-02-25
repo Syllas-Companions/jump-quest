@@ -1,6 +1,6 @@
 import Character from './base'
 import Matter from 'matter-js'
-import C from 'constants'
+import C from 'myConstants'
 var Body = Matter.Body;
 
 function move(dir) {

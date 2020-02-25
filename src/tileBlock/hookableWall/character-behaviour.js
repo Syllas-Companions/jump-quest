@@ -1,17 +1,18 @@
 import Matter from 'matter-js'
 import Character from 'character'
-
+import C from 'myConstants'
 var World = Matter.World,
     Body = Matter.Body,
     Composite = Matter.Composite,
     Constraint = Matter.Constraint;
 
-const HW_COOLDOWN = 200;
+
 function hookable(isKeyDown, isChanged){
     if(isKeyDown) {
+        if(this.hw_timestamp_break && ((Date.now()-this.hw_timestamp_break)<C.HW_COOLDOWN)) return true;
         if(!this.tileConstraint 
             && this.hw_touch 
-            && (!this.body.hw_timestamp_break || (Date.now()-this.body.hw_timestamp_break>HW_COOLDOWN))){
+            && (!this.hw_timestamp_break || ((Date.now()-this.hw_timestamp_break)>C.HW_COOLDOWN))){
             this.tileConstraint = Constraint.create({
                 bodyA: this.body,
                 bodyB: this.hw_touch,
@@ -22,7 +23,7 @@ function hookable(isKeyDown, isChanged){
                 render: { type: 'line' }
             });
             // console.log(this.hw_touch);
-
+            this.hw_timestamp_hooked = Date.now();
             World.add(this.gm.engine.world,this.tileConstraint);
             return true;
         }
@@ -32,8 +33,11 @@ function hookable(isKeyDown, isChanged){
     }
     else {
         if(this.tileConstraint) {
+            Body.setVelocity(this.body, { x: 3*-this.facing, y: 0 });
             World.remove(this.gm.engine.world, this.tileConstraint);
+            this.hw_timestamp_break = Date.now();
             this.tileConstraint = null;
+            this.timeStartJump = new Date();
         }
     }
     return false;
@@ -41,12 +45,10 @@ function hookable(isKeyDown, isChanged){
 
 
 
-function characterTurn(isKeyDown) {
+function characterTurn(isKeyDown, isChanged) {
     if (isKeyDown) {
-        if (this.itemConstraint && this.isTurned) {
-            //TODO: use (width character + width item) /2 instead of constant
-            if (this.facing == 1) Body.setPosition(this.itemConstraint.bodyB, { x: this.body.position.x + 25, y: this.body.position.y });
-            if (this.facing == -1) Body.setPosition(this.itemConstraint.bodyB, { x: this.body.position.x - 28, y: this.body.position.y });
+        if (this.tileConstraint) {
+            return true;
         }
     }
     return false;
@@ -57,10 +59,11 @@ function wallJump(isKeyDown, isChanged) {
     if (isKeyDown && isChanged) {
         if (this.tileConstraint) {
             // TODO: prevent auto latching again right after constriant broken"
-            Body.setVelocity(this.body, { x: this.body.velocity.x, y: -10 });
+            Body.setVelocity(this.body, { x: 3*-this.facing, y: -10 });
             World.remove(this.gm.engine.world, this.tileConstraint)
-            this.body.hw_timestamp_break = Date.now();
+            this.hw_timestamp_break = Date.now();
             this.tileConstraint = null;
+            this.timeStartJump = new Date();
             return true;
         }
         return false;
@@ -68,6 +71,6 @@ function wallJump(isKeyDown, isChanged) {
     return false;
 }
 Character.registerAction(32, wallJump);
-// Character.registerAction(39, characterTurn);
-// Character.registerAction(37, characterTurn);
+Character.registerAction(39, characterTurn);
+Character.registerAction(37, characterTurn);
 Character.registerAction(38, hookable);

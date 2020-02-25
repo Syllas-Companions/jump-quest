@@ -14,7 +14,7 @@ function clean_dist_folder() {
 }
 // function for deploying local version
 function copy_dev_explorer() {
-    return src(['./src/dev-explorer/**/*']).pipe(dest('./dist/explorer'));
+    return src(['./src/dev-explorer/**/*']).pipe(dest('./dist/public'));
 }
 // async function wp() {
 //     return src('./src/index_single_client.js')

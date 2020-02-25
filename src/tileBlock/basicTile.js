@@ -1,5 +1,5 @@
 import Matter from 'matter-js'
-import C from 'constants'
+import C from 'myConstants'
 // import room_manager from 'room_manager'
 var Engine = Matter.Engine,
     Render = Matter.Render,

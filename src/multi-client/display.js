@@ -2,7 +2,7 @@ import p5 from 'p5'
 import { polynomial } from 'everpolate'
 import tileset_manager from 'tileset_manager'
 import camera from 'camera'
-import C from 'constants'
+import C from 'myConstants'
 
 // TODO: uniform function to draw static/dynamic function (meaning, if position turn out to be array -> use array method, else use number method)
 export default function (clientState) {

@@ -1,7 +1,7 @@
 import Matter from 'matter-js'
 import Character from 'character'
 import GameMap from 'game-map'
-import C from 'constants'
+import C from 'myConstants'
 import level_manager from 'level_manager'
 
 var Engine = Matter.Engine,

@@ -1,5 +1,5 @@
 import Matter from 'matter-js'
-import C from 'constants'
+import C from 'myConstants'
 var Engine = Matter.Engine,
     Composite = Matter.Composite,
     Render = Matter.Render,
@@ -15,7 +15,7 @@ class Character {
     constructor(gm, pos, id, metadata) {
         this.id = id;
         this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity, objType: "character-body" });
-        this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 48, 0.001, { isSensor: true, objType: "character-base" });
+        this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 40, 0.001, { isSensor: true, objType: "character-base" });
         this.sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 3, 52, { isSensor: true, objType: "character-face" });
         this.body = Body.create({
             parts: [this.bodyC, this.sensorDown, this.sensorFace],
