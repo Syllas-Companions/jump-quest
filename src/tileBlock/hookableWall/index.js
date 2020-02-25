@@ -8,7 +8,6 @@ var Engine = Matter.Engine,
     World = Matter.World,
     Bodies = Matter.Bodies,
     Body = Matter.Body;
-// TODO: implement
 const DEFAULT_DURABILITY = 3000;
 class HookableWall extends Tile {
     constructor(map, x, y, width, height, tile_id) {

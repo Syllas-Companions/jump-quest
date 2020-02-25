@@ -175,7 +175,7 @@ export default class GameManager {
                 let c = character_info.character.body;
                 let obj = {
                     id: c.id,
-                    type: C.LAYER_CHARACTER, // TODO: move to constant file, and use integer
+                    type: C.LAYER_CHARACTER,
                     metadata: character_info.character.metadata,
                     client_id: key,
                     vertices: c.vertices.map((vertex) => {

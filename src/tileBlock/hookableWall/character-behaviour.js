@@ -6,9 +6,12 @@ var World = Matter.World,
     Composite = Matter.Composite,
     Constraint = Matter.Constraint;
 
+const HW_COOLDOWN = 200;
 function hookable(isKeyDown, isChanged){
     if(isKeyDown) {
-        if(!this.tileConstraint && this.hw_touch){
+        if(!this.tileConstraint 
+            && this.hw_touch 
+            && (!this.body.hw_timestamp_break || (Date.now()-this.body.hw_timestamp_break>HW_COOLDOWN))){
             this.tileConstraint = Constraint.create({
                 bodyA: this.body,
                 bodyB: this.hw_touch,
@@ -56,6 +59,7 @@ function wallJump(isKeyDown, isChanged) {
             // TODO: prevent auto latching again right after constriant broken"
             Body.setVelocity(this.body, { x: this.body.velocity.x, y: -10 });
             World.remove(this.gm.engine.world, this.tileConstraint)
+            this.body.hw_timestamp_break = Date.now();
             this.tileConstraint = null;
             return true;
         }

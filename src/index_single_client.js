@@ -115,7 +115,7 @@ Example.init = function () {
         camera.width = render.canvas.width;
         camera.height = render.canvas.height;
         setInterval(function () {
-            camera.towards(character.composite.position.x, character.composite.position.y);
+            camera.towards(character.body.position.x, character.body.position.y);
             camera.update();
             Render.lookAt(render, [{
                 min: camera.min(),
