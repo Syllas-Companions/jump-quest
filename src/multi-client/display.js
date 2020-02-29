@@ -111,11 +111,15 @@ export default function (clientState) {
         }
 
         p.setup = function () {
+            p.select('body').style('margin:0px')
             tileset_manager.setP5Instance(p);
-            p.createCanvas(p.windowWidth - 20, p.windowHeight - 20);
-            camera.width = p.windowWidth - 20;
-            camera.height = p.windowHeight - 20;
-            p.frameRate(60)
+            let canvas = p.createCanvas(p.windowWidth, p.windowHeight);
+            canvas.style('display:block')
+            camera.width = p.windowWidth;
+            camera.height = p.windowHeight;
+            p.frameRate(60);
+            // let button = p.createButton('click me');
+            // button.position(0, 0);
         };
         p.keyPressed = function () {
             if (p.keyCode === p.ENTER) {
