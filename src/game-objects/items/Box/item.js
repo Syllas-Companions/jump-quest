@@ -9,14 +9,10 @@ var Engine = Matter.Engine,
     Body = Matter.Body;
 
 //class items
-export default class Item  extends GameObject{
+export default class Item extends GameObject {
 
     constructor(map, pos) {
         super(Bodies.rectangle(pos.x, pos.y, 40, 40, { inertia: Infinity, objType: "ItemBox" }));
-        // this.sensor = Bodies.rectangle(pos.x, pos.y, 42, 42, { isSensor: true });
-        // this.composite = Body.create({
-        //     parts: [this.body, this.sensor]
-        // });
         this.map = map;
 
         this.body.item_logic = this;
@@ -24,7 +20,7 @@ export default class Item  extends GameObject{
         this.isPickedUp = false;
 
     }
-    destroy(){
+    destroy() {
         World.remove(this.map.engine.world, this.body, true);
     }
     //function update beforce update
@@ -41,8 +37,8 @@ export default class Item  extends GameObject{
                         this.associated_char.isJumping = false;
                     }
                 })
-        }else{
-            if(Matter.Query.collides(this.body, this.associated_char.body.parts).length==0){
+        } else {
+            if (Matter.Query.collides(this.body, this.associated_char.body.parts).length == 0) {
                 this.associated_char.bodyBring = null;;
                 this.associated_char = null;
             }

@@ -18,23 +18,15 @@ export default class Enemy extends GameObject{
         let tile = json.objects.find(obj => obj.name == "tile");
         let pos = { x: path.x, y: path.y };
         super(Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, isStatic:true, objType: "enemy" }));
-        // this.sensorShield = Bodies.circle(pos.x, pos.y, 41, { isSensor: true, objType: "enemy-shield" });
-        //sensor vision for enemys when catch character
-        // this.sensorVision 
+        console.log(this.body.render)
         if (tile) {
-            this.gid = tile.gid;
+            this.tile_id = tile.gid;
         }
         this.map = map;
         this.polygon = path.polygon;
-        // this.composite = Body.create({
-        //     parts: [this.body, this.sensorShield]
-        // });
         this.body.enemy_logic = this;
         World.add(map.engine.world, this.body);
         this.getDirection();
-        // Body.setStatic(this.body, true);
-        // console.log(this.composite.position);
-        // console.log(this.polygon);
         this.targetPoint = this.polygon[2];
         this.prePoint = this.polygon[1];
         this.distance = 0;
