@@ -1,5 +1,5 @@
 import Matter from 'matter-js'
-
+import GameObject from 'game-objects/game-object';
 var Engine = Matter.Engine,
     Render = Matter.Render,
     Events = Matter.Events,
@@ -7,15 +7,17 @@ var Engine = Matter.Engine,
     Bodies = Matter.Bodies,
     Body = Matter.Body;
 
-export default class BearTrap {
+export default class BearTrap extends GameObject {
 
     constructor(map, pos) {
-        this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 10, { inertia: Infinity, objType: "bearTrap" });
-        this.sensorUp = Bodies.rectangle(pos.x, pos.y - 5, 40, 0.02, { isSensor: true });
-        this.body = Body.create({
-            parts: [this.bodyC, this.sensorUp],
+        let bodyC = Bodies.rectangle(pos.x, pos.y, 50, 10, { inertia: Infinity, objType: "bearTrap" });
+        let sensorUp = Bodies.rectangle(pos.x, pos.y - 5, 40, 0.02, { isSensor: true });
+        super(Body.create({
+            parts: [bodyC, sensorUp],
             options: { objType: "bearTrap" }
-        });
+        }));
+        this.bodyC = bodyC;
+        this.sensorUp = sensorUp;
         this.map = map
         World.add(map.engine.world, this.body);
     }

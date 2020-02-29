@@ -1,5 +1,5 @@
 import Matter from 'matter-js'
-import Character from 'character'
+import Character from 'game-objects/character'
 import C from 'myConstants'
 var World = Matter.World,
     Body = Matter.Body,
@@ -54,11 +54,9 @@ function characterTurn(isKeyDown, isChanged) {
     return false;
 }
 
-// TODO: add wall jump by pressing space
 function wallJump(isKeyDown, isChanged) {
     if (isKeyDown && isChanged) {
         if (this.tileConstraint) {
-            // TODO: prevent auto latching again right after constriant broken"
             Body.setVelocity(this.body, { x: 3*-this.facing, y: -10 });
             World.remove(this.gm.engine.world, this.tileConstraint)
             this.hw_timestamp_break = Date.now();

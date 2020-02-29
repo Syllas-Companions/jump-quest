@@ -1,4 +1,5 @@
 import Matter from 'matter-js'
+import GameObject from 'game-objects/game-object';
 var Engine = Matter.Engine,
     Render = Matter.Render,
     Constraint = Matter.Constraint,
@@ -8,15 +9,10 @@ var Engine = Matter.Engine,
     Bodies = Matter.Bodies,
     Bodies = Matter.Bodies,
     Body = Matter.Body;
-export default class Rope {
+export default class Rope extends GameObject {
     constructor(map, json) {
-        this.map = map;
-        this.data = json;
-
-        this.collidingList = []
-
-        this.length = json.properties.find(prop => prop.name == "length");
-        this.length = this.length ? this.length.value : 8;
+        let length = json.properties.find(prop => prop.name == "length");
+        length = length ? length.value : 8;
         let seg_length = json.properties.find(prop => prop.name == "seg_length");
         seg_length = seg_length ? seg_length.value : 30;
         let r_rope = json.properties.find(prop => prop.name == "r_rope");
@@ -24,10 +20,10 @@ export default class Rope {
         // add bodies
         // var group = Body.nextGroup(true);
         let seg_no = -1;
-        this.body = Composites.stack(json.x - map.tileWidth / 2 - r_rope / 2, json.y - map.tileHeight / 2, 1, this.length, 0, 2, function (x, y) {
+        super(Composites.stack(json.x - map.tileWidth / 2 - r_rope / 2, json.y - map.tileHeight / 2, 1, length, 0, 2, function (x, y) {
             seg_no += 1;
-            return Bodies.rectangle(x, y, r_rope, seg_length, { objType: 'rope_seg', render: { fillStyle: '#669999' }, seg_no: seg_no, isSensor: true, /*collisionFilter: { group: group } */});
-        });
+            return Bodies.rectangle(x, y, r_rope, seg_length, { objType: 'rope_seg', render: { fillStyle: '#669999' }, seg_no: seg_no, isSensor: true, /*collisionFilter: { group: group } */ });
+        }));
         // let last = this.composite.bodies[this.composite.bodies.length - 1]
         Composites.chain(this.body, 0, 0.5, 0, -0.5, { stiffness: 1, length: 2, render: { type: 'line' } });
         Composite.add(this.body, Constraint.create({
@@ -48,11 +44,34 @@ export default class Rope {
         // }));
 
         World.add(map.engine.world, this.body);
+
+        this.map = map;
+        this.data = json;
+
+        this.collidingList = []
+
+
+
     }
-    destroy(){
+    simplify(){
+        // override
+        return this.body.bodies.map(b => {
+            return {
+                id: b.id,
+                vertices: b.vertices.map(vertex => {
+                    return { x: vertex.x, y: vertex.y }
+                }),
+                tile_id: b.render.tile_id, 
+                opacity: b.render.opacity,
+                color: b.render.fillStyle,
+                position: b.position
+            }
+        })
+    }
+    destroy() {
         World.remove(this.map.engine.world, this.body, true);
     }
-    getSeg(seg_no){
+    getSeg(seg_no) {
         return this.body.bodies.find(ele => ele.seg_no == seg_no)
     }
     update() {

@@ -1,7 +1,7 @@
 import Matter from 'matter-js'
 import Tile from "../basicTile"
 import C from 'myConstants'
-import Character from 'character'
+import Character from 'game-objects/character'
 import './character-behaviour'
 var Engine = Matter.Engine,
     Render = Matter.Render,

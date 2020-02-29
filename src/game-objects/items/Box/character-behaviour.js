@@ -1,5 +1,5 @@
 import Matter from 'matter-js'
-import Character from 'character'
+import Character from 'game-objects/character'
 
 var World = Matter.World,
     Body = Matter.Body,

@@ -1,5 +1,6 @@
 import Matter from 'matter-js'
 import C from 'myConstants'
+import GameObject from 'game-objects/game-object'
 var Engine = Matter.Engine,
     Composite = Matter.Composite,
     Render = Matter.Render,
@@ -10,17 +11,21 @@ var Engine = Matter.Engine,
     Constraint = Matter.Constraint,
     Body = Matter.Body;
 //class character
-class Character {
+class Character extends GameObject {
 
     constructor(gm, pos, id, metadata) {
-        this.id = id;
-        this.bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity, objType: "character-body" });
-        this.sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 40, 0.001, { isSensor: true, objType: "character-base" });
-        this.sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 3, 52, { isSensor: true, objType: "character-face" });
-        this.body = Body.create({
-            parts: [this.bodyC, this.sensorDown, this.sensorFace],
+        let bodyC = Bodies.rectangle(pos.x, pos.y, 50, 50, { inertia: Infinity, objType: "character-body" });
+        let sensorDown = Bodies.rectangle(pos.x, pos.y + 26, 40, 0.001, { isSensor: true, objType: "character-base" });
+        let sensorFace = Bodies.rectangle(pos.x + 27, pos.y, 3, 52, { isSensor: true, objType: "character-face" });
+        super(Body.create({
+            parts: [bodyC, sensorDown, sensorFace],
             options: { objType: "character" }
-        });
+        }));
+
+        this.bodyC = bodyC;
+        this.sensorDown = sensorDown;
+        this.sensorFace = sensorFace
+        this.id = id;
         this.gm = gm;
 
         this.bodyC.character_logic = this;
@@ -123,6 +128,15 @@ class Character {
         if (this.facing == -1)
         Body.setVelocity(this.body, {x: this.velocityReverse, y: -this.velocityReverse});
         
+    }
+
+    simplify(){
+        return Object.assign({
+            type: C.LAYER_CHARACTER,
+            metadata: this.metadata,
+            client_id: this.id,
+            position: this.body.position
+        },super.simplify())
     }
 }
 

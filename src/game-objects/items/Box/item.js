@@ -1,5 +1,5 @@
 import Matter from 'matter-js'
-
+import GameObject from 'game-objects/game-object';
 var Engine = Matter.Engine,
     Render = Matter.Render,
     Events = Matter.Events,
@@ -9,10 +9,10 @@ var Engine = Matter.Engine,
     Body = Matter.Body;
 
 //class items
-export default class Item {
+export default class Item  extends GameObject{
 
     constructor(map, pos) {
-        this.body = Bodies.rectangle(pos.x, pos.y, 40, 40, { inertia: Infinity, objType: "ItemBox" });
+        super(Bodies.rectangle(pos.x, pos.y, 40, 40, { inertia: Infinity, objType: "ItemBox" }));
         // this.sensor = Bodies.rectangle(pos.x, pos.y, 42, 42, { isSensor: true });
         // this.composite = Body.create({
         //     parts: [this.body, this.sensor]

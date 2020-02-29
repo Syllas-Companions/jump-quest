@@ -1,5 +1,5 @@
 import Matter from 'matter-js'
-
+import GameObject from 'game-objects/game-object';
 var Engine = Matter.Engine,
     Render = Matter.Render,
     Events = Matter.Events,
@@ -10,20 +10,20 @@ var Engine = Matter.Engine,
 
 //class enemys
 const DEFAULT_SPEED = 0.01;
-export default class Enemy {
+export default class Enemy extends GameObject{
 
 
     constructor(map, json) {//pos, polygon,speed) {
         let path = json.objects.find(obj => obj.name == "path");
         let tile = json.objects.find(obj => obj.name == "tile");
-        if (tile) {
-            this.gid = tile.gid;
-        }
         let pos = { x: path.x, y: path.y };
-        this.body = Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, isStatic:true, objType: "enemy" });
+        super(Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, isStatic:true, objType: "enemy" }));
         // this.sensorShield = Bodies.circle(pos.x, pos.y, 41, { isSensor: true, objType: "enemy-shield" });
         //sensor vision for enemys when catch character
         // this.sensorVision 
+        if (tile) {
+            this.gid = tile.gid;
+        }
         this.map = map;
         this.polygon = path.polygon;
         // this.composite = Body.create({

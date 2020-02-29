@@ -1,5 +1,5 @@
 import Matter from 'matter-js'
-import Character from 'character/base';
+import Character from 'game-objects/character/base';
 // import room_manager from 'room_manager'
 
 var Engine = Matter.Engine,

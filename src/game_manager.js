@@ -1,5 +1,5 @@
 import Matter from 'matter-js'
-import Character from 'character'
+import Character from 'game-objects/character'
 import GameMap from 'game-map'
 import C from 'myConstants'
 import level_manager from 'level_manager'
@@ -172,19 +172,7 @@ export default class GameManager {
         let objects = []
         this.character_map.forEach((character_info, key, map) => {
             if (character_info.character) {
-                let c = character_info.character.body;
-                let obj = {
-                    id: c.id,
-                    type: C.LAYER_CHARACTER,
-                    metadata: character_info.character.metadata,
-                    client_id: key,
-                    vertices: c.vertices.map((vertex) => {
-                        return { x: vertex.x, y: vertex.y };
-                    }),
-                    tile_id: c.tile_id,
-                    position: c.position
-                }
-                objects.push(obj);
+                objects.push(character_info.character.simplify());
             }
         })
         return objects

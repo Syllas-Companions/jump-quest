@@ -7,8 +7,6 @@ import C from 'myConstants'
 // TODO: uniform function to draw static/dynamic function (meaning, if position turn out to be array -> use array method, else use number method)
 export default function (clientState) {
     let sketch = function (p) {
-        //MTODO: currently only static objects will have tile graphic rendered, need to implement for moving object
-        // MTODO: currently moving object refered to only characters
         p.drawMovingObjs = function () {
             let timestamp = new Date().getTime();
             p.push();
@@ -30,7 +28,7 @@ export default function (clientState) {
                 }
                 // TODO: render obj.opacity as hp-bar if value != 1 due to performance when changing tint value
                 if (obj.tile_id) {
-                    // draw tile // TODO: move to function to reuse code below
+                    // draw tile
                     let tileset = clientState.mapData.tilesets.find(ts => {
                         return ts.firstgid < obj.tile_id + 1;
                     })

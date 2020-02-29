@@ -76,9 +76,10 @@ socket.on('worldUpdate', function (data) {
             clientState.dynamicData.delete(key);
         }
     })
-    // (obj definition in game_manager.getCharactersRenderObj)
     // transform the package for easier calculation
+
     data.forEach(obj => {
+        if(!obj) return;
         if (clientState.dynamicData.has(obj.id)) {
             // old object 
             let objState = clientState.dynamicData.get(obj.id)
@@ -102,14 +103,10 @@ socket.on('worldUpdate', function (data) {
             // newly created object
             // local states saved base on this skeleton
             clientState.dynamicData.set(obj.id, Object.assign({},obj,{
-//                id: obj.id,
                 timestamp: [timestamp],
-//                metadata: obj.metadata,
-//                client_id: obj.client_id,
                 vertices: obj.vertices.map(vertex => {
                     return { x: [vertex.x], y: [vertex.y] }
                 }),
-//                tile_id: obj.tile_id,
                 position: {
                     x: [obj.position.x],
                     y: [obj.position.y]
