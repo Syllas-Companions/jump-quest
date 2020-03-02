@@ -20,6 +20,31 @@ function initTileLayer(layerJson, type, createdObjects) {
             }
         }
     }
+    if(layerJson.type == 'objectgroup'){
+        if(layerJson.name == 'movable') {
+            var polygon = [];
+
+            layerJson.objects.forEach(layer => {
+                if(layer.name == 'path'){
+                    polygon = layer.polygon;
+                }
+            })
+            layerJson.objects.forEach(layer => {
+                if(layer.name == 'tile') { 
+                    let tileObjG = new type(this,
+                        layer.x,
+                        layer.y,
+                        this.tileWidth,
+                        this.tileHeight,
+                        layer.data,
+                        polygon
+                        );
+                        createdObjects.push(tileObjG);
+                        
+                }
+            })
+        }
+    }
 }
 
 function initStaticPlatforms(layerJson) {
@@ -44,9 +69,11 @@ function initDynamicPlatforms(layerJson) {
         let type = null;
         switch (layer.name) {
             case 'destructible': type = TileWDurability; break;
+            case 'movable': type = MovablePlatform; break;
         }
         if (type) {
             initTileLayer.call(this, layer, type, createdObjects);
+            console.log(createdObjects);
         }
     })
     return createdObjects

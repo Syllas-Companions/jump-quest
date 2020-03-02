@@ -14,6 +14,7 @@ export default class Enemy {
 
 
     constructor(map, json) {//pos, polygon,speed) {
+        // console.log(json);
         let path = json.objects.find(obj => obj.name == "path");
         let tile = json.objects.find(obj => obj.name == "tile");
         if (tile) {
@@ -55,7 +56,6 @@ export default class Enemy {
 
                 if (collision.bodyA.objType == 'character-body' || collision.bodyB.objType == 'character-body') {
                     // console.log(collision);
-                    // console.log("u dead");
                     let char_physics = collision.bodyA.objType == 'character-body' ? collision.bodyA : collision.bodyB;
                     let char_logics = char_physics.character_logic;
                     // console.log(char_logics);
