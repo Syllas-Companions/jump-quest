@@ -76,6 +76,10 @@ class Character extends GameObject {
     destroy() {
         World.remove(this.gm.engine.world, this.body, true);
     }
+    // TODO: call this on traps 
+    gotHit(){
+        this.gm.decreaseHp();
+    }
     die() {
         // Body.setPosition(this.composite, { x: 500, y: 500 });
         (this.gm.repositionCharacters.bind(this.gm))(this.id)

@@ -95,7 +95,10 @@ export default {
                 // create a minimized list of object to send
                 let objects = []
                 objects = objects.concat(room.currentMap.getMovingObj(), room.getCharactersRenderObj())
-                io.to(rId).emit('worldUpdate', objects)
+                io.to(rId).emit('worldUpdate', {
+                    hp: room.hp,
+                    objects
+                })
             });
         }, 1000 / 20)
     },

@@ -5,6 +5,7 @@ var clientState = {
     isAlive: true,
     id: null,
     latency: 100,
+    hp: 0,
     mapData: null,
     dynamicData: null
 }
@@ -70,15 +71,17 @@ clientState.dynamicData = new Map()
 socket.on('worldUpdate', function (data) {
     let timestamp = new Date().getTime() + 50; // TODO: might be better when considering ping in place of constant
 
+    clientState.hp = data.hp;
+    
     // remove objects which are not in this package (objects which are no longer exist)
     clientState.dynamicData.forEach((val, key) => {
-        if (data.every(obj => obj.id != key)) {
+        if (data.objects.every(obj => obj.id != key)) {
             clientState.dynamicData.delete(key);
         }
     })
     // transform the package for easier calculation
 
-    data.forEach(obj => {
+    data.objects.forEach(obj => {
         if(!obj) return;
         if (clientState.dynamicData.has(obj.id)) {
             // old object 

@@ -25,7 +25,7 @@ export default function (clientState) {
                 x = point.x;
                 y = point.y;
             }
-            return {x, y}
+            return { x, y }
         }
         function drawObject(obj) {
             // TODO: render obj.hp (for platform with durability) as hp-bar if value != 1 due to performance when changing tint value
@@ -39,7 +39,7 @@ export default function (clientState) {
                     if (res) {
                         // resource ready
                         p.imageMode(p.CENTER);
-                        let {x, y} = getCoordinate(obj.timestamp, obj.position);
+                        let { x, y } = getCoordinate(obj.timestamp, obj.position);
                         p.image(res.tileset.image, x, y, 64, 64, res.x, res.y, res.width, res.height);
 
                     } else {
@@ -62,15 +62,15 @@ export default function (clientState) {
                 p.beginShape();
                 // draw border
                 obj.vertices.forEach(vertex => {
-                    let {x, y} = getCoordinate(obj.timestamp, vertex);
-                    p.vertex(x,y);
+                    let { x, y } = getCoordinate(obj.timestamp, vertex);
+                    p.vertex(x, y);
                 })
                 p.endShape(p.CLOSE);
             }
             // draw the client name on top (for players)
             if (obj.type == C.LAYER_CHARACTER) {
                 if (obj.client_id) {
-                    let {x, y} = getCoordinate(obj.timestamp, obj.position);
+                    let { x, y } = getCoordinate(obj.timestamp, obj.position);
                     p.text(obj.client_id, x - 70, y - 35);
                 }
             }
@@ -109,7 +109,27 @@ export default function (clientState) {
                 p.pop();
             }
         }
+        // TODO: move GUI to another file
+        p.initGUI = function () {
 
+        }
+
+        p.updateGUI = function () {
+            p.push()
+            p.scale(camera.scale)
+            let cam_min = camera.min()
+            let cam_max = camera.max()
+            p.translate(-cam_min.x, -cam_min.y)
+            let side_offset = 150;
+            let hp_bar_width = cam_max.x - cam_min.x - side_offset*2;
+            p.fill(255)
+            p.rect(cam_min.x + side_offset, cam_min.y + 20, hp_bar_width, 20);
+            p.fill(255, 0, 0)
+
+            p.rect(cam_min.x + side_offset + 2, cam_min.y + 22, (hp_bar_width - 4) * (clientState.hp / 100.0), 16);
+
+            p.pop();
+        }
         p.setup = function () {
             p.select('body').style('margin:0px')
             tileset_manager.setP5Instance(p);
@@ -120,6 +140,7 @@ export default function (clientState) {
             p.frameRate(60);
             // let button = p.createButton('click me');
             // button.position(0, 0);
+            p.initGUI();
         };
         p.keyPressed = function () {
             if (p.keyCode === p.ENTER) {
@@ -149,6 +170,7 @@ export default function (clientState) {
                 p.text("DISCONNECTED", p.windowWidth / 2, p.windowHeight / 2)
                 p.pop();
             }
+            p.updateGUI();
         };
     };
     let p5_instance = new p5(sketch);
