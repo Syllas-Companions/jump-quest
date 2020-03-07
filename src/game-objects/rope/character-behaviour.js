@@ -95,6 +95,7 @@ function leftRope(isKeyDown) {
     if (isKeyDown) {
         if (this.attachedTo) {
             Body.applyForce(this.body, this.body.position, { x: -0.002, y: 0 });
+            this.facing = -1
             return true;
         }
     }
@@ -105,6 +106,7 @@ function rightRope(isKeyDown) {
     if (isKeyDown) {
         if (this.attachedTo) {
             Body.applyForce(this.body, this.body.position, { x: 0.002, y: 0 });
+            this.facing = +1
             return true;
         }
     }

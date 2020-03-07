@@ -4,7 +4,7 @@ import GameObject from 'game-objects/game-object'
 var Engine = Matter.Engine,
     Composite = Matter.Composite,
     Render = Matter.Render,
-    Events = Matter.Events,
+    Vector = Matter.Vector,
     World = Matter.World,
     Bodies = Matter.Bodies,
     Pair = Matter.Pair,
@@ -24,17 +24,17 @@ class CharStatus {
     finish() {
         if (this.character && this.character.statuses) {
             let index = this.character.statuses.indexOf(this)
-            this.character.statuses.splice(index,1);
+            this.character.statuses.splice(index, 1);
         }
     }
 }
-class HurtStatus extends CharStatus{
-    constructor(character, duration){
+class HurtStatus extends CharStatus {
+    constructor(character, duration) {
         super(character, duration);
         this.name = "hurt";
         this.character.faceAscii = "ಠ╭╮ಠ";
     }
-    finish(){
+    finish() {
         this.character.faceAscii = "⚆  v  ⚆";
         super.finish();
     }
@@ -107,8 +107,8 @@ class Character extends GameObject {
         World.remove(this.gm.engine.world, this.body, true);
     }
 
-    addStatus(status){
-        if(!this.statuses) this.statuses = [];
+    addStatus(status) {
+        if (!this.statuses) this.statuses = [];
         this.statuses.push(status);
         // console.log(this.statuses.length)
     }
@@ -118,10 +118,10 @@ class Character extends GameObject {
         this.addStatus(new HurtStatus(this, 2000));
         this.gm.decreaseHp();
     }
-    die() {
-        // Body.setPosition(this.composite, { x: 500, y: 500 });
-        (this.gm.repositionCharacters.bind(this.gm))(this.id)
-    }
+    // die() {
+    //     // Body.setPosition(this.composite, { x: 500, y: 500 });
+    //     (this.gm.repositionCharacters.bind(this.gm))(this.id)
+    // }
     teleport(posTo, resetVel = false) {
         Body.setPosition(this.body, { x: posTo.x, y: posTo.y });
         if (resetVel)
@@ -130,7 +130,7 @@ class Character extends GameObject {
     // added update function that get called from main index.js every "beforeUpdate" event
     update() {
         // update on statuses
-        if(this.statuses) this.statuses.forEach(s => s.update());
+        if (this.statuses) this.statuses.forEach(s => s.update());
         // query the list of collisions
         let collisions = Matter.Query.collides(this.sensorDown, this.gm.engine.world.bodies);
         // not jumping but collided with no object (incl platform)
@@ -166,12 +166,20 @@ class Character extends GameObject {
         } else console.log("chain empty");
         this.prevFrameKeyState = JSON.parse(JSON.stringify(keyState));
     }
-    forceReverse() {
-        if (this.facing == 1)
-            Body.setVelocity(this.body, { x: -this.velocityReverse, y: -this.velocityReverse });
-        if (this.facing == -1)
-            Body.setVelocity(this.body, { x: this.velocityReverse, y: -this.velocityReverse });
-
+    // forceOrigin = vector {x, y}
+    forceBack(forceOrigin) {
+        if (forceOrigin) {
+            let dir = Vector.normalise(Vector.sub(this.body.position,forceOrigin));
+            let vel = Vector.mult(dir,this.velocityReverse);
+            Body.setVelocity(this.body, vel);
+            // console.log("new formula")
+        }
+        else {
+            if (this.facing == 1)
+                Body.setVelocity(this.body, { x: -this.velocityReverse, y: -this.velocityReverse });
+            if (this.facing == -1)
+                Body.setVelocity(this.body, { x: this.velocityReverse, y: -this.velocityReverse });
+        }
     }
 
     simplify() {
@@ -180,7 +188,7 @@ class Character extends GameObject {
             metadata: this.metadata,
             client_id: this.id,
             faceAscii: this.faceAscii,
-            statuses: this.statuses?this.statuses.map(s=>s.name):undefined,
+            statuses: this.statuses ? this.statuses.map(s => s.name) : undefined,
             facing: this.facing,
             position: this.body.position
         }, super.simplify())

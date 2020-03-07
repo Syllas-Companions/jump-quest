@@ -55,7 +55,7 @@ export default class Enemy extends GameObject {
                     // console.log(char_logics);
                     if (this.ignoreList.findIndex(id => (id == char_logics.id)) == -1) {
                         this.ignoreList.push(char_logics.id);
-                        char_logics.forceReverse();
+                        char_logics.forceBack(this.body.position); // TODO: push back based on position instead of constant vector
                         char_logics.gotHit();
                     }
                     // Body.applyForce(this.composite,this.composite.position,{x:0,y:-0.1});

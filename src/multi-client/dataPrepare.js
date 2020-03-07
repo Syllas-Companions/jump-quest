@@ -1,5 +1,5 @@
 import io from 'socket.io-client'
-import tileset_manager from 'tileset_manager'
+import tileset_manager from 'controllers/tileset_manager'
 
 var clientState = {
     isAlive: true,
@@ -65,6 +65,11 @@ socket.on('requestRoomName', function () {
     }
 })
 
+socket.on('gameOver', function (data) {
+    console.log("gameover")
+    // TODO: show message or such 
+    socket.emit('joinGame', 'lobby');
+});
 
 var MAX_SAVED_STATE = 4
 clientState.dynamicData = new Map()

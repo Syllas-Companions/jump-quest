@@ -1,6 +1,6 @@
 import p5 from 'p5'
 import { polynomial } from 'everpolate'
-import tileset_manager from 'tileset_manager'
+import tileset_manager from 'controllers/tileset_manager'
 import camera from 'camera'
 import C from 'myConstants'
 
@@ -67,6 +67,7 @@ export default function (clientState) {
                 p.endShape(p.CLOSE);
             }
             if (obj.type == C.LAYER_CHARACTER) {
+                // TODO: flashing when statuses contains "hurt"
                 // draw face of character
                 if (obj.faceAscii) {
                     p.push();
@@ -141,14 +142,16 @@ export default function (clientState) {
             let cam_min = camera.min()
             let cam_max = camera.max()
             p.translate(-cam_min.x, -cam_min.y)
-            let side_offset = 150;
-            let hp_bar_width = cam_max.x - cam_min.x - side_offset * 2;
-            p.fill(255)
-            p.rect(cam_min.x + side_offset, cam_min.y + 20, hp_bar_width, 20);
-            p.fill(255, 0, 0)
-
-            p.rect(cam_min.x + side_offset + 2, cam_min.y + 22, (hp_bar_width - 4) * (clientState.hp / 100.0), 16);
-
+            if (clientState.hp) {
+                let side_offset = 150;
+                let hp_bar_width = cam_max.x - cam_min.x - side_offset * 2;
+                // draw white 
+                p.fill(255)
+                p.rect(cam_min.x + side_offset, cam_min.y + 20, hp_bar_width, 20);
+                // draw red bar
+                p.fill(255, 0, 0)
+                p.rect(cam_min.x + side_offset + 2, cam_min.y + 22, (hp_bar_width - 4) * (clientState.hp / 100.0), 16);
+            }
             p.pop();
         }
         p.preload = function () {

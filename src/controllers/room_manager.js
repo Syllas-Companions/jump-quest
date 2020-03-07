@@ -1,10 +1,18 @@
-import GameManager from "game_manager";
+import GameManager from "controllers/game_manager";
 
 var io;
 export default {
     lastRoomId: 0,
     rooms: new Map(),
     client_room_map: new Map(),
+    destroyRoom: function (roomId){
+        // function to remove the room when hp = 0, and cast all player inside back to lobby
+        // let room = this.rooms.get(roomId);
+        console.log(roomId);
+        io.in(roomId).emit('gameOver', 'lobby'); // call all client in room to safely quit the room (require client to call joinRoom(lobby))
+        // this.rooms.delete(roomId);
+
+    },
     joinRoom: function (socket, roomId) {
         let targetRoom, character_metadata = null;
         if (!this.client_room_map.has(socket.id)) {
@@ -15,6 +23,10 @@ export default {
             // client move to another room (managed by another GameManager)
             if (!this.rooms.has(roomId)) { // if room not exists 
                 targetRoom = new GameManager(roomId);
+                targetRoom.loseCallback = function(){
+                    this.destroyRoom(roomId);
+                    console.log('logged out');
+                }.bind(this);
                 targetRoom.start();
                 this.rooms.set(targetRoom.id, targetRoom)
             } else { // room exists
@@ -46,7 +58,11 @@ export default {
         let context = this;
 
         let waitingResponseList = []
+
+        // create lobby
         let lobby = new GameManager('lobby');
+        lobby.hp = undefined;
+        lobby.decreaseHp = function (){}
         lobby.start();
         // override lobby's nextMap function
         lobby.nextMap = (function (character, door) {
@@ -90,6 +106,7 @@ export default {
         // send worlds to client views 20 times per sec
         setInterval(function () {
             // loop through worlds
+            // TODO: check and remove room without any player
             context.rooms.forEach((room, rId) => {
                 // send only information of characters and movable objects
                 // create a minimized list of object to send

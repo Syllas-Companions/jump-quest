@@ -2,7 +2,7 @@ import Matter from 'matter-js'
 import Character from 'game-objects/character'
 import GameMap from 'game-map'
 import C from 'myConstants'
-import level_manager from 'level_manager'
+import level_manager from 'controllers/level_manager'
 
 var Engine = Matter.Engine,
     Events = Matter.Events,
@@ -34,7 +34,8 @@ export default class GameManager {
     }
     decreaseHp(){
         this.hp-=1;
-        if(this.hp==0){
+        if(this.hp<=0){
+            if(this.loseCallback) this.loseCallback();
             // TODO: player loses, call the callback (to room_manager/multi mode) or show popup (single mode)
         }
     }

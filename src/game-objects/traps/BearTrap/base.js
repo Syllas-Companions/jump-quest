@@ -32,10 +32,11 @@ export default class BearTrap extends GameObject {
 
                 if (collision.bodyA.objType == 'character-body' || collision.bodyB.objType == 'character-body') {
                     // console.log(collision);
-                    console.log("u dead");
+                    // console.log("u dead");
                     let char_physics = collision.bodyA.objType == 'character-body' ? collision.bodyA : collision.bodyB;
                     let char_logics = char_physics.character_logic;
                     char_logics.gotHit();
+                    char_logics.forceBack(this.body.position);
                     // console.log(char_logics);
                     // char_logics.die();
                 }
