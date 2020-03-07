@@ -34,8 +34,8 @@ export default class GameManager {
     decreaseHp(damage) {
         if (damage) {
             this.hp -= damage;
-        }else{
-            this.hp -=1;
+        } else {
+            this.hp -= 1;
         }
         if (this.hp <= 0) {
             if (this.loseCallback) this.loseCallback();
@@ -209,6 +209,14 @@ export default class GameManager {
 
         if (this.currentMap) {
             this.currentMap.update();
+        }
+    }
+    // create a minimized list of object to send to client
+    simplify() {
+        return {
+            hp: this.hp,
+            total_hp: this.total_hp,
+            objects: [].concat(this.currentMap.getMovingObj(), this.getCharactersRenderObj()).filter(e => e)
         }
     }
 }

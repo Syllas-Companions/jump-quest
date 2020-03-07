@@ -117,15 +117,7 @@ export default {
                     console.log("Worlds remaining: " + context.rooms.size)
                     return;
                 }
-                // send only information of characters and movable objects
-                // create a minimized list of object to send
-                let objects = []
-                objects = objects.concat(room.currentMap.getMovingObj(), room.getCharactersRenderObj()).filter(e=>e)
-                io.to(rId).emit('worldUpdate', {
-                    hp: room.hp,
-                    total_hp: room.total_hp, // TODO: create simplify function for room/ gamemanager
-                    objects
-                })
+                io.to(rId).emit('worldUpdate', room.simplify())
             });
         }, 1000 / 20)
     },
