@@ -21,7 +21,7 @@ class MovablePlatform extends Tile {
         this.prePoint = this.polygon[1];
         this.distance = 0;
         this.findPoint = 0;
-        this.speed = 0.01;
+        this.speed = 0.02;
         // di chuyen enemy 
         Body.setStatic(this.body, false);
     }
