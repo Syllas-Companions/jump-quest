@@ -22,6 +22,8 @@ class MovablePlatform extends Tile {
         this.distance = 0;
         this.findPoint = 0;
         this.speed = 0.01;
+        // di chuyen enemy 
+        Body.setStatic(this.body, false);
     }
     update() { 
         Body.setAngle(this.body, 0);
@@ -50,8 +52,6 @@ class MovablePlatform extends Tile {
         let xTo = x - this.body.position.x;
         let yTo = y - this.body.position.y;
         // console.log(xTo);
-        // di chuyen enemy 
-        Body.setStatic(this.body, false);
         //cần chuyển sang xTo yTo
         // console.log(this.speed);
         Body.setVelocity(this.body, { x: xTo * this.speed, y: yTo * this.speed });

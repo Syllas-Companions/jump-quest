@@ -24,25 +24,27 @@ function initTileLayer(layerJson, type, createdObjects) {
         if(layerJson.name == 'movable') {
             var polygon = [];
 
-            layerJson.objects.forEach(layer => {
-                if(layer.name == 'path'){
-                    polygon = layer.polygon;
-                }
-            })
-            layerJson.objects.forEach(layer => {
-                if(layer.name == 'tile') { 
-                    let tileObjG = new type(this,
-                        layer.x,
-                        layer.y,
-                        this.tileWidth,
-                        this.tileHeight,
-                        layer.data,
-                        polygon
-                        );
-                        createdObjects.push(tileObjG);
-                        
-                }
-            })
+            // layerJson.objects.forEach(layer => {
+            //     if(layer.name == 'path'){
+            //         polygon = layer.polygon;
+            //     }
+            // })
+
+            var polygonLayer = layerJson.objects.find(layer => layer.name == 'path');
+            if(polygonLayer) polygon = polygonLayer.polygon;
+            
+            var tileLayer = layerJson.objects.find(layer => layer.name == 'tile');
+            if(tileLayer) {
+                let tileObjG = new type(this,
+                    tileLayer.x,
+                    tileLayer.y,
+                    this.tileWidth,
+                    this.tileHeight,
+                    tileLayer.gid,
+                    polygon
+                    );
+                    createdObjects.push(tileObjG);
+            }
         }
     }
 }
