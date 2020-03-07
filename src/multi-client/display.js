@@ -3,8 +3,8 @@ import { polynomial } from 'everpolate'
 import tileset_manager from 'controllers/tileset_manager'
 import camera from 'camera'
 import C from 'myConstants'
-
-export default function (clientState) {
+import gui from './gui'
+export default function (socket, clientState) {
     let sketch = function (p) {
         function getCoordinate(timestamp, point) {
             let curTime = new Date().getTime();
@@ -80,30 +80,58 @@ export default function (clientState) {
                 p.endShape(p.CLOSE);
             }
             if (obj.type == C.LAYER_MAP_TILES) {
-            // render obj.hp (for platform with durability) as hp-bar due to performance when changing tint value
-            if (obj.hp && obj.total_hp) {
+                // render obj.hp (for platform with durability) as hp-bar due to performance when changing tint value
+                if (obj.hp && obj.total_hp) {
                     let { x, y } = getCoordinate(obj.timestamp, obj.position);
                     let hp_bar_height = 6;
                     let hp_bar_x_offset = 10;
                     let hp_bar_length = obj.size.x - 2 * hp_bar_x_offset;
-                    drawHpBar(x,y,hp_bar_length,hp_bar_height, (obj.hp / obj.total_hp))
+                    drawHpBar(x, y, hp_bar_length, hp_bar_height, (obj.hp / obj.total_hp))
                 }
             }
             if (obj.type == C.LAYER_CHARACTER) {
                 // flashing character when statuses contains "hurt"
-                if(obj.statuses && obj.statuses.includes('hurt'))
-                {
-                    p.push();
-                    let alpha = p.sin(Date.now()/25)>0?100:0;
-                    p.fill(0, 0, 0, alpha);
-                    p.beginShape();
-                    // draw border
-                    obj.vertices.forEach(vertex => {
-                        let { x, y } = getCoordinate(obj.timestamp, vertex);
-                        p.vertex(x, y);
-                    })
-                    p.endShape(p.CLOSE);
-                    p.pop();
+                if (obj.statuses) {
+                    // console.log(obj.statuses);
+                    let message = obj.statuses.find(s => s.name == 'message');
+                    if (message) {
+                        p.push();
+                        let { x, y } = getCoordinate(obj.timestamp, obj.position);
+
+                        p.translate(x, y - 75);
+
+                        // draw bubble
+                        p.stroke(0);
+                        p.fill(255);
+                        if (obj.facing == -1) p.scale(-1, 1);
+                        p.triangle(40, 25, 45, 25, 35, 30);
+                        if (obj.facing == -1) p.scale(-1, 1);
+                        p.rectMode(p.CENTER);
+                        p.rect(0, 0, 100, 50);
+                        // draw text
+                        p.textSize(12);
+                        p.fill(0);
+                        p.noStroke()
+
+                        p.textAlign(p.CENTER);
+                        p.text(message.info, 0, 0, 90, 40);
+
+                        p.pop();
+                    }
+
+                    if (obj.statuses.find(s => s.name == 'hurt')) {
+                        p.push();
+                        let alpha = p.sin(Date.now() / 25) > 0 ? 100 : 0;
+                        p.fill(0, 0, 0, alpha);
+                        p.beginShape();
+                        // draw border
+                        obj.vertices.forEach(vertex => {
+                            let { x, y } = getCoordinate(obj.timestamp, vertex);
+                            p.vertex(x, y);
+                        })
+                        p.endShape(p.CLOSE);
+                        p.pop();
+                    }
                 }
                 // draw face of character
                 if (obj.faceAscii) {
@@ -170,10 +198,10 @@ export default function (clientState) {
         }
         // TODO: move GUI to another file
         p.initGUI = function () {
-
+            gui.init(socket, clientState, p);
         }
 
-        p.updateGUI = function () {
+        p.updateRoomHp = function () {
             p.push()
             p.scale(camera.scale)
             let cam_min = camera.min()
@@ -206,8 +234,14 @@ export default function (clientState) {
             p.initGUI();
         };
         p.keyPressed = function () {
+            if (p.keyCode === p.ESCAPE) {
+                if (gui.isChatOn)
+                    gui.toggleChat()
+                else
+                    gui.toggleMenu();
+            }
             if (p.keyCode === p.ENTER) {
-                console.log(clientState);
+                gui.toggleChat();
             }
         }
         p.draw = function () {
@@ -236,7 +270,7 @@ export default function (clientState) {
                 p.text("DISCONNECTED", p.windowWidth / 2, p.windowHeight / 2)
                 p.pop();
             }
-            p.updateGUI();
+            p.updateRoomHp();
         };
     };
     let p5_instance = new p5(sketch);

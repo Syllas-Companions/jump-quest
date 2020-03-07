@@ -63,7 +63,7 @@ export default {
 
         // create lobby
         let lobby = new GameManager('lobby');
-        lobby.hp = undefined;
+        lobby.hp = Infinity;
         lobby.decreaseHp = function () { }
         lobby.start();
         // override lobby's nextMap function
@@ -81,9 +81,21 @@ export default {
                 socket.emit('pongResponse');
             });
             socket.on('inputUpdate', function (data) {
-                if (context.client_room_map.get(socket.id) && context.rooms.get(context.client_room_map.get(socket.id)))
-                    context.rooms.get(context.client_room_map.get(socket.id)).updateInput(socket.id, data);
+                let roomId = context.client_room_map.get(socket.id);
+                let room = roomId ? context.rooms.get(roomId) : null;
+                if (room)
+                    room.updateInput(socket.id, data);
             });
+
+            socket.on('userMessage', function (message) {
+                // add message to character
+                let roomId = context.client_room_map.get(socket.id);
+                let room = roomId ? context.rooms.get(roomId) : null;
+                if (room) {
+                    room.addUserMessage(socket.id, message);
+                    io.to(roomId).emit('userMessage', { userId: socket.id, message });
+                }
+            })
 
             socket.on('responseRoomName', (roomId) => {
                 waitingResponseList = waitingResponseList.filter(id => id != socket.id);
