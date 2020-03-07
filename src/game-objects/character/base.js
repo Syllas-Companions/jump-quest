@@ -10,6 +10,35 @@ var Engine = Matter.Engine,
     Pair = Matter.Pair,
     Constraint = Matter.Constraint,
     Body = Matter.Body;
+class CharStatus {
+    constructor(character, duration) {
+        this.character = character;
+        this.duration = duration;
+        this.active_time = Date.now();
+    }
+    update() {
+        if (Date.now() - this.active_time > this.duration) {
+            this.finish();
+        }
+    }
+    finish() {
+        if (this.character && this.character.statuses) {
+            let index = this.character.statuses.indexOf(this)
+            this.character.statuses.splice(index,1);
+        }
+    }
+}
+class HurtStatus extends CharStatus{
+    constructor(character, duration){
+        super(character, duration);
+        this.name = "hurt";
+        this.faceAscii = "ಠ╭╮ಠ";
+    }
+    finish(){
+        this.faceAscii = "⚆_⚆";
+        super.finish();
+    }
+}
 //class character
 class Character extends GameObject {
 
@@ -35,6 +64,7 @@ class Character extends GameObject {
         // this.isJumping = true;
         // this.isChanneling = true;
 
+        this.faceAscii = "⚆_⚆";
         if (metadata) {
             this.metadata = metadata
         } else {
@@ -76,8 +106,14 @@ class Character extends GameObject {
     destroy() {
         World.remove(this.gm.engine.world, this.body, true);
     }
+
+    addStatus(status){
+        if(!this.statuses) this.statuses = [];
+        this.statuses.push(status);
+    }
     // TODO: call this on traps 
-    gotHit(){
+    gotHit() {
+        this.addStatus(new HurtStatus(this, 2000));
         this.gm.decreaseHp();
     }
     die() {
@@ -91,6 +127,8 @@ class Character extends GameObject {
     }
     // added update function that get called from main index.js every "beforeUpdate" event
     update() {
+        // update on statuses
+        if(this.statuses) this.statuses.forEach(s => s.update());
         // query the list of collisions
         let collisions = Matter.Query.collides(this.sensorDown, this.gm.engine.world.bodies);
         // not jumping but collided with no object (incl platform)
@@ -128,19 +166,22 @@ class Character extends GameObject {
     }
     forceReverse() {
         if (this.facing == 1)
-        Body.setVelocity(this.body, {x: -this.velocityReverse, y: -this.velocityReverse});
+            Body.setVelocity(this.body, { x: -this.velocityReverse, y: -this.velocityReverse });
         if (this.facing == -1)
-        Body.setVelocity(this.body, {x: this.velocityReverse, y: -this.velocityReverse});
-        
+            Body.setVelocity(this.body, { x: this.velocityReverse, y: -this.velocityReverse });
+
     }
 
-    simplify(){
+    simplify() {
         return Object.assign({
             type: C.LAYER_CHARACTER,
             metadata: this.metadata,
             client_id: this.id,
+            faceAscii: this.faceAscii,
+            statuses: this.statuses,
+            facing: this.facing,
             position: this.body.position
-        },super.simplify())
+        }, super.simplify())
     }
 }
 

@@ -28,6 +28,7 @@ export default function (clientState) {
             return { x, y }
         }
         function drawObject(obj) {
+            // TODO: draw face of character
             // TODO: render obj.hp (for platform with durability) as hp-bar if value != 1 due to performance when changing tint value
             if (obj.tile_id) {
                 // draw tile
@@ -69,9 +70,26 @@ export default function (clientState) {
             }
             // draw the client name on top (for players)
             if (obj.type == C.LAYER_CHARACTER) {
-                if (obj.client_id) {
+                if(obj.faceAscii){
+                    p.push();
+                    p.fill(255);
                     let { x, y } = getCoordinate(obj.timestamp, obj.position);
-                    p.text(obj.client_id, x - 70, y - 35);
+                    p.translate(x,y);
+                    if(obj.facing==-1) p.rotateY(p.PI);
+                    p.textSize(16);
+                    p.textFont(p.faceFont);
+                    p.text(obj.faceAscii,0,0);
+                    p.textFont(p.font);
+                    if(obj.facing==-1) p.rotateY(p.PI);
+                    p.pop();
+                }
+                if (obj.client_id) {
+                    p.push();
+                    let { x, y } = getCoordinate(obj.timestamp, obj.position);
+                    p.translate(x - 70, y - 35);
+                    p.textSize(12);
+                    p.text(obj.client_id, 0,0);
+                    p.pop();
                 }
             }
         }
@@ -130,14 +148,20 @@ export default function (clientState) {
 
             p.pop();
         }
+        p.preload = function (){
+            p.font = p.loadFont('/fonts/arial.ttf');
+            p.faceFont = p.loadFont('/fonts/seguisym.ttf');
+            console.log(p.textFont)
+        }
         p.setup = function () {
             p.select('body').style('margin:0px')
             tileset_manager.setP5Instance(p);
-            let canvas = p.createCanvas(p.windowWidth, p.windowHeight);
+            let canvas = p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
             canvas.style('display:block')
             camera.width = p.windowWidth;
             camera.height = p.windowHeight;
             p.frameRate(60);
+            
             // let button = p.createButton('click me');
             // button.position(0, 0);
             p.initGUI();
@@ -148,6 +172,8 @@ export default function (clientState) {
             }
         }
         p.draw = function () {
+            p.translate(-p.windowWidth/2, -p.windowHeight/2) // WEBGL MODE ONLY, DUE TO DIFFERENT IN COORDINATE"S ORIGIN
+            p.textFont(p.font);
             if (clientState.isAlive) {
                 camera.update();
                 p.background(0);

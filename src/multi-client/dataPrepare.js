@@ -86,17 +86,21 @@ socket.on('worldUpdate', function (data) {
         if (clientState.dynamicData.has(obj.id)) {
             // old object 
             let objState = clientState.dynamicData.get(obj.id)
+            let {vertices, position, ...metaData} = obj;
+            Object.assign(objState, metaData); // update other properties
+
+            // update position and vertices in a way easier to use later in calculation
             for (let i = 0; i < objState.vertices.length; i++) {
-                objState.vertices[i].x.push(obj.vertices[i].x);
-                objState.vertices[i].y.push(obj.vertices[i].y);
+                objState.vertices[i].x.push(vertices[i].x);
+                objState.vertices[i].y.push(vertices[i].y);
                 if (objState.vertices[i].x.length > MAX_SAVED_STATE) {
                     objState.vertices[i].x.shift();
                     objState.vertices[i].y.shift();
                 }
             }
             objState.timestamp.push(timestamp)
-            objState.position.x.push(obj.position.x);
-            objState.position.y.push(obj.position.y);
+            objState.position.x.push(position.x);
+            objState.position.y.push(position.y);
             if (objState.timestamp.length > MAX_SAVED_STATE) {
                 objState.timestamp.shift();
                 objState.position.x.shift();
