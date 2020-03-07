@@ -32,10 +32,10 @@ class HurtStatus extends CharStatus{
     constructor(character, duration){
         super(character, duration);
         this.name = "hurt";
-        this.faceAscii = "ಠ╭╮ಠ";
+        this.character.faceAscii = "ಠ╭╮ಠ";
     }
     finish(){
-        this.faceAscii = "⚆  ‿  ⚆";
+        this.character.faceAscii = "⚆  v  ⚆";
         super.finish();
     }
 }
@@ -110,9 +110,11 @@ class Character extends GameObject {
     addStatus(status){
         if(!this.statuses) this.statuses = [];
         this.statuses.push(status);
+        // console.log(this.statuses.length)
     }
     // TODO: call this on traps 
     gotHit() {
+        // console.log(this.faceAscii)
         this.addStatus(new HurtStatus(this, 2000));
         this.gm.decreaseHp();
     }
@@ -178,7 +180,7 @@ class Character extends GameObject {
             metadata: this.metadata,
             client_id: this.id,
             faceAscii: this.faceAscii,
-            statuses: this.statuses,
+            statuses: this.statuses?this.statuses.map(s=>s.name):undefined,
             facing: this.facing,
             position: this.body.position
         }, super.simplify())

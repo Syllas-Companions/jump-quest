@@ -4,7 +4,6 @@ import tileset_manager from 'tileset_manager'
 import camera from 'camera'
 import C from 'myConstants'
 
-// TODO: uniform function to draw static/dynamic function (meaning, if position turn out to be array -> use array method, else use number method)
 export default function (clientState) {
     let sketch = function (p) {
         function getCoordinate(timestamp, point) {
@@ -28,7 +27,6 @@ export default function (clientState) {
             return { x, y }
         }
         function drawObject(obj) {
-            // TODO: draw face of character
             // TODO: render obj.hp (for platform with durability) as hp-bar if value != 1 due to performance when changing tint value
             if (obj.tile_id) {
                 // draw tile
@@ -68,31 +66,32 @@ export default function (clientState) {
                 })
                 p.endShape(p.CLOSE);
             }
-            // draw the client name on top (for players)
             if (obj.type == C.LAYER_CHARACTER) {
-                if(obj.faceAscii){
+                // draw face of character
+                if (obj.faceAscii) {
                     p.push();
                     p.fill(255);
                     p.stroke(0);
                     let { x, y } = getCoordinate(obj.timestamp, obj.position);
-                    p.translate(x,y);
-                    p.scale(0.6,1)
-                    if(obj.facing==-1) p.scale(-1,1);
+                    p.translate(x, y);
+                    p.scale(0.6, 1)
+                    if (obj.facing == -1) p.scale(-1, 1);
                     // p.textAlign(p.CENTER);
                     p.textSize(16);
                     // p.textFont(p.faceFont);
                     p.strokeWeight(3);
-                    p.text(obj.faceAscii,0,0);
+                    p.text(obj.faceAscii, 0, 0);
                     // p.textFont(p.font);
-                    if(obj.facing==-1) p.scale(-1,1);
+                    if (obj.facing == -1) p.scale(-1, 1);
                     p.pop();
                 }
+                // draw the client name on top (for players)
                 if (obj.client_id) {
                     p.push();
                     let { x, y } = getCoordinate(obj.timestamp, obj.position);
                     p.translate(x - 70, y - 35);
                     p.textSize(12);
-                    p.text(obj.client_id, 0,0);
+                    p.text(obj.client_id, 0, 0);
                     p.pop();
                 }
             }
@@ -143,7 +142,7 @@ export default function (clientState) {
             let cam_max = camera.max()
             p.translate(-cam_min.x, -cam_min.y)
             let side_offset = 150;
-            let hp_bar_width = cam_max.x - cam_min.x - side_offset*2;
+            let hp_bar_width = cam_max.x - cam_min.x - side_offset * 2;
             p.fill(255)
             p.rect(cam_min.x + side_offset, cam_min.y + 20, hp_bar_width, 20);
             p.fill(255, 0, 0)
@@ -152,7 +151,7 @@ export default function (clientState) {
 
             p.pop();
         }
-        p.preload = function (){
+        p.preload = function () {
             // p.font = p.loadFont('/fonts/arial.ttf');
             // p.faceFont = p.loadFont('/fonts/seguisym.ttf');
             // console.log(p.textFont)
@@ -165,7 +164,7 @@ export default function (clientState) {
             camera.width = p.windowWidth;
             camera.height = p.windowHeight;
             p.frameRate(60);
-            
+
             // let button = p.createButton('click me');
             // button.position(0, 0);
             p.initGUI();
@@ -190,6 +189,7 @@ export default function (clientState) {
                 p.drawMap();
                 p.drawMovingObjs();
                 p.fill(255)
+                p.stroke(0)
                 p.text("Room: " + clientState.mapData.name, cam_min.x + 20, cam_min.y + 20);
                 p.text(clientState.latency, cam_max.x - 20, cam_min.y + 20);
                 p.pop();

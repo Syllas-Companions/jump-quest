@@ -10,15 +10,16 @@ var Engine = Matter.Engine,
 
 //class enemys
 const DEFAULT_SPEED = 0.01;
-export default class Enemy extends GameObject{
+export default class Enemy extends GameObject {
 
 
     constructor(map, json) {//pos, polygon,speed) {
         let path = json.objects.find(obj => obj.name == "path");
         let tile = json.objects.find(obj => obj.name == "tile");
         let pos = { x: path.x, y: path.y };
-        super(Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, isStatic:true, objType: "enemy" }));
-        console.log(this.body.render)
+        super(Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, isStatic: true, objType: "enemy" }));
+
+        this.ignoreList = []
         if (tile) {
             this.tile_id = tile.gid;
         }
@@ -40,6 +41,7 @@ export default class Enemy extends GameObject{
     }
     //function update beforce update
     update() {
+        let curFrameChars = []
         Matter.Query.collides(this.body, this.map.engine.world.bodies)
             .forEach((collision) => {
                 // console.log(collision.bodyA.objType);
@@ -51,7 +53,11 @@ export default class Enemy extends GameObject{
                     let char_physics = collision.bodyA.objType == 'character-body' ? collision.bodyA : collision.bodyB;
                     let char_logics = char_physics.character_logic;
                     // console.log(char_logics);
-                    char_logics.forceReverse();
+                    if (this.ignoreList.findIndex(id => (id == char_logics.id)) == -1) {
+                        this.ignoreList.push(char_logics.id);
+                        char_logics.forceReverse();
+                        char_logics.gotHit();
+                    }
                     // Body.applyForce(this.composite,this.composite.position,{x:0,y:-0.1});
                 }
             })
@@ -65,6 +71,7 @@ export default class Enemy extends GameObject{
             this.prePoint = this.targetPoint;
             this.getNextPoint(this.prePoint);
         }
+        this.ignoreList = this.ignoreList.filter(id => (curFrameChars.findIndex(e => e == id) != -1))
 
     }
     getNextPoint(pre) {
