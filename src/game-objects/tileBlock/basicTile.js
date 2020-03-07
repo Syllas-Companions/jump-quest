@@ -37,4 +37,14 @@ export default class Tile extends GameObject {
     }
     update() {
     }
+
+    simplify() {
+        return Object.assign({
+            type: C.LAYER_MAP_TILES,
+            size: {
+                x:this.width,
+                y:this.height
+            }
+        }, super.simplify())
+    }
 }

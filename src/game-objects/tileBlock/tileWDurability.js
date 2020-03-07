@@ -33,6 +33,14 @@ class TileWDurability extends Tile {
             }
         }
     }
+    simplify() {
+        if (!this.isDestroyed) {
+            return Object.assign({
+                total_hp: DEFAULT_DURABILITY,
+                hp: this.durability
+            }, super.simplify())
+        } else return null;
+    }
 }
 
 export default TileWDurability;

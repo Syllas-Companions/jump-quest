@@ -113,8 +113,9 @@ class Character extends GameObject {
         // console.log(this.statuses.length)
     }
     gotHit(damage) {
-        // console.log(this.faceAscii)
-        this.addStatus(new HurtStatus(this, 2000));
+        // extend hurt duration instead of adding 1 more
+        if(this.statuses) this.statuses = this.statuses.filter(e=>!(e instanceof HurtStatus))
+        this.addStatus(new HurtStatus(this, 1000));
         this.gm.decreaseHp(damage);
     }
     // die() {
@@ -188,8 +189,7 @@ class Character extends GameObject {
             client_id: this.id,
             faceAscii: this.faceAscii,
             statuses: this.statuses ? this.statuses.map(s => s.name) : undefined,
-            facing: this.facing,
-            position: this.body.position
+            facing: this.facing
         }, super.simplify())
     }
 }

@@ -67,7 +67,7 @@ socket.on('requestRoomName', function () {
 
 socket.on('gameOver', function (data) {
     console.log("gameover")
-    // TODO: show message or such 
+    // TODO: show message or such (when GUI's ready)
     socket.emit('joinGame', 'lobby');
 });
 
@@ -75,18 +75,19 @@ var MAX_SAVED_STATE = 4
 clientState.dynamicData = new Map()
 socket.on('worldUpdate', function (data) {
     let timestamp = new Date().getTime() + 50; // TODO: might be better when considering ping in place of constant
+    let {objects, ...worldMetadata} = data;
 
-    clientState.hp = data.hp;
+    Object.assign(clientState, worldMetadata); // update other properties
     
     // remove objects which are not in this package (objects which are no longer exist)
     clientState.dynamicData.forEach((val, key) => {
-        if (data.objects.every(obj => obj.id != key)) {
+        if (objects.every(obj => obj.id != key)) {
             clientState.dynamicData.delete(key);
         }
     })
     // transform the package for easier calculation
 
-    data.objects.forEach(obj => {
+    objects.forEach(obj => {
         if(!obj) return;
         if (clientState.dynamicData.has(obj.id)) {
             // old object 

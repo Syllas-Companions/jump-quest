@@ -13,9 +13,13 @@ export default function (clientState) {
                 // input is array => can be predict
                 let prediction = (timestamp.length >= 3);
                 if (prediction) { // predictable
-                    // TODO: check if distance is too high then return last value
+                    // check if distance is too high then return last received value (in this case prediction is likely incorrect)
                     x = polynomial(curTime, timestamp, point.x)[0];
                     y = polynomial(curTime, timestamp, point.y)[0];
+                    if (p.dist(x, y, point.x[point.x.length - 1], point.y[point.y.length - 1]) > C.CLIENT.MAX_EXTRAPOLATION_RANGE) {
+                        x = point.x[point.x.length - 1]
+                        y = point.y[point.y.length - 1];
+                    }
                 } else {
                     x = point.x[point.x.length - 1]
                     y = point.y[point.y.length - 1];
@@ -26,8 +30,17 @@ export default function (clientState) {
             }
             return { x, y }
         }
+        function drawHpBar(x, y, w, h, percent) {
+            p.push();
+            p.translate(x - w / 2, y - h / 2);
+            p.fill(255);
+            p.rect(0, 0, w, h);
+            p.fill(200, 0, 0);
+            p.noStroke();
+            p.rect(2, 1, (w - 4) * (percent), h - 2);
+            p.pop();
+        }
         function drawObject(obj) {
-            // TODO: render obj.hp (for platform with durability) as hp-bar if value != 1 due to performance when changing tint value
             if (obj.tile_id) {
                 // draw tile
                 let tileset = clientState.mapData.tilesets.find(ts => {
@@ -66,8 +79,32 @@ export default function (clientState) {
                 })
                 p.endShape(p.CLOSE);
             }
+            if (obj.type == C.LAYER_MAP_TILES) {
+            // render obj.hp (for platform with durability) as hp-bar due to performance when changing tint value
+            if (obj.hp && obj.total_hp) {
+                    let { x, y } = getCoordinate(obj.timestamp, obj.position);
+                    let hp_bar_height = 6;
+                    let hp_bar_x_offset = 10;
+                    let hp_bar_length = obj.size.x - 2 * hp_bar_x_offset;
+                    drawHpBar(x,y,hp_bar_length,hp_bar_height, (obj.hp / obj.total_hp))
+                }
+            }
             if (obj.type == C.LAYER_CHARACTER) {
-                // TODO: flashing when statuses contains "hurt"
+                // flashing character when statuses contains "hurt"
+                if(obj.statuses && obj.statuses.includes('hurt'))
+                {
+                    p.push();
+                    let alpha = p.sin(Date.now()/25)>0?100:0;
+                    p.fill(0, 0, 0, alpha);
+                    p.beginShape();
+                    // draw border
+                    obj.vertices.forEach(vertex => {
+                        let { x, y } = getCoordinate(obj.timestamp, vertex);
+                        p.vertex(x, y);
+                    })
+                    p.endShape(p.CLOSE);
+                    p.pop();
+                }
                 // draw face of character
                 if (obj.faceAscii) {
                     p.push();
@@ -145,12 +182,8 @@ export default function (clientState) {
             if (clientState.hp) {
                 let side_offset = 150;
                 let hp_bar_width = cam_max.x - cam_min.x - side_offset * 2;
-                // draw white 
-                p.fill(255)
-                p.rect(cam_min.x + side_offset, cam_min.y + 20, hp_bar_width, 20);
-                // draw red bar
-                p.fill(255, 0, 0)
-                p.rect(cam_min.x + side_offset + 2, cam_min.y + 22, (hp_bar_width - 4) * (clientState.hp / 100.0), 16);
+
+                drawHpBar(camera.position.x, cam_min.y + 25, hp_bar_width, 20, (clientState.hp / 100.0))
             }
             p.pop();
         }

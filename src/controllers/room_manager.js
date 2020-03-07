@@ -15,12 +15,12 @@ export default {
     },
     joinRoom: function (socket, roomId) {
         let targetRoom, character_metadata = null;
-        // TODO: check if player already in that room
         if (!this.client_room_map.has(socket.id)) {
             console.log("NEW CLIENT: " + socket.id);
             targetRoom = this.rooms.get("lobby");
         } else {
-            if(this.client_room_map.get(socket.id)==roomId) return;
+            // do not do anything player already in that room
+            if (this.client_room_map.get(socket.id) == roomId) return;
             if (!roomId) return;
             // client move to another room (managed by another GameManager)
             if (!this.rooms.has(roomId)) { // if room not exists 
@@ -107,22 +107,23 @@ export default {
 
         setInterval(function () {
             // loop through worlds
-            // TODO: check and remove room without any player
 
             // send worlds to client views 20 times per sec
             context.rooms.forEach((room, rId) => {
-                if(room.id!='lobby' && room.getPlayerCount()==0 && room.hp<=0){
+                // check and remove room without any player
+                if (room.id != 'lobby' && room.getPlayerCount() == 0 && room.hp <= 0) {
                     context.rooms.delete(rId);
-                    console.log("World '"+room.id+ "' has fallen!")
-                    console.log("Worlds remaining: "+context.rooms.size)
+                    console.log("World '" + room.id + "' has fallen!")
+                    console.log("Worlds remaining: " + context.rooms.size)
                     return;
                 }
                 // send only information of characters and movable objects
                 // create a minimized list of object to send
                 let objects = []
-                objects = objects.concat(room.currentMap.getMovingObj(), room.getCharactersRenderObj())
+                objects = objects.concat(room.currentMap.getMovingObj(), room.getCharactersRenderObj()).filter(e=>e)
                 io.to(rId).emit('worldUpdate', {
                     hp: room.hp,
+                    total_hp: room.total_hp, // TODO: create simplify function for room/ gamemanager
                     objects
                 })
             });

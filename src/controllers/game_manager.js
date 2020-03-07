@@ -25,6 +25,7 @@ export default class GameManager {
 
         // init character array
         this.hp = 100;
+        this.total_hp = 100;
         this.character_map = new Map();
         this.nextMap = this.nextMap.bind(this);
         this.createCharacter = this.createCharacter.bind(this);

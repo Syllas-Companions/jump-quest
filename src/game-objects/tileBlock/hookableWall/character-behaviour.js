@@ -62,6 +62,7 @@ function wallJump(isKeyDown, isChanged) {
             this.hw_timestamp_break = Date.now();
             this.tileConstraint = null;
             this.timeStartJump = new Date();
+            this.facing*=-1;
             return true;
         }
         return false;
