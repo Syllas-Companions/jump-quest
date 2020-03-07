@@ -35,7 +35,7 @@ class HurtStatus extends CharStatus{
         this.faceAscii = "ಠ╭╮ಠ";
     }
     finish(){
-        this.faceAscii = "⚆_⚆";
+        this.faceAscii = "⚆  ‿  ⚆";
         super.finish();
     }
 }
@@ -64,7 +64,7 @@ class Character extends GameObject {
         // this.isJumping = true;
         // this.isChanneling = true;
 
-        this.faceAscii = "⚆_⚆";
+        this.faceAscii = "⚆  v  ⚆";
         if (metadata) {
             this.metadata = metadata
         } else {

@@ -73,14 +73,18 @@ export default function (clientState) {
                 if(obj.faceAscii){
                     p.push();
                     p.fill(255);
+                    p.stroke(0);
                     let { x, y } = getCoordinate(obj.timestamp, obj.position);
                     p.translate(x,y);
-                    if(obj.facing==-1) p.rotateY(p.PI);
+                    p.scale(0.6,1)
+                    if(obj.facing==-1) p.scale(-1,1);
+                    // p.textAlign(p.CENTER);
                     p.textSize(16);
-                    p.textFont(p.faceFont);
+                    // p.textFont(p.faceFont);
+                    p.strokeWeight(3);
                     p.text(obj.faceAscii,0,0);
-                    p.textFont(p.font);
-                    if(obj.facing==-1) p.rotateY(p.PI);
+                    // p.textFont(p.font);
+                    if(obj.facing==-1) p.scale(-1,1);
                     p.pop();
                 }
                 if (obj.client_id) {
@@ -149,14 +153,14 @@ export default function (clientState) {
             p.pop();
         }
         p.preload = function (){
-            p.font = p.loadFont('/fonts/arial.ttf');
-            p.faceFont = p.loadFont('/fonts/seguisym.ttf');
-            console.log(p.textFont)
+            // p.font = p.loadFont('/fonts/arial.ttf');
+            // p.faceFont = p.loadFont('/fonts/seguisym.ttf');
+            // console.log(p.textFont)
         }
         p.setup = function () {
             p.select('body').style('margin:0px')
             tileset_manager.setP5Instance(p);
-            let canvas = p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
+            let canvas = p.createCanvas(p.windowWidth, p.windowHeight/*, p.WEBGL*/);
             canvas.style('display:block')
             camera.width = p.windowWidth;
             camera.height = p.windowHeight;
@@ -172,8 +176,8 @@ export default function (clientState) {
             }
         }
         p.draw = function () {
-            p.translate(-p.windowWidth/2, -p.windowHeight/2) // WEBGL MODE ONLY, DUE TO DIFFERENT IN COORDINATE"S ORIGIN
-            p.textFont(p.font);
+            // p.translate(-p.windowWidth/2, -p.windowHeight/2) // WEBGL MODE ONLY, DUE TO DIFFERENT IN COORDINATE"S ORIGIN
+            // p.textFont(p.font);
             if (clientState.isAlive) {
                 camera.update();
                 p.background(0);
