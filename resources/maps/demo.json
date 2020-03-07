@@ -64,34 +64,40 @@
                  "name":"movable",
                  "objects":[
                         {
+                         "gid":6,
+                         "height":64,
+                         "id":22,
+                         "name":"tile",
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":64,
+                         "x":933.02244349613,
+                         "y":416.253674727359
+                        }, 
+                        {
                          "height":0,
-                         "id":13,
-                         "name":"",
+                         "id":24,
+                         "name":"path",
                          "polygon":[
                                 {
                                  "x":0,
                                  "y":0
                                 }, 
                                 {
-                                 "x":1.33333333333326,
-                                 "y":129.333333333333
+                                 "x":-2,
+                                 "y":118
                                 }, 
                                 {
-                                 "x":1.33333333333348,
-                                 "y":261.333333333333
-                                }],
-                         "properties":[
-                                {
-                                 "name":"width",
-                                 "type":"string",
-                                 "value":"2"
+                                 "x":-130,
+                                 "y":118
                                 }],
                          "rotation":0,
-                         "type":"",
+                         "type":"platform",
                          "visible":true,
                          "width":0,
-                         "x":1042.66666666667,
-                         "y":288
+                         "x":964,
+                         "y":388
                         }],
                  "opacity":1,
                  "type":"objectgroup",
@@ -367,8 +373,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":24,
- "nextobjectid":21,
+ "nextlayerid":26,
+ "nextobjectid":25,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -377,7 +383,7 @@
          "value":"0.03"
         }],
  "renderorder":"right-down",
- "tiledversion":"2019.10.30",
+ "tiledversion":"2020.01.22",
  "tileheight":64,
  "tilesets":[
         {
