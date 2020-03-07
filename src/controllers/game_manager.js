@@ -13,8 +13,6 @@ var Engine = Matter.Engine,
 
 function isNodejs() { return typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node !== 'undefined'; }
 
-// TODO: create a child class/object Lobby from GameManager with modified behaviour
-// TODO: control party's total HP and provide function to decrease, function then passed to character objects
 export default class GameManager {
     constructor(gmId, level = level_manager.getDefaultLevel()) {
         this.id = gmId;
@@ -32,11 +30,15 @@ export default class GameManager {
         this.createCharacter = this.createCharacter.bind(this);
         this.moveCharacter = this.moveCharacter.bind(this);
     }
-    decreaseHp(){
-        this.hp-=1;
-        if(this.hp<=0){
-            if(this.loseCallback) this.loseCallback();
-            // TODO: player loses, call the callback (to room_manager/multi mode) or show popup (single mode)
+    decreaseHp(damage) {
+        if (damage) {
+            this.hp -= damage;
+        }else{
+            this.hp -=1;
+        }
+        if (this.hp <= 0) {
+            if (this.loseCallback) this.loseCallback();
+            // player loses, call the callback (to room_manager/multi mode) or show popup (single mode TODO)
         }
     }
     nextMap() {
@@ -86,6 +88,9 @@ export default class GameManager {
     }
     getCharacterIdList() {
         return [...this.character_map.keys()]
+    }
+    getPlayerCount() {
+        return this.character_map.size;
     }
     isInGame(id) {
         return this.character_map.has(id);

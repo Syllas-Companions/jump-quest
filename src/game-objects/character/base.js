@@ -112,11 +112,10 @@ class Character extends GameObject {
         this.statuses.push(status);
         // console.log(this.statuses.length)
     }
-    // TODO: call this on traps 
-    gotHit() {
+    gotHit(damage) {
         // console.log(this.faceAscii)
         this.addStatus(new HurtStatus(this, 2000));
-        this.gm.decreaseHp();
+        this.gm.decreaseHp(damage);
     }
     // die() {
     //     // Body.setPosition(this.composite, { x: 500, y: 500 });

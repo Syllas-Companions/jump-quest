@@ -5,27 +5,29 @@ export default {
     lastRoomId: 0,
     rooms: new Map(),
     client_room_map: new Map(),
-    destroyRoom: function (roomId){
+    destroyRoom: function (roomId) {
         // function to remove the room when hp = 0, and cast all player inside back to lobby
         // let room = this.rooms.get(roomId);
-        console.log(roomId);
+        // console.log(roomId);
         io.in(roomId).emit('gameOver', 'lobby'); // call all client in room to safely quit the room (require client to call joinRoom(lobby))
         // this.rooms.delete(roomId);
 
     },
     joinRoom: function (socket, roomId) {
         let targetRoom, character_metadata = null;
+        // TODO: check if player already in that room
         if (!this.client_room_map.has(socket.id)) {
             console.log("NEW CLIENT: " + socket.id);
             targetRoom = this.rooms.get("lobby");
         } else {
+            if(this.client_room_map.get(socket.id)==roomId) return;
             if (!roomId) return;
             // client move to another room (managed by another GameManager)
             if (!this.rooms.has(roomId)) { // if room not exists 
                 targetRoom = new GameManager(roomId);
-                targetRoom.loseCallback = function(){
+                targetRoom.loseCallback = function () {
                     this.destroyRoom(roomId);
-                    console.log('logged out');
+                    // console.log('logged out');
                 }.bind(this);
                 targetRoom.start();
                 this.rooms.set(targetRoom.id, targetRoom)
@@ -39,7 +41,7 @@ export default {
             socket.leave(curRoom);
         }
         // add him to the target room
-        let character = targetRoom.createCharacter(socket.id,character_metadata)
+        let character = targetRoom.createCharacter(socket.id, character_metadata)
         this.client_room_map.set(socket.id, targetRoom.id)
         socket.join(targetRoom.id);
         // send current map information for rendering on client
@@ -62,7 +64,7 @@ export default {
         // create lobby
         let lobby = new GameManager('lobby');
         lobby.hp = undefined;
-        lobby.decreaseHp = function (){}
+        lobby.decreaseHp = function () { }
         lobby.start();
         // override lobby's nextMap function
         lobby.nextMap = (function (character, door) {
@@ -103,11 +105,18 @@ export default {
             });
         });
 
-        // send worlds to client views 20 times per sec
         setInterval(function () {
             // loop through worlds
             // TODO: check and remove room without any player
+
+            // send worlds to client views 20 times per sec
             context.rooms.forEach((room, rId) => {
+                if(room.id!='lobby' && room.getPlayerCount()==0 && room.hp<=0){
+                    context.rooms.delete(rId);
+                    console.log("World '"+room.id+ "' has fallen!")
+                    console.log("Worlds remaining: "+context.rooms.size)
+                    return;
+                }
                 // send only information of characters and movable objects
                 // create a minimized list of object to send
                 let objects = []
