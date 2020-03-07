@@ -29,6 +29,10 @@ function initTileLayer(layerJson, type, createdObjects) {
             //         polygon = layer.polygon;
             //     }
             // })
+            var speed = 0.02;
+            var speedLayer = layerJson.properties.find(layer => layer.name == 'speed')
+            if(speedLayer) speed = speedLayer.value ;
+            
 
             var polygonLayer = layerJson.objects.find(layer => layer.name == 'path');
             if(polygonLayer) polygon = polygonLayer.polygon;
@@ -41,7 +45,8 @@ function initTileLayer(layerJson, type, createdObjects) {
                     this.tileWidth,
                     this.tileHeight,
                     tileLayer.gid,
-                    polygon
+                    polygon,
+                    speed
                     );
                     createdObjects.push(tileObjG);
             }

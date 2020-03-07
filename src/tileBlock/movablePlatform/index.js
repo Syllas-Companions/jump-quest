@@ -9,7 +9,7 @@ var Engine = Matter.Engine,
     Body = Matter.Body;
 class MovablePlatform extends Tile {
     
-    constructor(map, x, y, width, height, tile_id,polygon) {
+    constructor(map, x, y, width, height, tile_id,polygon,speed) {
         super(map, x, y, width, height, tile_id);
         this.polygon = polygon;
         
@@ -21,7 +21,7 @@ class MovablePlatform extends Tile {
         this.prePoint = this.polygon[1];
         this.distance = 0;
         this.findPoint = 0;
-        this.speed = 0.02;
+        this.speed = speed;
         // di chuyen enemy 
         Body.setStatic(this.body, false);
     }
