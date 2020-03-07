@@ -73,7 +73,7 @@ function initDynamicPlatforms(layerJson) {
         }
         if (type) {
             initTileLayer.call(this, layer, type, createdObjects);
-            console.log(createdObjects);
+            // console.log(createdObjects);
         }
     })
     return createdObjects

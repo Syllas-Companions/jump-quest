@@ -20,7 +20,7 @@ export default class Door extends GameObject {
         if (doorJson.gid)
             this.body.render.tile_id = doorJson.gid
         else this.body.render.fillStyle = "#a86d32"
-        console.log(doorJson.gid)
+        // console.log(doorJson.gid)
         this.map = map;
         this.name = doorJson.name;
         let t = doorJson.properties.find(prop => prop.name == 'target');
@@ -49,7 +49,7 @@ export default class Door extends GameObject {
                     curFrameChars.push(char_logics.id);
                     if (this.ignoreList.findIndex(id => (id == char_logics.id)) == -1) {
                         this.ignoreList.push(char_logics.id);
-                        console.log(this.ignoreList)
+                        // console.log(this.ignoreList)
                         if (this.callback) this.callback(char_logics, this);
                     }
                     // NOTE: door's functionalities moved to creation step (in GameMap)

@@ -14,7 +14,7 @@ class MovablePlatform extends Tile {
         this.polygon = polygon;
         
         this.getDirection();
-        console.log(this.body.position)
+        // console.log(this.body.position)
         Body.setInertia(this.body,Infinity);
 
         this.targetPoint = this.polygon[2];
@@ -43,7 +43,7 @@ class MovablePlatform extends Tile {
         this.findPoint = this.polygon.indexOf(pre);
         if (this.findPoint == 2) this.findPoint = -1;
         this.targetPoint = this.polygon[this.findPoint + 1];
-        console.log(this.findPoint);
+        // console.log(this.findPoint);
     }
     //x,y vi tri den
     move(x, y) {
@@ -60,7 +60,7 @@ class MovablePlatform extends Tile {
     getDirection() {
         //input point 
         this.polygon.forEach((position) => {
-            console.log(position)
+            // console.log(position)
             position.x += this.body.position.x;
             position.y += this.body.position.y;
         })
