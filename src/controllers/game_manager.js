@@ -193,6 +193,12 @@ export default class GameManager {
         return objects
     }
 
+    addUserMessage(id, message){
+        if (this.character_map.has(id))
+            this.character_map.get(id).character.addUserMessage(message);
+    }
+
+
     updateInput(id, input) {
         if (this.character_map.has(id))
             this.character_map.get(id).input = input;

@@ -28,6 +28,16 @@ class CharStatus {
         }
     }
 }
+class UserMessage extends CharStatus {
+    constructor(character, message) {
+        super(character, 4000);
+        this.name = "message";
+        this.info = message;
+    }
+    finish() {
+        super.finish();
+    }
+}
 class HurtStatus extends CharStatus {
     constructor(character, duration) {
         super(character, duration);
@@ -103,6 +113,10 @@ class Character extends GameObject {
         }
     }
 
+    addUserMessage(message) {
+        if (this.statuses) this.statuses = this.statuses.filter(e => !(e instanceof UserMessage))
+        this.addStatus(new UserMessage(this, message));
+    }
     destroy() {
         World.remove(this.gm.engine.world, this.body, true);
     }
@@ -114,7 +128,7 @@ class Character extends GameObject {
     }
     gotHit(damage) {
         // extend hurt duration instead of adding 1 more
-        if(this.statuses) this.statuses = this.statuses.filter(e=>!(e instanceof HurtStatus))
+        if (this.statuses) this.statuses = this.statuses.filter(e => !(e instanceof HurtStatus))
         this.addStatus(new HurtStatus(this, 1000));
         this.gm.decreaseHp(damage);
     }
@@ -169,8 +183,8 @@ class Character extends GameObject {
     // forceOrigin = vector {x, y}
     forceBack(forceOrigin) {
         if (forceOrigin) {
-            let dir = Vector.normalise(Vector.sub(this.body.position,forceOrigin));
-            let vel = Vector.mult(dir,this.velocityReverse);
+            let dir = Vector.normalise(Vector.sub(this.body.position, forceOrigin));
+            let vel = Vector.mult(dir, this.velocityReverse);
             Body.setVelocity(this.body, vel);
             // console.log("new formula")
         }
@@ -188,7 +202,7 @@ class Character extends GameObject {
             metadata: this.metadata,
             client_id: this.id,
             faceAscii: this.faceAscii,
-            statuses: this.statuses ? this.statuses.map(s => s.name) : undefined,
+            statuses: this.statuses ? this.statuses.map(s => { return { name: s.name, info: s.info } }) : undefined,
             facing: this.facing
         }, super.simplify())
     }
