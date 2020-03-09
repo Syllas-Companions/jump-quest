@@ -160,5 +160,5 @@ async function nodemon_deploy() {
         env: { 'NODE_ENV': 'development' }
     })
 }
-exports.build = series(wp_deploy_front, wp_deploy_back, nodemon_deploy);
+exports.build = series(wp_deploy_front, wp_deploy_back);
 exports.start = nodemon_deploy;
