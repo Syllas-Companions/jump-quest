@@ -1,6 +1,6 @@
 export default {
     levels: new Map([
-        ['lobby', "lobby.json"],
+        ['lobby', "maplevel1.json"],
         ['0', "maplevel1.json"],
         ['1', "maplevel2.json"],
         ['2', "maplevel3.json"]

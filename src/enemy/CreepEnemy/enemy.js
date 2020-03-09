@@ -68,7 +68,7 @@ export default class Enemy {
         this.distance = Math.sqrt(Math.pow(this.targetPoint.x - this.body.position.x, 2)
             + Math.pow(this.targetPoint.y - this.body.position.y, 2));
         // console.log(this.distance);
-        if (this.distance < 30) {
+        if (this.distance < 50) {
             // Body.setPosition(this.composite, this.targetPoint);
             this.prePoint = this.targetPoint;
             this.getNextPoint(this.prePoint);
