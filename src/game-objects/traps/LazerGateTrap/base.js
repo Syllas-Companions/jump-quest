@@ -25,28 +25,39 @@ export default class LazerGateTrap extends GameObject {
         this.map = map;
         World.add(map.engine.world, this.body);
         this.start_time = Date.now();
-        this.timeInvisible = Date.now();
-        this.timeAppear = Date.now();
+        this.change = true;
+        this.time_start_invi = this.start_time;
+        this.time_start_appear = this.start_time;
+        this.counterTime = 0;
     }
     destroy(){
         World.remove(this.map.engine.world, this.body, true);
     }
-    invisible(){
-        this.bodyC.isSensor = true; 
-        this.timeInvisible = Date.now();
-    }
-    appear(){    
-        this.bodyC.isSensor = false; 
-        this.timeAppear = Date.now();
+    // invisible(){
+    //     this.bodyC.isSensor = false; 
+    // }
+    // appear(){    
+    //     this.bodyC.isSensor = true; 
+    // }
+    counter(time){
+        this.counterTime = this.current_time - time;
     }
     update(){
         this.current_time = Date.now();
-        if(this.bodyC.isSensor && this.current_time - this.timeInvisible - DEFAULT_DURABILITY< 0){
-            this.appear();
+        console.log(this.counterTime);
+        if(this.counterTime > DEFAULT_DURABILITY) this.change = true;
+
+        if(this.bodyC.isSensor) this.counter(this.time_start_invi);
+        else this.counter(this.time_start_appear);
+        if(this.bodyC.isSensor && this.change) {
+            this.change = false;
+            this.bodyC.isSensor = false; 
+            this.time_start_invi = Date.now();
         }
-        if(!this.bodyC.isSensor && this.current_time*2 - this.timeAppear*2 - DEFAULT_DURABILITY< 0){
-            this.invisible();
+        if(!this.bodyC.isSensor && this.change){
+            this.change = false;
+            this.bodyC.isSensor = true;
+            this.time_start_appear = Date.now();
         }
-        console.log(this.current_time - this.timeInvisible - DEFAULT_DURABILITY);
     }
 }
