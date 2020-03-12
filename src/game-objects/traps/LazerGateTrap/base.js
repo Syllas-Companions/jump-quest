@@ -27,12 +27,13 @@ export default class LazerGateTrap extends GameObject {
             bodies: bodies
         }));
         
-        
+        this.tmp = this.body.bodies;
         this.ignoreList = [];
         // this.bodyC = bodyC;
         this.map = map;
         World.add(map.engine.world, this.body);
         this.toggle_time = Date.now();
+        this.toggle = true;
     }
     destroy() {
         World.remove(this.map.engine.world, this.body, true);
@@ -53,9 +54,17 @@ export default class LazerGateTrap extends GameObject {
         })
     }
     update() {
+        console.log(this.toggle)
         if (Date.now() - this.toggle_time > DEFAULT_DURATION) {
-            this.body.isSensor = !this.body.isSensor;
+            // this.body.isSensor = !this.body.isSensor;
             this.toggle_time = Date.now();
+            if(this.toggle) {
+                this.body.bodies = [];
+                this.toggle = false;
+            }else{
+                this.body.bodies =this.tmp;
+                this.toggle = true;
+            }
         }
         let curFrameChars = [];
         this.body.bodies.forEach(body => {
