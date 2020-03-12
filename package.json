@@ -5,7 +5,8 @@
     "private": true,
     "scripts": {
         "build-front": "webpack",
-        "start": "node ./node_modules/gulp/bin/gulp deploy",
+        "start": "node ./node_modules/gulp/bin/gulp start",
+        "build": "node ./node_modules/gulp/bin/gulp build",
         "dev": "gulp",
         "dev-multi": "gulp multi"
     },

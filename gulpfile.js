@@ -152,14 +152,13 @@ function wp_deploy_back() {
         .pipe(dest('dist/'))
 };
 async function nodemon_deploy() {
-    setTimeout(function () {
-        nodemon({
-            script: './dist/server.js', //this is where express server is
-            watch: ['./dist/server.js'],
-            nodeArgs: ['-r', 'esm'],
-            ext: 'js html css', //nodemon watches *.js, *.html and *.css files
-            env: { 'NODE_ENV': 'development' }
-        })
-    }, 4000)
+    nodemon({
+        script: './dist/server.js', //this is where express server is
+        watch: ['./dist/server.js'],
+        nodeArgs: ['-r', 'esm'],
+        ext: 'js html css', //nodemon watches *.js, *.html and *.css files
+        env: { 'NODE_ENV': 'development' }
+    })
 }
-exports.deploy = series(wp_deploy_front, wp_deploy_back, nodemon_deploy);
+exports.build = series(wp_deploy_front, wp_deploy_back);
+exports.start = nodemon_deploy;

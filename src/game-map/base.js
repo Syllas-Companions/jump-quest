@@ -117,37 +117,11 @@ class GameMap {
         );
     }
     getStaticObj() {
-        let result = []
-        this.getObj(true).map(e => e.body).reduce(simplifyObj, result);
-        return result;
+        return this.getObj(true).map(e => e.simplify()).flat();
     }
 
     getMovingObj() {
-        let result = []
-        this.getObj(false).map(e => e.body).reduce(simplifyObj, result);
-        return result;
+        return this.getObj(false).map(e => e.simplify()).flat();
     }
-}
-function simplifyObj(arr, obj) {
-    if (obj) {
-        if (obj.type == 'body') {
-            let res = {
-                id: obj.id,
-                vertices: obj.vertices.map(vertex => {
-                    return { x: vertex.x, y: vertex.y }
-                }),
-                tile_id: obj.render.tile_id, // TODO: put in movable platform
-                opacity: obj.render.opacity,
-                color: obj.render.fillStyle,
-                position: obj.position
-            }
-            // console.log(obj.render.opacity)
-            arr.push(res);
-        }
-        else if (obj.type == 'composite') {
-            obj.bodies.reduce(simplifyObj, arr);
-        }
-    }
-    return arr;
 }
 export default GameMap;

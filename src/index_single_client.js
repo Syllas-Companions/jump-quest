@@ -1,5 +1,5 @@
 import Matter from 'matter-js'
-import GameManager from 'game_manager'
+import GameManager from 'controllers/game_manager'
 import camera from 'camera'
 // import BearTrap from './traps/BearTrap'
 

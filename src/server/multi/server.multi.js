@@ -1,4 +1,4 @@
-import room_manager from 'room_manager'
+import room_manager from 'controllers/room_manager'
 var express = require('express');
 var path = require('path');
 var app = express();
@@ -7,6 +7,7 @@ app.use("/",express.static('dist/public'));
 app.use("/maps", express.static('resources/maps'));
 app.use("/tilesets", express.static('resources/tilesets'));
 app.use("/backgrounds", express.static('resources/backgrounds'));
+app.use("/fonts", express.static('resources/fonts'));
 
 var server = require('http').Server(app);
  

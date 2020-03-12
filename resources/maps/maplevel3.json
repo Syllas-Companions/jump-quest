@@ -64,9 +64,21 @@
                  "name":"movable",
                  "objects":[
                         {
+                         "gid":6,
+                         "height":64,
+                         "id":22,
+                         "name":"tile",
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":64,
+                         "x":933.02244349613,
+                         "y":416.253674727359
+                        }, 
+                        {
                          "height":0,
-                         "id":13,
-                         "name":"",
+                         "id":24,
+                         "name":"path",
                          "polygon":[
                                 {
                                  "x":0,
@@ -87,13 +99,19 @@
                                  "value":"2"
                                 }],
                          "rotation":0,
-                         "type":"",
+                         "type":"platform",
                          "visible":true,
                          "width":0,
                          "x":1042.66666666667,
                          "y":68.9290953545233
                         }],
                  "opacity":1,
+                 "properties":[
+                        {
+                         "name":"speed",
+                         "type":"string",
+                         "value":"0.05"
+                        }],
                  "type":"objectgroup",
                  "visible":true,
                  "x":0,

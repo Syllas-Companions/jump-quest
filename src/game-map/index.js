@@ -1,12 +1,12 @@
 import GameMap from './base.js'
 
 // import other modules/ object types to the map; to disable an object type from the game, just commend out its module
-import BearTrap from 'traps/BearTrap'
-import Door from 'door'
-import Rope from 'rope'
-import ItemBox from 'items/Box'
-import CreepEnemy from 'enemy/CreepEnemy'
-import {Tile, TileWDurability, MovablePlatform, HookableWall} from 'tileBlock'
+import BearTrap from 'game-objects/traps/BearTrap'
+import Door from 'game-objects/door'
+import Rope from 'game-objects/rope'
+import ItemBox from 'game-objects/items/Box'
+import CreepEnemy from 'game-objects/enemy/CreepEnemy'
+import {Tile, TileWDurability, MovablePlatform, HookableWall} from 'game-objects/tileBlock'
 
 function initBackground(layerJson) {
     let matched = layerJson.image.match(/([^/]*)$/);
