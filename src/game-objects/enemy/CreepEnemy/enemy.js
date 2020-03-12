@@ -18,7 +18,7 @@ export default class Enemy extends GameObject {
         let path = json.objects.find(obj => obj.name == "path");
         let tile = json.objects.find(obj => obj.name == "tile");
         let pos = { x: path.x, y: path.y };
-        super(Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, isStatic: true, objType: "enemy" }));
+        super(Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, isStatic: true, objType: "enemy" , isSensor: true}));
 
         this.ignoreList = []
         if (tile) {
@@ -35,7 +35,7 @@ export default class Enemy extends GameObject {
         this.findPoint = 0;
         this.speed = json.properties.find(prop => prop.name == 'speed');
         if (this.speed) this.speed = parseFloat(this.speed.value);
-        else this.speed = 0.1
+        else this.speed = 0.1;
     }
     destroy() {
         World.remove(this.map.engine.world, this.body, true);

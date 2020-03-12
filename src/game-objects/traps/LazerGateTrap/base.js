@@ -6,58 +6,76 @@ var Engine = Matter.Engine,
     Events = Matter.Events,
     World = Matter.World,
     Bodies = Matter.Bodies,
-    Body = Matter.Body;
-    const DEFAULT_DURABILITY = 3000.0
+    Body = Matter.Body,
+    Composite = Matter.Composite;
+const DEFAULT_DURATION = 3000.0
 export default class LazerGateTrap extends GameObject {
-    
-    constructor(map, pos){
-        let bodyC = Bodies.rectangle(pos.x, pos.y, 10, 50, { inertia: Infinity, objType: "lazerGateTrap"});
-        let sensor = Bodies.rectangle(pos.x, pos.y, 11, 50, { isSensor: true});
-        super(Body.create({
-            parts: [bodyC, sensor],
-            options: { objType: "lazerGateTrap"},
-            restitution: 0,
-            sleepThreshold: Infinity,
-            isStatic : true
+
+    constructor(map, pos) {
+        let bodies = [];
+
+        for (let i = 0; i < pos.length - 1; i++) {
+            let posAvg = { x: (pos[i].x + pos[i + 1].x) / 2, y: (pos[i].y + pos[i + 1].y) / 2 };
+            let length = Math.sqrt(Math.pow(pos[i + 1].x - pos[i].x, 2) + Math.pow(pos[i + 1].y - pos[i].y, 2));
+            let angle = Math.atan((pos[i + 1].x - pos[i].x) / (pos[i + 1].y - pos[i].y));
+            let body = Bodies.rectangle(posAvg.x, posAvg.y, 10, length, { isStatic:true, isSensor: true, inertia: Infinity, objType: "lazerGateTrap" });
+            Body.setAngle(body, Math.PI - angle);
+            bodies.push(body);
+        }
+        super(Composite.create({
+            bodies: bodies
         }));
-        this.bodyC = bodyC;
-        this.sensor = sensor;
+        
+        
+        this.ignoreList = [];
+        // this.bodyC = bodyC;
         this.map = map;
         World.add(map.engine.world, this.body);
-        this.start_time = Date.now();
-        this.change = true;
-        this.time_start_invi = this.start_time;
-        this.time_start_appear = this.start_time;
-        this.counterTime = 0;
+        this.toggle_time = Date.now();
     }
-    destroy(){
+    destroy() {
         World.remove(this.map.engine.world, this.body, true);
     }
-    // invisible(){
-    //     this.bodyC.isSensor = false; 
-    // }
-    // appear(){    
-    //     this.bodyC.isSensor = true; 
-    // }
-    counter(time){
-        this.counterTime = this.current_time - time;
+    simplify(){
+        // override
+        return this.body.bodies.map(b => {
+            return {
+                id: b.id,
+                vertices: b.vertices.map(vertex => {
+                    return { x: vertex.x, y: vertex.y }
+                }),
+                tile_id: b.render.tile_id, 
+                opacity: b.render.opacity,
+                color: b.render.fillStyle,
+                position: b.position
+            }
+        })
     }
-    update(){
-        this.current_time = Date.now();
-        console.log(this.counterTime);
-        if(this.counterTime > DEFAULT_DURABILITY) this.change = true;
+    update() {
+        if (Date.now() - this.toggle_time > DEFAULT_DURATION) {
+            this.body.isSensor = !this.body.isSensor;
+            this.toggle_time = Date.now();
+        }
+        let curFrameChars = [];
+        this.body.bodies.forEach(body => {
+            Matter.Query.collides(body, this.map.engine.world.bodies)
+                .forEach((collision) => {
+                    if (collision.bodyA.objType == 'character-body' || collision.bodyB.objType == 'character-body') {
+                        // console.log(collision);
+                        let char_physics = collision.bodyA.objType == 'character-body' ? collision.bodyA : collision.bodyB;
+                        let char_logics = char_physics.character_logic;
+                        // console.log(char_logics);
+                        if (this.ignoreList.findIndex(id => (id == char_logics.id)) == -1) {
+                            this.ignoreList.push(char_logics.id);
+                            char_logics.forceBack(body.position); // push back based on relative position 
+                            char_logics.gotHit();
+                        }
 
-        if(this.bodyC.isSensor) this.counter(this.time_start_invi);
-        else this.counter(this.time_start_appear);
-        if(this.bodyC.isSensor && this.change) {
-            this.change = false;
-            this.bodyC.isSensor = false; 
-            this.time_start_invi = Date.now();
-        }
-        if(!this.bodyC.isSensor && this.change){
-            this.change = false;
-            this.bodyC.isSensor = true;
-            this.time_start_appear = Date.now();
-        }
+                        // Body.applyForce(this.composite,this.composite.position,{x:0,y:-0.1});
+                    }
+                });
+        })
+        this.ignoreList = this.ignoreList.filter(id => (curFrameChars.findIndex(e => e == id) != -1))
+
     }
 }

@@ -76,7 +76,7 @@ class Character extends GameObject {
 
         this.faceAscii = "⚆  v  ⚆";
         if (metadata) {
-            this.metadata = metadata
+            this.metadata = metadata;
         } else {
             this.metadata = {
                 color: {
