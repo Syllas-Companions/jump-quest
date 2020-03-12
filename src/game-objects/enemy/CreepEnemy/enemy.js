@@ -10,6 +10,7 @@ var Engine = Matter.Engine,
 
 //class enemys
 const DEFAULT_SPEED = 0.01;
+const VELOCITY_REVERSE = 5;
 export default class Enemy extends GameObject {
 
 
@@ -55,7 +56,7 @@ export default class Enemy extends GameObject {
                     // console.log(char_logics);
                     if (this.ignoreList.findIndex(id => (id == char_logics.id)) == -1) {
                         this.ignoreList.push(char_logics.id);
-                        char_logics.forceBack(this.body.position); // push back based on relative position 
+                        char_logics.forceBack(this.body.position,VELOCITY_REVERSE); // push back based on relative position 
                         char_logics.gotHit();
                     }
                     // Body.applyForce(this.composite,this.composite.position,{x:0,y:-0.1});

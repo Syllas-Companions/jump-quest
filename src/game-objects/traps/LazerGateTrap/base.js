@@ -8,7 +8,8 @@ var Engine = Matter.Engine,
     Bodies = Matter.Bodies,
     Body = Matter.Body,
     Composite = Matter.Composite;
-const DEFAULT_DURATION = 3000.0
+const DEFAULT_DURATION = 3000.0;
+const VELOCITY_REVERSE = 10;
 export default class LazerGateTrap extends GameObject {
 
     constructor(map, pos) {
@@ -67,7 +68,7 @@ export default class LazerGateTrap extends GameObject {
                         // console.log(char_logics);
                         if (this.ignoreList.findIndex(id => (id == char_logics.id)) == -1) {
                             this.ignoreList.push(char_logics.id);
-                            char_logics.forceBack(body.position); // push back based on relative position 
+                            char_logics.forceBack(body.position, VELOCITY_REVERSE); // push back based on relative position 
                             char_logics.gotHit();
                         }
 

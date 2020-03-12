@@ -6,7 +6,7 @@ var Engine = Matter.Engine,
     World = Matter.World,
     Bodies = Matter.Bodies,
     Body = Matter.Body;
-
+const VELOCITY_REVERSE = 5;
 export default class BearTrap extends GameObject {
 
     constructor(map, pos) {
@@ -36,7 +36,7 @@ export default class BearTrap extends GameObject {
                     let char_physics = collision.bodyA.objType == 'character-body' ? collision.bodyA : collision.bodyB;
                     let char_logics = char_physics.character_logic;
                     char_logics.gotHit();
-                    char_logics.forceBack(this.body.position);
+                    char_logics.forceBack(this.body.position,VELOCITY_REVERSE);
                     // console.log(char_logics);
                     // char_logics.die();
                 }
