@@ -1,9 +1,9 @@
 export default {
     levels: new Map([
         ['lobby', "demo.json"],
-        ['0', "demo.json"],
-        ['1', "demo.json"],
-        ['2', "demo.json"]
+        ['0', "maplevel1.json"],
+        ['1', "maplevel2.json"],
+        ['2', "maplevel3.json"]
     ]),
     level_order: ['0','1','2'],
     getDefaultLevel: function(){

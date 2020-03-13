@@ -30,7 +30,7 @@ function initTileLayer(layerJson, type, createdObjects) {
             //     }
             // })
             var speed = 0.02;
-            var speedLayer = layerJson.properties.find(layer => layer.name == 'speed')
+            var speedLayer = layerJson.properties?layerJson.properties.find(layer => layer.name == 'speed'):null;
             if(speedLayer) speed = speedLayer.value ;
             
 
