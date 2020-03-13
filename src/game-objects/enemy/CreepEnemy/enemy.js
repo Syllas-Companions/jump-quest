@@ -10,6 +10,7 @@ var Engine = Matter.Engine,
 
 //class enemys
 const DEFAULT_SPEED = 0.01;
+const VELOCITY_REVERSE = 5;
 export default class Enemy extends GameObject {
 
 
@@ -18,7 +19,7 @@ export default class Enemy extends GameObject {
         let path = json.objects.find(obj => obj.name == "path");
         let tile = json.objects.find(obj => obj.name == "tile");
         let pos = { x: path.x, y: path.y };
-        super(Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, isStatic: true, objType: "enemy" }));
+        super(Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, isStatic: true, objType: "enemy" , isSensor: true}));
 
         this.ignoreList = []
         if (tile) {
@@ -35,7 +36,7 @@ export default class Enemy extends GameObject {
         this.findPoint = 0;
         this.speed = json.properties.find(prop => prop.name == 'speed');
         if (this.speed) this.speed = parseFloat(this.speed.value);
-        else this.speed = 0.1
+        else this.speed = 0.1;
     }
     destroy() {
         World.remove(this.map.engine.world, this.body, true);
@@ -55,7 +56,7 @@ export default class Enemy extends GameObject {
                     // console.log(char_logics);
                     if (this.ignoreList.findIndex(id => (id == char_logics.id)) == -1) {
                         this.ignoreList.push(char_logics.id);
-                        char_logics.forceBack(this.body.position); // push back based on relative position 
+                        char_logics.forceBack(this.body.position,VELOCITY_REVERSE); // push back based on relative position 
                         char_logics.gotHit();
                     }
                     // Body.applyForce(this.composite,this.composite.position,{x:0,y:-0.1});

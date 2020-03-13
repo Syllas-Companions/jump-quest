@@ -76,7 +76,7 @@ class Character extends GameObject {
 
         this.faceAscii = "⚆  v  ⚆";
         if (metadata) {
-            this.metadata = metadata
+            this.metadata = metadata;
         } else {
             this.metadata = {
                 color: {
@@ -181,18 +181,18 @@ class Character extends GameObject {
         this.prevFrameKeyState = JSON.parse(JSON.stringify(keyState));
     }
     // forceOrigin = vector {x, y}
-    forceBack(forceOrigin) {
+    forceBack(forceOrigin,force) {
         if (forceOrigin) {
             let dir = Vector.normalise(Vector.sub(this.body.position, forceOrigin));
-            let vel = Vector.mult(dir, this.velocityReverse);
+            let vel = Vector.mult(dir, force);
             Body.setVelocity(this.body, vel);
             // console.log("new formula")
         }
         else {
             if (this.facing == 1)
-                Body.setVelocity(this.body, { x: -this.velocityReverse, y: -this.velocityReverse });
+                Body.setVelocity(this.body, { x: -force, y: -force });
             if (this.facing == -1)
-                Body.setVelocity(this.body, { x: this.velocityReverse, y: -this.velocityReverse });
+                Body.setVelocity(this.body, { x: force, y: -force });
         }
     }
 
