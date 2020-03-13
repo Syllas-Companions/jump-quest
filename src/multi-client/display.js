@@ -229,8 +229,6 @@ export default function (socket, clientState) {
             camera.height = p.windowHeight;
             p.frameRate(60);
 
-            // let button = p.createButton('click me');
-            // button.position(0, 0);
             p.initGUI();
         };
         p.keyPressed = function () {

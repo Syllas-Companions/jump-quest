@@ -1,6 +1,7 @@
 import Matter from 'matter-js'
 import C from 'myConstants'
 import GameObject from 'game-objects/game-object'
+import {UserMessage, HurtStatus} from './status'
 var Engine = Matter.Engine,
     Composite = Matter.Composite,
     Render = Matter.Render,
@@ -10,46 +11,7 @@ var Engine = Matter.Engine,
     Pair = Matter.Pair,
     Constraint = Matter.Constraint,
     Body = Matter.Body;
-class CharStatus {
-    constructor(character, duration) {
-        this.character = character;
-        this.duration = duration;
-        this.active_time = Date.now();
-    }
-    update() {
-        if (Date.now() - this.active_time > this.duration) {
-            this.finish();
-        }
-    }
-    finish() {
-        if (this.character && this.character.statuses) {
-            let index = this.character.statuses.indexOf(this)
-            this.character.statuses.splice(index, 1);
-        }
-    }
-}
-class UserMessage extends CharStatus {
-    constructor(character, message) {
-        super(character, 4000);
-        this.name = "message";
-        this.info = message;
-    }
-    finish() {
-        super.finish();
-    }
-}
-class HurtStatus extends CharStatus {
-    constructor(character, duration) {
-        super(character, duration);
-        this.name = "hurt";
-        this.character.faceAscii = "ಠ╭╮ಠ";
-    }
-    finish() {
-        this.character.faceAscii = "⚆  v  ⚆";
-        super.finish();
-    }
-}
-//class character
+
 class Character extends GameObject {
 
     constructor(gm, pos, id, metadata) {
@@ -74,11 +36,12 @@ class Character extends GameObject {
         // this.isJumping = true;
         // this.isChanneling = true;
 
-        this.faceAscii = "⚆  v  ⚆";
         if (metadata) {
             this.metadata = metadata;
         } else {
             this.metadata = {
+                name: id,
+                defaultFace: '⚆  v  ⚆',
                 color: {
                     r: Math.random() * 255,
                     g: Math.random() * 255,
@@ -86,6 +49,7 @@ class Character extends GameObject {
                 }
             }
         }
+        this.faceAscii = this.metadata.defaultFace;
         //field for use force (applyForce)
         this.forceMoveX = 0.01;
         this.forceJumpLandingX = 0;
