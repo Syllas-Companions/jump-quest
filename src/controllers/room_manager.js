@@ -62,7 +62,7 @@ export default {
         let waitingResponseList = []
 
         // create lobby
-        let lobby = new GameManager('lobby');
+        let lobby = new GameManager('lobby', 'lobby');
         lobby.hp = Infinity;
         lobby.decreaseHp = function () { }
         lobby.start();
