@@ -33,11 +33,13 @@ export default function(socket, clientState, p5Instance) {
                 label: "Save",
                 func: function() {
                     let { name, defaultFace, color } = menu.data.entries;
-                    socket.emit('updateCharacterData', {
+                    let characterData ={
                         name: name.value(),
                         defaultFace: defaultFace.value(),
                         color: color.value()
-                    })
+                    };
+                    localStorage.setItem('characterData', JSON.stringify(characterData))
+                    socket.emit('updateCharacterData', characterData)
                 }
             },
             btnBack: {

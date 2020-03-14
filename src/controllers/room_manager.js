@@ -13,7 +13,7 @@ export default {
         // this.rooms.delete(roomId);
 
     },
-    joinRoom: function(socket, roomId) {
+    joinRoom: function(socket, roomId, characterData) {
         let targetRoom, character_metadata = null;
         if (!this.client_room_map.has(socket.id)) {
             console.log("NEW CLIENT: " + socket.id);
@@ -37,11 +37,11 @@ export default {
             // remove character from the current room
             let curRoom = this.client_room_map.get(socket.id);
             // save character metadata when moving to new room
-            character_metadata = this.rooms.get(curRoom).deleteCharacter(socket.id);
+            characterData = this.rooms.get(curRoom).deleteCharacter(socket.id);
             socket.leave(curRoom);
         }
         // add him to the target room
-        let character = targetRoom.createCharacter(socket.id, character_metadata)
+        let character = targetRoom.createCharacter(socket.id, characterData)
         this.client_room_map.set(socket.id, targetRoom.id)
         socket.character = character;
         socket.join(targetRoom.id);
@@ -105,9 +105,9 @@ export default {
                         context.joinRoom(socket, roomId)
                 })
                 /** data: {roomId} */
-            socket.on('joinGame', function(roomId) {
+            socket.on('joinGame', function(roomId, characterData) {
                 if (roomId != null && roomId != "")
-                    context.joinRoom(socket, roomId)
+                    context.joinRoom(socket, roomId, characterData)
             });
 
             socket.on('updateCharacterData', (data) => {

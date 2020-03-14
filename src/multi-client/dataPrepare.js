@@ -16,8 +16,10 @@ export default function (socket, clientState) {
     socket.on('connect', () => {
         clientState.id = socket.id
         clientState.isAlive = true;
-        console.log('hello')
-        socket.emit('joinGame', 'lobby');
+
+        let characterData = localStorage.getItem('characterData');
+        if (characterData) characterData = JSON.parse(characterData);
+        socket.emit('joinGame', 'lobby', characterData);
     })
     // change client status on disconnection
     socket.on('disconnect', (reason) => {
