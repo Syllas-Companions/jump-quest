@@ -3,14 +3,29 @@ import ModalBox from './modal'
 export default function (socket, clientState, p5Instance) {
     var menu = new ModalBox(p5Instance,{
             div: {},
-            buttons: [
+            name: 'Setting',
+            entries: [
                 {
-                    type: 'h1',
-                    text: "Setting"
+                    type: 'text',
+                    label: 'Name',
+                },
+                {
+                    type: 'option',
+                    label: 'Default Face',
+                    options: [
+                        '⚆  v  ⚆',
+                        '◕‿‿◕',
+                        '☉ヮ⚆',
+                    ],
+                    selectedIndex: 0
+                },
+                {
+                    type: 'color',
+                    label: 'Color',
                 },
                 {
                     type: 'button',
-                    text: "Back",
+                    label: "Back",
                     func: function () {
                         menu.hide(false);
                     }

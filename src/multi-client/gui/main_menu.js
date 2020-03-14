@@ -1,41 +1,34 @@
 import ModalBox from './modal'
 import SettingMenu from './setting_menu'
-export default function (socket, clientState, p5Instance) {
+export default function(socket, clientState, p5Instance) {
     var setting_menu = SettingMenu(socket, clientState, p5Instance);
-    var menu = new ModalBox(p5Instance,{
+    var menu = new ModalBox(p5Instance, {
         changed: null,
         isActive: false,
+        name: 'Main Menu',
         div: {},
-        buttons: [
-            {
-                type: 'h1',
-                text: "Main Menu"
-            },
-            {
+        entries: [{
                 type: 'button',
-                text: "Setting",
-                func: function () {
+                label: "Setting",
+                func: function() {
                     setting_menu.show();
                 }
             },
             {
-                type: 'separator'
-            },
-            {
                 type: 'button',
-                text: "Back To Lobby",
-                func: function () {
+                label: "Back To Lobby",
+                func: function() {
                     socket.emit('joinGame', 'lobby');
                     menu.hide();
                 },
-                condition: function () {
+                condition: function() {
                     return clientState.mapData.name != 'lobby';
                 }
             },
             {
                 type: 'button',
-                text: "Resume",
-                func: function () {
+                label: "Resume",
+                func: function() {
                     menu.hide();
                 }
             }

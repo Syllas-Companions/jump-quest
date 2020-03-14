@@ -4,10 +4,12 @@ var path = require('path');
 var app = express();
 
 app.use("/",express.static('dist/public'));
-app.use("/maps", express.static('resources/maps'));
-app.use("/tilesets", express.static('resources/tilesets'));
-app.use("/backgrounds", express.static('resources/backgrounds'));
-app.use("/fonts", express.static('resources/fonts'));
+
+app.use("/",express.static('resources'));
+// app.use("/maps", express.static('resources/maps'));
+// app.use("/tilesets", express.static('resources/tilesets'));
+// app.use("/backgrounds", express.static('resources/backgrounds'));
+// app.use("/fonts", express.static('resources/fonts'));
 
 var server = require('http').Server(app);
  
