@@ -7,14 +7,15 @@ export default function(socket, clientState, p5Instance) {
         isActive: false,
         name: 'Main Menu',
         div: {},
-        entries: [{
+        entries: {
+            btnSetting: {
                 type: 'button',
                 label: "Setting",
                 func: function() {
                     setting_menu.show();
                 }
             },
-            {
+            btnLobby: {
                 type: 'button',
                 label: "Back To Lobby",
                 func: function() {
@@ -25,14 +26,14 @@ export default function(socket, clientState, p5Instance) {
                     return clientState.mapData.name != 'lobby';
                 }
             },
-            {
+            btnResume: {
                 type: 'button',
                 label: "Resume",
                 func: function() {
                     menu.hide();
                 }
             }
-        ]
+        }
     })
     setting_menu.child(menu);
     return menu

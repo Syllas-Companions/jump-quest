@@ -30,6 +30,7 @@ export default class ModalBox {
     }
     show() {
         this.reogarnizeMenu();
+        if (this.data.onLoad) this.data.onLoad();
         this.backdrop.style('display: table')
             // this.data.div.show();
         this.data.isActive = true;
@@ -59,7 +60,7 @@ export default class ModalBox {
         title.addClass('menu-header')
 
         // lastY += BTN_HEIGHT + SPACING
-        this.data.entries.forEach(info => {
+        Object.values(this.data.entries).forEach(info => {
             let ele = null;
             switch (info.type) {
                 case 'text':
@@ -143,7 +144,7 @@ export default class ModalBox {
     reogarnizeMenu() {
         // recalib width/height/padding
         // let lastY = MARGIN + BTN_HEIGHT + SPACING;
-        this.data.entries.forEach(info => {
+        Object.values(this.data.entries).forEach(info => {
             if (!info.condition || info.condition()) {
                 // info.element.position(MARGIN, lastY);
                 info.element.show();

@@ -21,17 +21,23 @@ var chat_system = {
         // console.log(this.textInput);
         this.textInput.hide();
         this.sendMessage = this.sendMessage.bind(this);
-        this.socket.on('userMessage', (data) => {
-            this.chatLogContent.html(`<div>[${new Date().toLocaleTimeString('it-IT')}] ${data.userId}: ${data.message} </div>`, true);
-            if (this.chatLog.size().height - this.chatLogContent.size().height > 0) {
-                this.chatLogContent.position(0, this.chatLog.size().height - this.chatLogContent.size().height);
-            } else {
-                this.chatLogContent.position(0, 0, 'relative');
-                this.chatLog.elt.scrollTop = this.chatLog.elt.scrollHeight
-            }
-        })
     },
-    sendMessage: function (event) {
+    updateChatLog: function() {
+        // console.log(this.clientState.messageSystem.newMessages);
+        this.clientState.messageSystem.newMessages.forEach(m => this.addEntryChatLog(m));
+        this.clientState.messageSystem.newMessages = [];
+    },
+    addEntryChatLog: function(message) {
+        this.chatLogContent.html(`<div>[${new Date(message.time).toLocaleTimeString('it-IT')}] ${message.name}: ${message.content} </div>`, true);
+        if (this.chatLog.size().height - this.chatLogContent.size().height > 0) {
+            this.chatLogContent.position(0, this.chatLog.size().height - this.chatLogContent.size().height);
+        } else {
+            this.chatLogContent.position(0, 0, 'relative');
+            this.chatLog.elt.scrollTop = this.chatLog.elt.scrollHeight
+        }
+
+    },
+    sendMessage: function(event) {
         // event.preventDefault();
         if (event.keyCode === 13) {
             // send
@@ -49,14 +55,13 @@ var chat_system = {
             this.textInput.elt.focus();
             this.textInput.elt.addEventListener("keydown", this.sendMessage);
             this.clientState.sendingInput = false;
-        }
-        else {
+        } else {
             this.textInput.elt.removeEventListener("keydown", this.sendMessage);
             this.textInput.hide();
             this.clientState.sendingInput = true;
         }
     },
-    init: function (socket, clientState, p5Instance) {
+    init: function(socket, clientState, p5Instance) {
         this.socket = socket;
         this.clientState = clientState;
         this.p5 = p5Instance;
@@ -64,7 +69,7 @@ var chat_system = {
         this.initChat();
     }
 }
-export default function (socket, clientState, p5Instance){
+export default function(socket, clientState, p5Instance) {
     chat_system.init(socket, clientState, p5Instance)
     return chat_system;
 }

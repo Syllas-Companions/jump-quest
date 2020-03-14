@@ -1,7 +1,7 @@
 import Matter from 'matter-js'
 import C from 'myConstants'
 import GameObject from 'game-objects/game-object'
-import {UserMessage, HurtStatus} from './status'
+import { UserMessage, HurtStatus } from './status'
 var Engine = Matter.Engine,
     Composite = Matter.Composite,
     Render = Matter.Render,
@@ -42,11 +42,7 @@ class Character extends GameObject {
             this.metadata = {
                 name: id,
                 defaultFace: '⚆  v  ⚆',
-                color: {
-                    r: Math.random() * 255,
-                    g: Math.random() * 255,
-                    b: Math.random() * 255
-                }
+                color: '#' + Math.floor(Math.random() * 16777215).toString(16)
             }
         }
         this.faceAscii = this.metadata.defaultFace;
@@ -91,21 +87,21 @@ class Character extends GameObject {
         // console.log(this.statuses.length)
     }
     gotHit(damage) {
-        // extend hurt duration instead of adding 1 more
-        if (this.statuses) this.statuses = this.statuses.filter(e => !(e instanceof HurtStatus))
-        this.addStatus(new HurtStatus(this, 1000));
-        this.gm.decreaseHp(damage);
-    }
-    // die() {
-    //     // Body.setPosition(this.composite, { x: 500, y: 500 });
-    //     (this.gm.repositionCharacters.bind(this.gm))(this.id)
-    // }
+            // extend hurt duration instead of adding 1 more
+            if (this.statuses) this.statuses = this.statuses.filter(e => !(e instanceof HurtStatus))
+            this.addStatus(new HurtStatus(this, 1000));
+            this.gm.decreaseHp(damage);
+        }
+        // die() {
+        //     // Body.setPosition(this.composite, { x: 500, y: 500 });
+        //     (this.gm.repositionCharacters.bind(this.gm))(this.id)
+        // }
     teleport(posTo, resetVel = false) {
-        Body.setPosition(this.body, { x: posTo.x, y: posTo.y });
-        if (resetVel)
-            Body.setVelocity(this.body, { x: 0, y: 0 });
-    }
-    // added update function that get called from main index.js every "beforeUpdate" event
+            Body.setPosition(this.body, { x: posTo.x, y: posTo.y });
+            if (resetVel)
+                Body.setVelocity(this.body, { x: 0, y: 0 });
+        }
+        // added update function that get called from main index.js every "beforeUpdate" event
     update() {
         // update on statuses
         if (this.statuses) this.statuses.forEach(s => s.update());
@@ -134,25 +130,24 @@ class Character extends GameObject {
     }
 
     inputHandler(keyState) {
-        if (Character.controlChain) {
-            Character.controlChain.forEach((fChain, key) => {
-                let isChanged = this.prevFrameKeyState && (keyState[key] != this.prevFrameKeyState[key]);
-                for (const func of fChain) {
-                    if (func.call(this, keyState[key], isChanged)) break;
-                }
-            })
-        } else console.log("chain empty");
-        this.prevFrameKeyState = JSON.parse(JSON.stringify(keyState));
-    }
-    // forceOrigin = vector {x, y}
-    forceBack(forceOrigin,force) {
+            if (Character.controlChain) {
+                Character.controlChain.forEach((fChain, key) => {
+                    let isChanged = this.prevFrameKeyState && (keyState[key] != this.prevFrameKeyState[key]);
+                    for (const func of fChain) {
+                        if (func.call(this, keyState[key], isChanged)) break;
+                    }
+                })
+            } else console.log("chain empty");
+            this.prevFrameKeyState = JSON.parse(JSON.stringify(keyState));
+        }
+        // forceOrigin = vector {x, y}
+    forceBack(forceOrigin, force) {
         if (forceOrigin) {
             let dir = Vector.normalise(Vector.sub(this.body.position, forceOrigin));
             let vel = Vector.mult(dir, force);
             Body.setVelocity(this.body, vel);
             // console.log("new formula")
-        }
-        else {
+        } else {
             if (this.facing == 1)
                 Body.setVelocity(this.body, { x: -force, y: -force });
             if (this.facing == -1)
@@ -166,7 +161,7 @@ class Character extends GameObject {
             metadata: this.metadata,
             client_id: this.id,
             faceAscii: this.faceAscii,
-            statuses: this.statuses ? this.statuses.map(s => { return { name: s.name, info: s.info } }) : undefined,
+            statuses: this.statuses ? this.statuses.map(s => { return s.simplify() }) : [],
             facing: this.facing
         }, super.simplify())
     }

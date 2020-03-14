@@ -2,7 +2,7 @@ import MainMenu from './main_menu'
 import ChatSystem from './chat_system'
 export default {
 
-    init: function (socket, clientState, p5Instance) {
+    init: function(socket, clientState, p5Instance) {
         this.socket = socket;
         this.clientState = clientState;
         this.p5 = p5Instance;
@@ -11,14 +11,16 @@ export default {
 
         this.chatSystem = ChatSystem(socket, clientState, p5Instance);
     },
+    update() {
+        this.chatSystem.updateChatLog();
+    },
     toggleChat() {
         this.chatSystem.toggleChat();
     },
     toggleMenu() {
         if (!this.mainMenu.data.isActive) {
             this.mainMenu.show();
-        }
-        else {
+        } else {
             this.mainMenu.hide();
         }
 
