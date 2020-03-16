@@ -54,7 +54,7 @@ export default class LazerGateTrap extends GameObject {
         })
     }
     update() {
-        console.log(this.toggle)
+        // console.log(this.toggle)
         if (Date.now() - this.toggle_time > DEFAULT_DURATION) {
             // this.body.isSensor = !this.body.isSensor;
             this.toggle_time = Date.now();

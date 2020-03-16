@@ -11,14 +11,15 @@ export default class BearTrap extends GameObject {
 
     constructor(map, pos) {
         let bodyC = Bodies.rectangle(pos.x, pos.y, 50, 10, { inertia: Infinity, objType: "bearTrap" });
-        let sensorUp = Bodies.rectangle(pos.x, pos.y - 5, 40, 0.02, { isSensor: true });
+        let sensorUp = Bodies.rectangle(pos.x, pos.y, 51, 11, { isSensor: true });
         super(Body.create({
             parts: [bodyC, sensorUp],
-            options: { objType: "bearTrap" }
+            options: { objType: "bearTrap" },
+            isStatic: true
         }));
         this.bodyC = bodyC;
         this.sensorUp = sensorUp;
-        this.map = map
+        this.map = map;
         World.add(map.engine.world, this.body);
     }
     destroy() {
