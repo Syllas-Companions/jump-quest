@@ -5,7 +5,7 @@ export default {
     lastRoomId: 0,
     rooms: new Map(),
     client_room_map: new Map(),
-    destroyRoom: function(roomId) {
+    destroyRoom: function (roomId) {
         // function to remove the room when hp = 0, and cast all player inside back to lobby
         // let room = this.rooms.get(roomId);
         // console.log(roomId);
@@ -13,7 +13,7 @@ export default {
         // this.rooms.delete(roomId);
 
     },
-    joinRoom: function(socket, roomId, characterData) {
+    joinRoom: function (socket, roomId, characterData) {
         let targetRoom, character_metadata = null;
         if (!this.client_room_map.has(socket.id)) {
             console.log("NEW CLIENT: " + socket.id);
@@ -25,7 +25,7 @@ export default {
             // client move to another room (managed by another GameManager)
             if (!this.rooms.has(roomId)) { // if room not exists 
                 targetRoom = new GameManager(roomId);
-                targetRoom.loseCallback = function() {
+                targetRoom.loseCallback = function () {
                     this.destroyRoom(roomId);
                     // console.log('logged out');
                 }.bind(this);
@@ -54,7 +54,7 @@ export default {
         });
         socket.emit('characterData', character.metadata);
     },
-    init: function(server) {
+    init: function (server) {
         // socket.io setup
         io = require('socket.io')(server);
         this.lastRoomId = 100;
@@ -65,10 +65,10 @@ export default {
         // create lobby
         let lobby = new GameManager('lobby', 'lobby');
         lobby.hp = Infinity;
-        lobby.decreaseHp = function() {}
+        lobby.decreaseHp = function () { }
         lobby.start();
         // override lobby's nextMap function
-        lobby.nextMap = (function(character, door) {
+        lobby.nextMap = (function (character, door) {
             if (waitingResponseList.every(id => id != character.id)) {
                 io.to(character.id).emit('requestRoomName');
                 waitingResponseList.push(character.id);
@@ -77,35 +77,30 @@ export default {
 
         this.rooms.set(lobby.id, lobby);
 
-        io.on('connection', function(socket) {
-            socket.on('pingRequest', function() {
+        io.on('connection', function (socket) {
+            socket.on('pingRequest', function () {
                 socket.emit('pongResponse');
             });
 
-            socket.on('inputUpdate', function(data) {
+            socket.on('inputUpdate', function (data) {
                 let roomId = context.client_room_map.get(socket.id);
                 let room = roomId ? context.rooms.get(roomId) : null;
                 if (room)
                     room.updateInput(socket.id, data);
             });
 
-            socket.on('userMessage', function(message) {
+            socket.on('userMessage', function (message) {
                 // add message to character
-                let roomId = context.client_room_map.get(socket.id);
-                let room = roomId ? context.rooms.get(roomId) : null;
-                if (room) {
-                    room.addUserMessage(socket.id, message);
-                    io.to(roomId).emit('userMessage', { userId: socket.id, message });
-                }
+                socket.character.addUserMessage(message)
             })
 
             socket.on('responseRoomName', (roomId) => {
-                    waitingResponseList = waitingResponseList.filter(id => id != socket.id);
-                    if (roomId != null && roomId != "")
-                        context.joinRoom(socket, roomId)
-                })
-                /** data: {roomId} */
-            socket.on('joinGame', function(roomId, characterData) {
+                waitingResponseList = waitingResponseList.filter(id => id != socket.id);
+                if (roomId != null && roomId != "")
+                    context.joinRoom(socket, roomId)
+            })
+            /** data: {roomId} */
+            socket.on('joinGame', function (roomId, characterData) {
                 if (roomId != null && roomId != "")
                     context.joinRoom(socket, roomId, characterData)
             });
@@ -116,7 +111,7 @@ export default {
                 socket.emit('characterData', data);
             })
 
-            socket.on('disconnect', function() {
+            socket.on('disconnect', function () {
                 console.log('DISCONNECTED: ' + socket.id);
                 if (context.client_room_map.get(socket.id) && context.rooms.get(context.client_room_map.get(socket.id))) {
                     context.rooms.get(context.client_room_map.get(socket.id)).deleteCharacter(socket.id);
@@ -126,7 +121,7 @@ export default {
             });
         });
 
-        setInterval(function() {
+        setInterval(function () {
             // loop through worlds
 
             // send worlds to client views 20 times per sec
