@@ -32,15 +32,16 @@ function moveRight(isKeyDown) {
 }
 function jump(isKeyDown) {
     if (isKeyDown) {
+        console.log(this.baseJump);
         if (!this.isJumping) {
             this.timeStartJump = new Date();
 
-            Body.setVelocity(this.body, { x: this.body.velocity.x, y: -10 });
+            Body.setVelocity(this.body, { x: this.body.velocity.x, y: -this.baseJump });
 
             this.isJumping = true;
         } else {
             if (new Date() - this.timeStartJump < this.maxJumpTime) {
-                Body.setVelocity(this.body, { x: this.body.velocity.x, y: -10 });
+                Body.setVelocity(this.body, { x: this.body.velocity.x, y: -this.baseJump });
             }
         }
         return true;

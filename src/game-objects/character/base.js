@@ -96,7 +96,7 @@ class Character extends GameObject {
         this.maxJumpLandingV = 7.0;
         this.maxJumpFlyV = 5.0;
         this.maxMoveSpeed = 5.0;
-
+        this.baseJump = 10;
         //field for use velocity (setVelocity)
         this.moveVelocity = 1;
         this.jumpVelocity = 1;
@@ -167,6 +167,9 @@ class Character extends GameObject {
         //change face
         if (this.facing == 1) Body.setPosition(this.sensorFace, { x: this.body.position.x + 25, y: this.body.position.y });
         if (this.facing == -1) Body.setPosition(this.sensorFace, { x: this.body.position.x - 28, y: this.body.position.y });
+        //set default jump
+        this.setBaseJump(); 
+
     }
 
     inputHandler(keyState) {
@@ -205,6 +208,11 @@ class Character extends GameObject {
             statuses: this.statuses ? this.statuses.map(s => { return { name: s.name, info: s.info } }) : undefined,
             facing: this.facing
         }, super.simplify())
+    }
+
+    setBaseJump(value){
+        if(value) this.baseJump = value;
+        else this.baseJump = 10;
     }
 }
 

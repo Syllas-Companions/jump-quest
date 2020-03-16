@@ -146,6 +146,53 @@
          "layers":[
                 {
                  "draworder":"topdown",
+                 "id":27,
+                 "name":"springTraps",
+                 "objects":[
+                        {
+                         "height":0,
+                         "id":39,
+                         "name":"springtrap1",
+                         "point":true,
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":0,
+                         "x":546.853686784198,
+                         "y":881.225067558873
+                        }, 
+                        {
+                         "height":0,
+                         "id":42,
+                         "name":"springtrap2",
+                         "point":true,
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":0,
+                         "x":485.085574572127,
+                         "y":887.813666194827
+                        }, 
+                        {
+                         "height":0,
+                         "id":43,
+                         "name":"springtrap3",
+                         "point":true,
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":0,
+                         "x":420.023163042079,
+                         "y":884.51936687685
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "draworder":"topdown",
                  "id":26,
                  "name":"lazerGateTraps",
                  "objects":[
@@ -229,7 +276,7 @@
                          "type":"",
                          "visible":true,
                          "width":0,
-                         "x":474.640476746419,
+                         "x":266.276044884367,
                          "y":712.542150162382
                         }],
                  "opacity":1,
@@ -450,8 +497,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":27,
- "nextobjectid":30,
+ "nextlayerid":28,
+ "nextobjectid":44,
  "orientation":"orthogonal",
  "properties":[
         {

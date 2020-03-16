@@ -1,5 +1,6 @@
 import BearTrap from './BearTrap'
 import LazerGateTrap from './LazerGateTrap'
+import SpringTrap from './SpringTrap'
 
 // function initTraps(layerJson) {
 //     console.log("hello");
