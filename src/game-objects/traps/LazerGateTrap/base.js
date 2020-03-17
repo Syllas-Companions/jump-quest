@@ -26,7 +26,7 @@ export default class LazerGateTrap extends GameObject {
         super(Composite.create({
             bodies: bodies
         }));
-
+        
         this.tmp = this.body.bodies;
         this.ignoreList = [];
         // this.bodyC = bodyC;
@@ -38,7 +38,7 @@ export default class LazerGateTrap extends GameObject {
     destroy() {
         World.remove(this.map.engine.world, this.body, true);
     }
-    simplify() {
+    simplify(){
         // override
         return this.body.bodies.map(b => {
             return {
@@ -46,7 +46,7 @@ export default class LazerGateTrap extends GameObject {
                 vertices: b.vertices.map(vertex => {
                     return { x: vertex.x, y: vertex.y }
                 }),
-                tile_id: b.render.tile_id,
+                tile_id: b.render.tile_id, 
                 opacity: b.render.opacity,
                 color: b.render.fillStyle,
                 position: b.position
@@ -58,11 +58,11 @@ export default class LazerGateTrap extends GameObject {
         if (Date.now() - this.toggle_time > DEFAULT_DURATION) {
             // this.body.isSensor = !this.body.isSensor;
             this.toggle_time = Date.now();
-            if (this.toggle) {
+            if(this.toggle) {
                 this.body.bodies = [];
                 this.toggle = false;
-            } else {
-                this.body.bodies = this.tmp;
+            }else{
+                this.body.bodies =this.tmp;
                 this.toggle = true;
             }
         }

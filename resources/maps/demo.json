@@ -72,8 +72,8 @@
                          "type":"",
                          "visible":true,
                          "width":64,
-                         "x":933.02244349613,
-                         "y":416.253674727359
+                         "x":934.669593155119,
+                         "y":444.255218930164
                         }, 
                         {
                          "height":0,
@@ -85,19 +85,19 @@
                                  "y":0
                                 }, 
                                 {
-                                 "x":-2,
-                                 "y":118
+                                 "x":-1.08014780422575,
+                                 "y":63.4303307612945
                                 }, 
                                 {
-                                 "x":-130,
-                                 "y":118
+                                 "x":-70.2096072746736,
+                                 "y":63.4303307612945
                                 }],
                          "rotation":0,
                          "type":"platform",
                          "visible":true,
                          "width":0,
-                         "x":964,
-                         "y":388
+                         "x":959.058551023034,
+                         "y":383.882125852529
                         }],
                  "opacity":1,
                  "properties":[
@@ -132,8 +132,8 @@
                  "type":"spawn_point",
                  "visible":true,
                  "width":0,
-                 "x":772.380737113079,
-                 "y":822.137502354492
+                 "x":700.117032869772,
+                 "y":866.428159793938
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -144,6 +144,124 @@
         {
          "id":5,
          "layers":[
+                {
+                 "draworder":"topdown",
+                 "id":27,
+                 "name":"springTraps",
+                 "objects":[
+                        {
+                         "height":0,
+                         "id":39,
+                         "name":"springtrap1",
+                         "point":true,
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":0,
+                         "x":546.853686784198,
+                         "y":881.225067558873
+                        }, 
+                        {
+                         "height":0,
+                         "id":42,
+                         "name":"springtrap2",
+                         "point":true,
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":0,
+                         "x":485.085574572127,
+                         "y":887.813666194827
+                        }, 
+                        {
+                         "height":0,
+                         "id":43,
+                         "name":"springtrap3",
+                         "point":true,
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":0,
+                         "x":420.023163042079,
+                         "y":884.51936687685
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "draworder":"topdown",
+                 "id":26,
+                 "name":"lazerGateTraps",
+                 "objects":[
+                        {
+                         "height":0,
+                         "id":25,
+                         "name":"lazerGate0",
+                         "point":true,
+                         "rotation":0,
+                         "type":"0",
+                         "visible":true,
+                         "width":0,
+                         "x":971.80974958356,
+                         "y":775.864484181494
+                        }, 
+                        {
+                         "height":0,
+                         "id":26,
+                         "name":"lazerGate0",
+                         "point":true,
+                         "rotation":0,
+                         "type":"0",
+                         "visible":true,
+                         "width":0,
+                         "x":973.228920050993,
+                         "y":865.998907302859
+                        }, 
+                        {
+                         "height":0,
+                         "id":27,
+                         "name":"lazerGate1",
+                         "point":true,
+                         "rotation":0,
+                         "type":"1",
+                         "visible":true,
+                         "width":0,
+                         "x":868.329994536514,
+                         "y":773.920961573484
+                        }, 
+                        {
+                         "height":0,
+                         "id":28,
+                         "name":"lazerGate1",
+                         "point":true,
+                         "rotation":0,
+                         "type":"1",
+                         "visible":true,
+                         "width":0,
+                         "x":819.377162629758,
+                         "y":833.363686031688
+                        }, 
+                        {
+                         "height":0,
+                         "id":29,
+                         "name":"lazerGate1",
+                         "point":true,
+                         "rotation":0,
+                         "type":"1",
+                         "visible":true,
+                         "width":0,
+                         "x":882.316517938444,
+                         "y":892.806410489893
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
+                }, 
                 {
                  "draworder":"topdown",
                  "id":3,
@@ -158,8 +276,8 @@
                          "type":"",
                          "visible":true,
                          "width":0,
-                         "x":880.015718028102,
-                         "y":668.892684199186
+                         "x":266.276044884367,
+                         "y":712.542150162382
                         }],
                  "opacity":1,
                  "type":"objectgroup",
@@ -323,23 +441,23 @@
                                  "name":"path",
                                  "polygon":[
                                         {
-                                         "x":45.7867628294279,
-                                         "y":16.7790146242013
+                                         "x":98.2672810743994,
+                                         "y":30.5170678543971
                                         }, 
                                         {
-                                         "x":-147.367251541785,
-                                         "y":141.371862203834
+                                         "x":-316.278728469332,
+                                         "y":257.122054435436
                                         }, 
                                         {
-                                         "x":47.3319949443976,
-                                         "y":139.484091785961
+                                         "x":101.583649150749,
+                                         "y":253.688645547846
                                         }],
                                  "rotation":0,
                                  "type":"enemy",
                                  "visible":true,
                                  "width":0,
-                                 "x":680.144579477007,
-                                 "y":631.380229640306
+                                 "x":856.439732471058,
+                                 "y":585.619649216244
                                 }, 
                                 {
                                  "gid":72,
@@ -350,8 +468,8 @@
                                  "type":"",
                                  "visible":true,
                                  "width":64,
-                                 "x":694.666666666667,
-                                 "y":685.333333333333
+                                 "x":924.529536292402,
+                                 "y":662.347590047699
                                 }],
                          "opacity":1,
                          "properties":[
@@ -379,8 +497,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":26,
- "nextobjectid":25,
+ "nextlayerid":28,
+ "nextobjectid":44,
  "orientation":"orthogonal",
  "properties":[
         {
