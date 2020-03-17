@@ -56,7 +56,7 @@ class Character extends GameObject {
         this.maxJumpLandingV = 7.0;
         this.maxJumpFlyV = 5.0;
         this.maxMoveSpeed = 5.0;
-
+        this.baseJump = 10;
         //field for use velocity (setVelocity)
         this.moveVelocity = 1;
         this.jumpVelocity = 1;
@@ -127,21 +127,24 @@ class Character extends GameObject {
         //change face
         if (this.facing == 1) Body.setPosition(this.sensorFace, { x: this.body.position.x + 25, y: this.body.position.y });
         if (this.facing == -1) Body.setPosition(this.sensorFace, { x: this.body.position.x - 28, y: this.body.position.y });
+        //set default jump
+        this.setBaseJump(); 
+
     }
 
     inputHandler(keyState) {
-            if (Character.controlChain) {
-                Character.controlChain.forEach((fChain, key) => {
-                    let isChanged = this.prevFrameKeyState && (keyState[key] != this.prevFrameKeyState[key]);
-                    for (const func of fChain) {
-                        if (func.call(this, keyState[key], isChanged)) break;
-                    }
-                })
-            } else console.log("chain empty");
-            this.prevFrameKeyState = JSON.parse(JSON.stringify(keyState));
-        }
-        // forceOrigin = vector {x, y}
-    forceBack(forceOrigin, force) {
+        if (Character.controlChain) {
+            Character.controlChain.forEach((fChain, key) => {
+                let isChanged = this.prevFrameKeyState && (keyState[key] != this.prevFrameKeyState[key]);
+                for (const func of fChain) {
+                    if (func.call(this, keyState[key], isChanged)) break;
+                }
+            })
+        } else console.log("chain empty");
+        this.prevFrameKeyState = JSON.parse(JSON.stringify(keyState));
+    }
+    // forceOrigin = vector {x, y}
+    forceBack(forceOrigin,force) {
         if (forceOrigin) {
             let dir = Vector.normalise(Vector.sub(this.body.position, forceOrigin));
             let vel = Vector.mult(dir, force);
@@ -164,6 +167,11 @@ class Character extends GameObject {
             statuses: this.statuses ? this.statuses.map(s => { return s.simplify() }) : [],
             facing: this.facing
         }, super.simplify())
+    }
+
+    setBaseJump(value){
+        if(value) this.baseJump = value;
+        else this.baseJump = 10;
     }
 }
 

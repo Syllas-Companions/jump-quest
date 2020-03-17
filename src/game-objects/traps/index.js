@@ -1,5 +1,6 @@
 import BearTrap from './BearTrap'
 import LazerGateTrap from './LazerGateTrap'
+import SpringTrap from './SpringTrap'
 
 // function initTraps(layerJson) {
 //     console.log("hello");
@@ -19,4 +20,4 @@ import LazerGateTrap from './LazerGateTrap'
 // }
 // GameMap.registerObjType('traps', false, initTraps);
 
-export {BearTrap, LazerGateTrap} 
+export {BearTrap, LazerGateTrap, SpringTrap} 
