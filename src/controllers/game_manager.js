@@ -212,6 +212,7 @@ export default class GameManager {
     // create a minimized list of object to send to client
     simplify() {
         return {
+            timestamp: Date.now(),
             hp: this.hp,
             total_hp: this.total_hp,
             objects: [].concat(this.currentMap.getMovingObj(), this.getCharactersRenderObj()).filter(e => e)
