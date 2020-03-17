@@ -81,6 +81,7 @@ export default function (socket, clientState) {
     clientState.characterData = {}
 
     socket.on('worldUpdate', function (data) {
+        // TODO: timestamp should be on server, client timestamp is likely off due to the change in latency
         let timestamp = new Date().getTime() + 50; // TODO: might be better when considering ping in place of constant
         let { objects, ...worldMetadata } = data;
 
