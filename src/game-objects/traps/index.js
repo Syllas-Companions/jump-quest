@@ -20,4 +20,4 @@ import SpringTrap from './SpringTrap'
 // }
 // GameMap.registerObjType('traps', false, initTraps);
 
-export {BearTrap, LazerGateTrap} 
+export {BearTrap, LazerGateTrap, SpringTrap} 

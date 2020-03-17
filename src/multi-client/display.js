@@ -4,8 +4,8 @@ import tileset_manager from 'controllers/tileset_manager'
 import camera from 'camera'
 import C from 'myConstants'
 import gui from './gui'
-export default function (socket, clientState) {
-    let sketch = function (p) {
+export default function(socket, clientState) {
+    let sketch = function(p) {
         function getCoordinate(timestamp, point) {
             let curTime = new Date().getTime();
             let x, y;
@@ -30,6 +30,7 @@ export default function (socket, clientState) {
             }
             return { x, y }
         }
+
         function drawHpBar(x, y, w, h, percent) {
             p.push();
             p.translate(x - w / 2, y - h / 2);
@@ -40,6 +41,7 @@ export default function (socket, clientState) {
             p.rect(2, 1, (w - 4) * (percent), h - 2);
             p.pop();
         }
+
         function drawObject(obj) {
             if (obj.tile_id) {
                 // draw tile
@@ -63,7 +65,7 @@ export default function (socket, clientState) {
                 // setting up color
                 if (obj.metadata && obj.metadata.color) {
                     p.noStroke()
-                    p.fill(obj.metadata.color.r, obj.metadata.color.g, obj.metadata.color.b);
+                    p.fill(obj.metadata.color);
                 } else if (obj.color) {
                     p.noStroke()
                     p.fill(obj.color);
@@ -101,7 +103,7 @@ export default function (socket, clientState) {
                         p.translate(x, y - 75);
 
                         // draw bubble
-                        p.stroke(0);
+                        p.stroke(1);
                         p.fill(255);
                         if (obj.facing == -1) p.scale(-1, 1);
                         p.triangle(40, 25, 45, 25, 35, 30);
@@ -113,7 +115,7 @@ export default function (socket, clientState) {
                         p.fill(0);
                         p.noStroke()
 
-                        p.textAlign(p.CENTER);
+                        p.textAlign(p.CENTER, p.CENTER);
                         p.text(message.info, 0, 0, 90, 40);
 
                         p.pop();
@@ -155,14 +157,20 @@ export default function (socket, clientState) {
                 if (obj.client_id) {
                     p.push();
                     let { x, y } = getCoordinate(obj.timestamp, obj.position);
-                    p.translate(x - 70, y - 35);
+                    p.translate(x, y + 40);
+                    p.textAlign(p.CENTER);
+                    p.stroke(1);
                     p.textSize(12);
-                    p.text(obj.client_id, 0, 0);
+                    if (obj.metadata && obj.metadata.name) {
+                        p.text(obj.metadata.name, 0, 0);
+                    } else {
+                        p.text(obj.client_id, 0, 0);
+                    }
                     p.pop();
                 }
             }
         }
-        p.drawMovingObjs = function () {
+        p.drawMovingObjs = function() {
             p.push();
             clientState.dynamicData.forEach((obj, id) => {
                 if (clientState.id == obj.client_id && obj.type == C.LAYER_CHARACTER) {
@@ -173,7 +181,7 @@ export default function (socket, clientState) {
             })
             p.pop();
         }
-        p.drawMap = function () {
+        p.drawMap = function() {
             if (clientState.mapData) {
                 p.push();
                 // Render tiles using tilesheet's information (TileSet and tileset_manager)
@@ -183,7 +191,7 @@ export default function (socket, clientState) {
                 p.pop();
             }
         }
-        p.drawBackground = function () {
+        p.drawBackground = function() {
             if (clientState.mapData && clientState.mapData.background && clientState.mapData.background != "") {
                 p.push();
                 let img = tileset_manager.getBackground(clientState.mapData.background);
@@ -196,12 +204,11 @@ export default function (socket, clientState) {
                 p.pop();
             }
         }
-        // TODO: move GUI to another file
-        p.initGUI = function () {
+        p.initGUI = function() {
             gui.init(socket, clientState, p);
         }
 
-        p.updateRoomHp = function () {
+        p.updateRoomHp = function() {
             p.push()
             p.scale(camera.scale)
             let cam_min = camera.min()
@@ -215,25 +222,23 @@ export default function (socket, clientState) {
             }
             p.pop();
         }
-        p.preload = function () {
+        p.preload = function() {
             // p.font = p.loadFont('/fonts/arial.ttf');
             // p.faceFont = p.loadFont('/fonts/seguisym.ttf');
             // console.log(p.textFont)
         }
-        p.setup = function () {
+        p.setup = function() {
             p.select('body').style('margin:0px')
             tileset_manager.setP5Instance(p);
-            let canvas = p.createCanvas(p.windowWidth, p.windowHeight/*, p.WEBGL*/);
+            let canvas = p.createCanvas(p.windowWidth, p.windowHeight /*, p.WEBGL*/ );
             canvas.style('display:block')
             camera.width = p.windowWidth;
             camera.height = p.windowHeight;
             p.frameRate(60);
 
-            // let button = p.createButton('click me');
-            // button.position(0, 0);
             p.initGUI();
         };
-        p.keyPressed = function () {
+        p.keyPressed = function() {
             if (p.keyCode === p.ESCAPE) {
                 if (gui.isChatOn)
                     gui.toggleChat()
@@ -241,10 +246,11 @@ export default function (socket, clientState) {
                     gui.toggleMenu();
             }
             if (p.keyCode === p.ENTER) {
+                // console.log(clientState.messageSystem);
                 gui.toggleChat();
             }
         }
-        p.draw = function () {
+        p.draw = function() {
             // p.translate(-p.windowWidth/2, -p.windowHeight/2) // WEBGL MODE ONLY, DUE TO DIFFERENT IN COORDINATE"S ORIGIN
             // p.textFont(p.font);
             if (clientState.isAlive) {
@@ -271,6 +277,7 @@ export default function (socket, clientState) {
                 p.pop();
             }
             p.updateRoomHp();
+            gui.update();
         };
     };
     let p5_instance = new p5(sketch);

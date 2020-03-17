@@ -1,7 +1,7 @@
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-
+var HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 const common = {
   mode: 'development',
   watch: true,
@@ -45,7 +45,8 @@ const frontend = {
       chunks: ['client-view'],
       title: 'JumpQuest Development Client',
       filename: 'index.html'
-    })
+    }),
+    new HtmlWebpackTagsPlugin({ tags: ['css/menu.css'], append: true })
   ],
   output: {
     filename: '[name].js',
