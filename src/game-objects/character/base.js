@@ -1,6 +1,7 @@
 import Matter from 'matter-js'
 import C from 'myConstants'
 import GameObject from 'game-objects/game-object'
+import { UserMessage, HurtStatus } from './status'
 var Engine = Matter.Engine,
     Composite = Matter.Composite,
     Render = Matter.Render,
@@ -10,46 +11,7 @@ var Engine = Matter.Engine,
     Pair = Matter.Pair,
     Constraint = Matter.Constraint,
     Body = Matter.Body;
-class CharStatus {
-    constructor(character, duration) {
-        this.character = character;
-        this.duration = duration;
-        this.active_time = Date.now();
-    }
-    update() {
-        if (Date.now() - this.active_time > this.duration) {
-            this.finish();
-        }
-    }
-    finish() {
-        if (this.character && this.character.statuses) {
-            let index = this.character.statuses.indexOf(this)
-            this.character.statuses.splice(index, 1);
-        }
-    }
-}
-class UserMessage extends CharStatus {
-    constructor(character, message) {
-        super(character, 4000);
-        this.name = "message";
-        this.info = message;
-    }
-    finish() {
-        super.finish();
-    }
-}
-class HurtStatus extends CharStatus {
-    constructor(character, duration) {
-        super(character, duration);
-        this.name = "hurt";
-        this.character.faceAscii = "ಠ╭╮ಠ";
-    }
-    finish() {
-        this.character.faceAscii = "⚆  v  ⚆";
-        super.finish();
-    }
-}
-//class character
+
 class Character extends GameObject {
 
     constructor(gm, pos, id, metadata) {
@@ -74,18 +36,16 @@ class Character extends GameObject {
         // this.isJumping = true;
         // this.isChanneling = true;
 
-        this.faceAscii = "⚆  v  ⚆";
         if (metadata) {
             this.metadata = metadata;
         } else {
             this.metadata = {
-                color: {
-                    r: Math.random() * 255,
-                    g: Math.random() * 255,
-                    b: Math.random() * 255
-                }
+                name: id,
+                defaultFace: '⚆  v  ⚆',
+                color: '#' + Math.floor(Math.random() * 16777215).toString(16)
             }
         }
+        this.faceAscii = this.metadata.defaultFace;
         //field for use force (applyForce)
         this.forceMoveX = 0.01;
         this.forceJumpLandingX = 0;
@@ -127,21 +87,21 @@ class Character extends GameObject {
         // console.log(this.statuses.length)
     }
     gotHit(damage) {
-        // extend hurt duration instead of adding 1 more
-        if (this.statuses) this.statuses = this.statuses.filter(e => !(e instanceof HurtStatus))
-        this.addStatus(new HurtStatus(this, 1000));
-        this.gm.decreaseHp(damage);
-    }
-    // die() {
-    //     // Body.setPosition(this.composite, { x: 500, y: 500 });
-    //     (this.gm.repositionCharacters.bind(this.gm))(this.id)
-    // }
+            // extend hurt duration instead of adding 1 more
+            if (this.statuses) this.statuses = this.statuses.filter(e => !(e instanceof HurtStatus))
+            this.addStatus(new HurtStatus(this, 1000));
+            this.gm.decreaseHp(damage);
+        }
+        // die() {
+        //     // Body.setPosition(this.composite, { x: 500, y: 500 });
+        //     (this.gm.repositionCharacters.bind(this.gm))(this.id)
+        // }
     teleport(posTo, resetVel = false) {
-        Body.setPosition(this.body, { x: posTo.x, y: posTo.y });
-        if (resetVel)
-            Body.setVelocity(this.body, { x: 0, y: 0 });
-    }
-    // added update function that get called from main index.js every "beforeUpdate" event
+            Body.setPosition(this.body, { x: posTo.x, y: posTo.y });
+            if (resetVel)
+                Body.setVelocity(this.body, { x: 0, y: 0 });
+        }
+        // added update function that get called from main index.js every "beforeUpdate" event
     update() {
         // update on statuses
         if (this.statuses) this.statuses.forEach(s => s.update());
@@ -170,25 +130,24 @@ class Character extends GameObject {
     }
 
     inputHandler(keyState) {
-        if (Character.controlChain) {
-            Character.controlChain.forEach((fChain, key) => {
-                let isChanged = this.prevFrameKeyState && (keyState[key] != this.prevFrameKeyState[key]);
-                for (const func of fChain) {
-                    if (func.call(this, keyState[key], isChanged)) break;
-                }
-            })
-        } else console.log("chain empty");
-        this.prevFrameKeyState = JSON.parse(JSON.stringify(keyState));
-    }
-    // forceOrigin = vector {x, y}
-    forceBack(forceOrigin,force) {
+            if (Character.controlChain) {
+                Character.controlChain.forEach((fChain, key) => {
+                    let isChanged = this.prevFrameKeyState && (keyState[key] != this.prevFrameKeyState[key]);
+                    for (const func of fChain) {
+                        if (func.call(this, keyState[key], isChanged)) break;
+                    }
+                })
+            } else console.log("chain empty");
+            this.prevFrameKeyState = JSON.parse(JSON.stringify(keyState));
+        }
+        // forceOrigin = vector {x, y}
+    forceBack(forceOrigin, force) {
         if (forceOrigin) {
             let dir = Vector.normalise(Vector.sub(this.body.position, forceOrigin));
             let vel = Vector.mult(dir, force);
             Body.setVelocity(this.body, vel);
             // console.log("new formula")
-        }
-        else {
+        } else {
             if (this.facing == 1)
                 Body.setVelocity(this.body, { x: -force, y: -force });
             if (this.facing == -1)
@@ -202,7 +161,7 @@ class Character extends GameObject {
             metadata: this.metadata,
             client_id: this.id,
             faceAscii: this.faceAscii,
-            statuses: this.statuses ? this.statuses.map(s => { return { name: s.name, info: s.info } }) : undefined,
+            statuses: this.statuses ? this.statuses.map(s => { return s.simplify() }) : [],
             facing: this.facing
         }, super.simplify())
     }

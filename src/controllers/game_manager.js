@@ -116,8 +116,6 @@ export default class GameManager {
     loadMap(mapName) {
 
         // create two boxes and a ground
-        var boxA = Bodies.rectangle(400, 200, 80, 80, { objType: "box" });
-        var boxB = Bodies.rectangle(250, 50, 80, 80, { objType: "box" });
 
         this.isMapReady = false;
         // load using fs/request 
@@ -192,12 +190,6 @@ export default class GameManager {
         })
         return objects
     }
-
-    addUserMessage(id, message){
-        if (this.character_map.has(id))
-            this.character_map.get(id).character.addUserMessage(message);
-    }
-
 
     updateInput(id, input) {
         if (this.character_map.has(id))

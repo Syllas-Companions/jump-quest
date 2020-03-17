@@ -13,7 +13,7 @@ export default {
         // this.rooms.delete(roomId);
 
     },
-    joinRoom: function (socket, roomId) {
+    joinRoom: function (socket, roomId, characterData) {
         let targetRoom, character_metadata = null;
         if (!this.client_room_map.has(socket.id)) {
             console.log("NEW CLIENT: " + socket.id);
@@ -37,21 +37,22 @@ export default {
             // remove character from the current room
             let curRoom = this.client_room_map.get(socket.id);
             // save character metadata when moving to new room
-            character_metadata = this.rooms.get(curRoom).deleteCharacter(socket.id);
+            characterData = this.rooms.get(curRoom).deleteCharacter(socket.id);
             socket.leave(curRoom);
         }
         // add him to the target room
-        let character = targetRoom.createCharacter(socket.id, character_metadata)
+        let character = targetRoom.createCharacter(socket.id, characterData)
         this.client_room_map.set(socket.id, targetRoom.id)
+        socket.character = character;
         socket.join(targetRoom.id);
         // send current map information for rendering on client
-        socket.emit('mapData',
-            {
-                name: targetRoom.id,
-                background: targetRoom.currentMap.background,
-                tilesets: targetRoom.currentMap.tilesets,
-                map: targetRoom.currentMap.getStaticObj()
-            });
+        socket.emit('mapData', {
+            name: targetRoom.id,
+            background: targetRoom.currentMap.background,
+            tilesets: targetRoom.currentMap.tilesets,
+            map: targetRoom.currentMap.getStaticObj()
+        });
+        socket.emit('characterData', character.metadata);
     },
     init: function (server) {
         // socket.io setup
@@ -80,6 +81,7 @@ export default {
             socket.on('pingRequest', function () {
                 socket.emit('pongResponse');
             });
+
             socket.on('inputUpdate', function (data) {
                 let roomId = context.client_room_map.get(socket.id);
                 let room = roomId ? context.rooms.get(roomId) : null;
@@ -89,12 +91,7 @@ export default {
 
             socket.on('userMessage', function (message) {
                 // add message to character
-                let roomId = context.client_room_map.get(socket.id);
-                let room = roomId ? context.rooms.get(roomId) : null;
-                if (room) {
-                    room.addUserMessage(socket.id, message);
-                    io.to(roomId).emit('userMessage', { userId: socket.id, message });
-                }
+                socket.character.addUserMessage(message)
             })
 
             socket.on('responseRoomName', (roomId) => {
@@ -103,10 +100,17 @@ export default {
                     context.joinRoom(socket, roomId)
             })
             /** data: {roomId} */
-            socket.on('joinGame', function (roomId) {
+            socket.on('joinGame', function (roomId, characterData) {
                 if (roomId != null && roomId != "")
-                    context.joinRoom(socket, roomId)
+                    context.joinRoom(socket, roomId, characterData)
             });
+
+            socket.on('updateCharacterData', (data) => {
+                socket.character.metadata = data;
+                socket.character.faceAscii = data.defaultFace;
+                socket.emit('characterData', data);
+            })
+
             socket.on('disconnect', function () {
                 console.log('DISCONNECTED: ' + socket.id);
                 if (context.client_room_map.get(socket.id) && context.rooms.get(context.client_room_map.get(socket.id))) {
