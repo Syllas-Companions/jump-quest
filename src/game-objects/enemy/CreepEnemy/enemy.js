@@ -90,7 +90,9 @@ export default class Enemy extends GameObject {
         Body.setStatic(this.body, false);
         //cần chuyển sang xTo yTo
         // console.log(this.speed);
-        Body.setVelocity(this.body, { x: xTo * this.speed, y: yTo * this.speed });
+        let caculVector = Matter.Vector.normalise({ x: xTo * this.speed, y: yTo * this.speed });
+        Body.setVelocity(this.body, caculVector);
+        // Body.setVelocity(this.body, { x: xTo * this.speed, y: yTo * this.speed });
     }
     //return true pos
     getDirection() {
