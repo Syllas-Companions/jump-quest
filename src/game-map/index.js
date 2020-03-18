@@ -7,6 +7,7 @@ import Door from 'game-objects/door'
 import Rope from 'game-objects/rope'
 import ItemBox from 'game-objects/items/Box'
 import CreepEnemy from 'game-objects/enemy/CreepEnemy'
+import Chaser from 'game-objects/enemy/Chaser'
 import {Tile, TileWDurability, MovablePlatform, HookableWall} from 'game-objects/tileBlock'
 
 function initBackground(layerJson) {

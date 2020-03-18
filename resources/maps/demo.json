@@ -310,6 +310,45 @@
          "id":18,
          "layers":[
                 {
+                 "id":26,
+                 "layers":[
+                        {
+                         "draworder":"topdown",
+                         "id":27,
+                         "name":"chasers1",
+                         "objects":[
+                                {
+                                 "gid":72,
+                                 "height":64,
+                                 "id":25,
+                                 "name":"tile",
+                                 "rotation":0,
+                                 "type":"",
+                                 "visible":true,
+                                 "width":64,
+                                 "x":619.44769012997,
+                                 "y":604.38450649852
+                                }],
+                         "opacity":1,
+                         "properties":[
+                                {
+                                 "name":"speed",
+                                 "type":"string",
+                                 "value":"0.01"
+                                }],
+                         "type":"objectgroup",
+                         "visible":true,
+                         "x":0,
+                         "y":0
+                        }],
+                 "name":"chasers",
+                 "opacity":1,
+                 "type":"group",
+                 "visible":true,
+                 "x":0,
+                 "y":0
+                }, 
+                {
                  "id":22,
                  "layers":[
                         {
@@ -338,8 +377,8 @@
                                  "type":"enemy",
                                  "visible":true,
                                  "width":0,
-                                 "x":680.144579477007,
-                                 "y":631.380229640306
+                                 "x":701.557525043858,
+                                 "y":609.967284073455
                                 }, 
                                 {
                                  "gid":72,
@@ -350,8 +389,8 @@
                                  "type":"",
                                  "visible":true,
                                  "width":64,
-                                 "x":694.666666666667,
-                                 "y":685.333333333333
+                                 "x":718.550336722001,
+                                 "y":665.56753742547
                                 }],
                          "opacity":1,
                          "properties":[
@@ -379,8 +418,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":26,
- "nextobjectid":25,
+ "nextlayerid":28,
+ "nextobjectid":28,
  "orientation":"orthogonal",
  "properties":[
         {

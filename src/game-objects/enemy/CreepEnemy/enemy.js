@@ -1,5 +1,6 @@
 import Matter from 'matter-js'
 import GameObject from 'game-objects/game-object';
+import Enemy from './../index.js'
 var Engine = Matter.Engine,
     Render = Matter.Render,
     Events = Matter.Events,
@@ -11,32 +12,18 @@ var Engine = Matter.Engine,
 //class enemys
 const DEFAULT_SPEED = 0.01;
 const VELOCITY_REVERSE = 5;
-export default class Enemy extends GameObject {
+export default class CreepEnemy extends Enemy {
 
-
-    constructor(map, json) {//pos, polygon,speed) {
-        // console.log(json);
-        let path = json.objects.find(obj => obj.name == "path");
-        let tile = json.objects.find(obj => obj.name == "tile");
-        let pos = { x: path.x, y: path.y };
-        super(Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, isStatic: true, objType: "enemy" , isSensor: true}));
-
-        this.ignoreList = []
-        if (tile) {
-            this.tile_id = tile.gid;
-        }
-        this.map = map;
-        this.polygon = path.polygon;
-        this.body.enemy_logic = this;
+    constructor(map, json) {
+        super(map, json);
         World.add(map.engine.world, this.body);
-        this.getDirection();
+        let path = json.objects.find(obj => obj.name == "path");
+        this.polygon = path.polygon;
+        let pos = { x: path.x, y: path.y };
         this.targetPoint = this.polygon[2];
         this.prePoint = this.polygon[1];
-        this.distance = 0;
-        this.findPoint = 0;
-        this.speed = json.properties.find(prop => prop.name == 'speed');
-        if (this.speed) this.speed = parseFloat(this.speed.value);
-        else this.speed = 0.1;
+        this.getDirection();
+
     }
     destroy() {
         World.remove(this.map.engine.world, this.body, true);
@@ -73,26 +60,6 @@ export default class Enemy extends GameObject {
             this.getNextPoint(this.prePoint);
         }
         this.ignoreList = this.ignoreList.filter(id => (curFrameChars.findIndex(e => e == id) != -1))
-
-    }
-    getNextPoint(pre) {
-        this.findPoint = this.polygon.indexOf(pre);
-        if (this.findPoint == 2) this.findPoint = -1;
-        this.targetPoint = this.polygon[this.findPoint + 1];
-        // console.log(this.findPoint);
-    }
-    //x,y vi tri den
-    move(x, y) {
-        let xTo = x - this.body.position.x;
-        let yTo = y - this.body.position.y;
-        // console.log(xTo);
-        // di chuyen enemy 
-        Body.setStatic(this.body, false);
-        //cần chuyển sang xTo yTo
-        // console.log(this.speed);
-        let caculVector = Matter.Vector.normalise({ x: xTo * this.speed, y: yTo * this.speed });
-        Body.setVelocity(this.body, caculVector);
-        // Body.setVelocity(this.body, { x: xTo * this.speed, y: yTo * this.speed });
     }
     //return true pos
     getDirection() {
@@ -102,6 +69,4 @@ export default class Enemy extends GameObject {
             position.y += this.body.position.y;
         })
     }
-
-
 }
