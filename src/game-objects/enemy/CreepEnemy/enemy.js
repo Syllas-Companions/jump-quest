@@ -23,8 +23,9 @@ export default class Enemy extends GameObject {
 
         this.ignoreList = []
         if (tile) {
-            this.tile_id = tile.gid;
+            this.body.render.tile_id = tile.gid;
         }
+        this.body.render.angle = 0;
         this.map = map;
         this.polygon = path.polygon;
         this.body.enemy_logic = this;
@@ -41,8 +42,12 @@ export default class Enemy extends GameObject {
     destroy() {
         World.remove(this.map.engine.world, this.body, true);
     }
+    simplify(){
+        return Object.assign({angle: this.body.render.angle},super.simplify());
+    }
     //function update beforce update
     update() {
+        this.body.render.angle+=0.1;
         let curFrameChars = []
         Matter.Query.collides(this.body, this.map.engine.world.bodies)
             .forEach((collision) => {

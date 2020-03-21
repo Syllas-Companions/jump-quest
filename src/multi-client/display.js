@@ -4,8 +4,8 @@ import tileset_manager from 'controllers/tileset_manager'
 import camera from 'camera'
 import C from 'myConstants'
 import gui from './gui'
-export default function(socket, clientState) {
-    let sketch = function(p) {
+export default function (socket, clientState) {
+    let sketch = function (p) {
         function getCoordinate(timestamp, point) {
             let curTime = new Date().getTime();
             let x, y;
@@ -52,9 +52,15 @@ export default function(socket, clientState) {
                     let res = tileset_manager.getTile(tileset.source, obj.tile_id - tileset.firstgid)
                     if (res) {
                         // resource ready
+                        p.push();
                         p.imageMode(p.CENTER);
                         let { x, y } = getCoordinate(obj.timestamp, obj.position);
-                        p.image(res.tileset.image, x, y, 64, 64, res.x, res.y, res.width, res.height);
+                        p.translate(x, y);
+                        if (obj.angle) {
+                            p.rotate(obj.angle);
+                        }
+                        p.image(res.tileset.image, 0, 0, 64, 64, res.x, res.y, res.width, res.height);
+                        p.pop();
 
                     } else {
                         console.log("tileset not ready")
@@ -170,7 +176,7 @@ export default function(socket, clientState) {
                 }
             }
         }
-        p.drawMovingObjs = function() {
+        p.drawMovingObjs = function () {
             p.push();
             clientState.dynamicData.forEach((obj, id) => {
                 if (clientState.id == obj.client_id && obj.type == C.LAYER_CHARACTER) {
@@ -181,7 +187,7 @@ export default function(socket, clientState) {
             })
             p.pop();
         }
-        p.drawMap = function() {
+        p.drawMap = function () {
             if (clientState.mapData) {
                 p.push();
                 // Render tiles using tilesheet's information (TileSet and tileset_manager)
@@ -191,7 +197,7 @@ export default function(socket, clientState) {
                 p.pop();
             }
         }
-        p.drawBackground = function() {
+        p.drawBackground = function () {
             if (clientState.mapData && clientState.mapData.background && clientState.mapData.background != "") {
                 p.push();
                 let img = tileset_manager.getBackground(clientState.mapData.background);
@@ -204,11 +210,11 @@ export default function(socket, clientState) {
                 p.pop();
             }
         }
-        p.initGUI = function() {
+        p.initGUI = function () {
             gui.init(socket, clientState, p);
         }
 
-        p.updateRoomHp = function() {
+        p.updateRoomHp = function () {
             p.push()
             p.scale(camera.scale)
             let cam_min = camera.min()
@@ -222,15 +228,15 @@ export default function(socket, clientState) {
             }
             p.pop();
         }
-        p.preload = function() {
+        p.preload = function () {
             // p.font = p.loadFont('/fonts/arial.ttf');
             // p.faceFont = p.loadFont('/fonts/seguisym.ttf');
             // console.log(p.textFont)
         }
-        p.setup = function() {
+        p.setup = function () {
             p.select('body').style('margin:0px')
             tileset_manager.setP5Instance(p);
-            let canvas = p.createCanvas(p.windowWidth, p.windowHeight /*, p.WEBGL*/ );
+            let canvas = p.createCanvas(p.windowWidth, p.windowHeight /*, p.WEBGL*/);
             canvas.style('display:block')
             camera.width = p.windowWidth;
             camera.height = p.windowHeight;
@@ -238,7 +244,7 @@ export default function(socket, clientState) {
 
             p.initGUI();
         };
-        p.keyPressed = function() {
+        p.keyPressed = function () {
             if (p.keyCode === p.ESCAPE) {
                 if (gui.isChatOn)
                     gui.toggleChat()
@@ -250,7 +256,7 @@ export default function(socket, clientState) {
                 gui.toggleChat();
             }
         }
-        p.draw = function() {
+        p.draw = function () {
             // p.translate(-p.windowWidth/2, -p.windowHeight/2) // WEBGL MODE ONLY, DUE TO DIFFERENT IN COORDINATE"S ORIGIN
             // p.textFont(p.font);
             if (clientState.isAlive) {
