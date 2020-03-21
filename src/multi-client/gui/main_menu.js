@@ -21,6 +21,7 @@ export default function(socket, clientState, p5Instance) {
                 func: function() {
                     socket.emit('joinRoom', 'lobby');
                     menu.hide();
+                    clientState.sendingInput = true;
                 },
                 condition: function() {
                     return clientState.mapData.name != 'lobby';
@@ -31,6 +32,7 @@ export default function(socket, clientState, p5Instance) {
                 label: "Resume",
                 func: function() {
                     menu.hide();
+                    clientState.sendingInput = true;
                 }
             }
         }

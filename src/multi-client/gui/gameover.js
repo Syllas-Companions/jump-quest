@@ -11,7 +11,7 @@ export default function(socket, clientState, p5Instance) {
                 type: 'button',
                 label: "Back To Lobby",
                 func: function() {
-                    socket.emit('joinGame', 'lobby');
+                    socket.emit('joinRoom', 'lobby');
                     clientState.sendingInput = true;
                     menu.hide();
                 },

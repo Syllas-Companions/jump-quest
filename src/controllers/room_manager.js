@@ -18,21 +18,28 @@ export default {
         }
         this.joinRoomN(socket, 'lobby');
     },
-    leaveRoom(socket) {
+    leaveRoom(socket, isDestroyingRoom = false) {
         let curRoom = socket.room;
-        curRoom.deleteCharacter(socket.id);
-        socket.leave(curRoom.id);
-        if (curRoom.id != 'lobby' && curRoom.getPlayerCount() == 0)
-            this.removeRoom(curRoom.id);
-        socket.room = null;
-        socket.character = null;
+        if (curRoom) {
+            curRoom.deleteCharacter(socket.id);
+            socket.leave(curRoom.id);
+            if (curRoom.id != 'lobby' && curRoom.getPlayerCount() == 0)
+                this.removeRoom(curRoom.id);
+            socket.room = null;
+            socket.character = null;
+            if (isDestroyingRoom) {
+                curRoom.sockets = curRoom.sockets.filter(s => s != socket);
+            }
+        }
     },
     joinRoomN(socket, roomId) {
         let room = this.getRoom(roomId);
         if (socket.characterInfo && !socket.character) {
             let character = room.createCharacter(socket.id, socket.characterInfo)
             socket.room = room;
+            room.sockets.push(socket);
             socket.character = character;
+            character.socket = socket;
             socket.join(roomId);
             // send current map information for rendering on client
             socket.emit('mapData', {
@@ -53,6 +60,7 @@ export default {
     },
     createRoom(roomId) {
         let room = new GameManager(roomId);
+        room.sockets = [];
         room.loseCallback = function () {
             // this.destroyRoom(roomId);
             this.gameOver(roomId);
@@ -69,8 +77,8 @@ export default {
             }
         } else {
             // force remove room => need to throw all players out
-            io.sockets.adapter.rooms[room.id].forEach(socket => {
-                this.leaveRoom(socket);
+            room.sockets.forEach(socket => {
+                this.leaveRoom(socket, true);
             });
             this.rooms.delete(room.id);
         }
@@ -79,25 +87,27 @@ export default {
         io.in(roomId).emit('gameOver');
         this.removeRoom(roomId, true);
     },
-    init: function (server) {
+    init(server) {
         // socket.io setup
         io = require('socket.io')(server);
         this.lastRoomId = 100;
         let context = this;
 
-        let waitingResponseList = []
+        // let waitingResponseList = []
 
         // create lobby
         let lobby = new GameManager('lobby', 'lobby');
         lobby.hp = Infinity;
         lobby.decreaseHp = function () { }
         lobby.start();
+        lobby.sockets = [];
         // override lobby's nextMap function
         lobby.nextMap = (function (character, door) {
-            if (waitingResponseList.every(id => id != character.id)) {
-                io.to(character.id).emit('requestRoomName');
-                waitingResponseList.push(character.id);
-            }
+            // if (waitingResponseList.every(id => id != character.id)) {
+            context.leaveRoom(character.socket);
+            io.to(character.id).emit('requestRoomName');
+            // waitingResponseList.push(character.id);
+            // }
         }).bind(lobby);
 
         this.rooms.set(lobby.id, lobby);
@@ -118,7 +128,7 @@ export default {
             })
 
             socket.on('responseRoomName', (roomId) => {
-                waitingResponseList = waitingResponseList.filter(id => id != socket.id);
+                // waitingResponseList = waitingResponseList.filter(id => id != socket.id);
                 if (roomId != null && roomId != "") {
                     context.leaveRoom(socket);
                     context.joinRoomN(socket, roomId)
@@ -130,7 +140,7 @@ export default {
             });
 
             socket.on('joinRoom', (roomId) => {
-                if(socket.room){
+                if (socket.room) {
                     context.leaveRoom(socket);
                 }
                 context.joinRoomN(socket, roomId)

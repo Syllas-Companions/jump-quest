@@ -32,7 +32,7 @@ export default class ModalBox {
         this.reogarnizeMenu();
         if (this.data.onLoad) this.data.onLoad();
         this.backdrop.style('display: table')
-            // this.data.div.show();
+        // this.data.div.show();
         this.data.isActive = true;
         if (this.parent) this.parent.hide(false);
     }
@@ -52,7 +52,7 @@ export default class ModalBox {
     createMenu() {
         let div = this.p5.createDiv();
         div.addClass('menu')
-            // let lastY = MARGIN;
+        // let lastY = MARGIN;
         let title = this.p5.createElement('h1', this.data.name);
         title.parent(div);
         // title.position(MARGIN, lastY);
@@ -83,9 +83,16 @@ export default class ModalBox {
                         label.parent(ele);
 
                         let radio = this.p5.createRadio();
-                        info.options.forEach(e => {
-                            radio.option(e)
-                        });
+                        if (info.useIndex) {
+                            info.options.forEach((e, index) => {
+                                radio.option(e, index);
+                            });
+                        } else {
+                            info.options.forEach(e => {
+                                radio.option(e)
+                            });
+
+                        }
                         radio.value(info.options[0]);
                         radio.parent(ele);
                         //encloseEachInputLabelPairIntoASubDiv
@@ -98,7 +105,7 @@ export default class ModalBox {
                                 this.p5.createDiv().parent(radio).child(inputs[i]).child(labels[i]);
                                 labels[i].addClass('menu-radio-label')
                             }
-                            radio._getInputChildrenArray = function() {
+                            radio._getInputChildrenArray = function () {
                                 return this.elt.getElementsByTagName('input');
                             }
                         }

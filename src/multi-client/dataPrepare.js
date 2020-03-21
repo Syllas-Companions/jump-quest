@@ -1,6 +1,7 @@
 import io from 'socket.io-client'
 import tileset_manager from 'controllers/tileset_manager'
 import C from 'myConstants'
+import gui from './gui'
 // var clientState = {
 //     isAlive: true,
 //     id: null,
@@ -54,14 +55,15 @@ export default function (socket, clientState) {
     }, 20);
 
     socket.on('requestRoomName', function () {
-        var roomName = prompt("Please enter room name", "room001");
+        gui.showRoomChooser();
+        // var roomName = prompt("Please enter room name", "room001");
         // check if room name valid
-        if (roomName && roomName != "") {
-            socket.emit('responseRoomName', roomName);
-            clientState.keyState = {}
-        } else {
-            alert('Room name must not be empty');
-        }
+        // if (roomName && roomName != "") {
+        //     socket.emit('responseRoomName', roomName);
+        //     clientState.keyState = {}
+        // } else {
+        //     alert('Room name must not be empty');
+        // }
     })
 
     socket.on('gameOver', function (data) {
