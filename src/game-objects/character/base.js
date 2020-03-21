@@ -90,7 +90,7 @@ class Character extends GameObject {
             // extend hurt duration instead of adding 1 more
             if (this.statuses) this.statuses = this.statuses.filter(e => !(e instanceof HurtStatus))
             this.addStatus(new HurtStatus(this, 1000));
-            this.gm.decreaseHp(damage);
+            this.gm.decreaseHp(damage*10);
         }
         // die() {
         //     // Body.setPosition(this.composite, { x: 500, y: 500 });

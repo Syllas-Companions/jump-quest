@@ -32,7 +32,6 @@ function moveRight(isKeyDown) {
 }
 function jump(isKeyDown) {
     if (isKeyDown) {
-        console.log(this.baseJump);
         if (!this.isJumping) {
             this.timeStartJump = new Date();
 

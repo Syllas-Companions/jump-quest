@@ -19,7 +19,7 @@ export default function (socket, clientState) {
 
         let characterData = localStorage.getItem('characterData');
         if (characterData) characterData = JSON.parse(characterData);
-        socket.emit('joinGame', 'lobby', characterData);
+        socket.emit('joinGame', characterData);
     })
     // change client status on disconnection
     socket.on('disconnect', (reason) => {
@@ -67,7 +67,8 @@ export default function (socket, clientState) {
     socket.on('gameOver', function (data) {
         console.log("gameover")
         // TODO: show game over message
-        socket.emit('joinGame', 'lobby');
+        clientState.gameState = 'gameOver';
+        // socket.emit('joinGame', 'lobby');
     });
 
     var MAX_SAVED_STATE = 4
