@@ -495,13 +495,8 @@
                                  "type":"enemy",
                                  "visible":true,
                                  "width":0,
-<<<<<<< HEAD
                                  "x":701.557525043858,
                                  "y":609.967284073455
-=======
-                                 "x":856.439732471058,
-                                 "y":585.619649216244
->>>>>>> develop
                                 }, 
                                 {
                                  "gid":72,
@@ -512,13 +507,8 @@
                                  "type":"",
                                  "visible":true,
                                  "width":64,
-<<<<<<< HEAD
                                  "x":718.550336722001,
                                  "y":665.56753742547
-=======
-                                 "x":924.529536292402,
-                                 "y":662.347590047699
->>>>>>> develop
                                 }],
                          "opacity":1,
                          "properties":[
@@ -547,11 +537,7 @@
          "y":0
         }],
  "nextlayerid":28,
-<<<<<<< HEAD
  "nextobjectid":28,
-=======
- "nextobjectid":44,
->>>>>>> develop
  "orientation":"orthogonal",
  "properties":[
         {
