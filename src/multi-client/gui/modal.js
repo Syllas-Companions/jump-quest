@@ -5,7 +5,8 @@ let SPACING = 30;
 export default class ModalBox {
 
     constructor(p5, data) {
-        this.data = data;
+        Object.assign(this,data);
+        // this.data = data;
         this.p5 = p5;
         this.createBackdrop();
         this.createMenu();
@@ -30,10 +31,10 @@ export default class ModalBox {
     }
     show() {
         this.reogarnizeMenu();
-        if (this.data.onLoad) this.data.onLoad();
+        if (this.onLoad) this.onLoad();
         this.backdrop.style('display: table')
         // this.data.div.show();
-        this.data.isActive = true;
+        this.isActive = true;
         if (this.parent) this.parent.hide(false);
     }
     hide(isRecursive = true) {
@@ -41,26 +42,30 @@ export default class ModalBox {
         this.backdrop.hide();
         if (this.parent && !isRecursive) this.parent.show();
         if (this.children && isRecursive) {
-            this.data.isActive = false;
+            this.isActive = false;
             this.children.forEach(m => m.hide(isRecursive));
         }
     }
+    cancel(){
+        if(this.onCancel) this.onCancel();
+        this.hide();
+    }
     accept() {
-        if (this.data.changed) this.data.changed();
+        if (this.changed) this.changed();
         this.hide();
     }
     createMenu() {
         let div = this.p5.createDiv();
         div.addClass('menu')
         // let lastY = MARGIN;
-        let title = this.p5.createElement('h1', this.data.name);
+        let title = this.p5.createElement('h1', this.name);
         title.parent(div);
         // title.position(MARGIN, lastY);
         // title.size(BTN_WIDTH, BTN_HEIGHT);
         title.addClass('menu-header')
 
         // lastY += BTN_HEIGHT + SPACING
-        Object.values(this.data.entries).forEach(info => {
+        Object.values(this.entries).forEach(info => {
             let ele = null;
             switch (info.type) {
                 case 'text':
@@ -145,13 +150,13 @@ export default class ModalBox {
 
         div.parent(this.menuContainer);
         // div.hide();
-        this.data.div = div;
+        this.div = div;
         return div;
     }
     reogarnizeMenu() {
         // recalib width/height/padding
         // let lastY = MARGIN + BTN_HEIGHT + SPACING;
-        Object.values(this.data.entries).forEach(info => {
+        Object.values(this.entries).forEach(info => {
             if (!info.condition || info.condition()) {
                 // info.element.position(MARGIN, lastY);
                 info.element.show();

@@ -1,5 +1,5 @@
 import ModalBox from './modal'
-import SettingMenu from './setting_menu'
+import SettingMenu from './menu_char_setting'
 export default function(socket, clientState, p5Instance) {
     var setting_menu = SettingMenu(socket, clientState, p5Instance);
     var menu = new ModalBox(p5Instance, {
@@ -8,9 +8,23 @@ export default function(socket, clientState, p5Instance) {
         name: 'Main Menu',
         div: {},
         entries: {
-            btnSetting: {
+            btnCharSetting: {
                 type: 'button',
-                label: "Setting",
+                label: "Character Setting",
+                func: function() {
+                    setting_menu.show();
+                }
+            },
+            btnControlSetting: {
+                type: 'button',
+                label: "Control Setting",
+                func: function() {
+                    setting_menu.show();
+                }
+            },
+            btnSoundSetting: {
+                type: 'button',
+                label: "Sound Setting",
                 func: function() {
                     setting_menu.show();
                 }

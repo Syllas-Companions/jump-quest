@@ -3,11 +3,11 @@ import ModalBox from './modal'
 export default function(socket, clientState, p5Instance) {
     var menu = new ModalBox(p5Instance, {
         div: {},
-        name: 'Setting',
+        name: 'Character Setting',
         onLoad: function() {
-            menu.data.entries.name.value(clientState.characterData.name);
-            menu.data.entries.defaultFace.value(clientState.characterData.defaultFace);
-            menu.data.entries.color.value(clientState.characterData.color);
+            menu.entries.name.value(clientState.characterData.name);
+            menu.entries.defaultFace.value(clientState.characterData.defaultFace);
+            menu.entries.color.value(clientState.characterData.color);
         },
         entries: {
             name: {
@@ -32,7 +32,7 @@ export default function(socket, clientState, p5Instance) {
                 type: 'button',
                 label: "Save",
                 func: function() {
-                    let { name, defaultFace, color } = menu.data.entries;
+                    let { name, defaultFace, color } = menu.entries;
                     let characterData ={
                         name: name.value(),
                         defaultFace: defaultFace.value(),

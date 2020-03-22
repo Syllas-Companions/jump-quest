@@ -22,12 +22,12 @@ var chat_system = {
         this.textInput.hide();
         this.sendMessage = this.sendMessage.bind(this);
     },
-    updateChatLog: function() {
+    updateChatLog: function () {
         // console.log(this.clientState.messageSystem.newMessages);
         this.clientState.messageSystem.newMessages.forEach(m => this.addEntryChatLog(m));
         this.clientState.messageSystem.newMessages = [];
     },
-    addEntryChatLog: function(message) {
+    addEntryChatLog: function (message) {
         this.chatLogContent.html(`<div>[${new Date(message.time).toLocaleTimeString('it-IT')}] ${message.name}: ${message.content} </div>`, true);
         if (this.chatLog.size().height - this.chatLogContent.size().height > 0) {
             this.chatLogContent.position(0, this.chatLog.size().height - this.chatLogContent.size().height);
@@ -37,7 +37,7 @@ var chat_system = {
         }
 
     },
-    sendMessage: function(event) {
+    sendMessage: function (event) {
         // event.preventDefault();
         if (event.keyCode === 13) {
             // send
@@ -48,20 +48,20 @@ var chat_system = {
 
         };
     },
-    toggleChat() {
-        this.isChatOn = !this.isChatOn;
-        if (this.isChatOn) {
-            this.textInput.show();
-            this.textInput.elt.focus();
-            this.textInput.elt.addEventListener("keydown", this.sendMessage);
-            this.clientState.sendingInput = false;
-        } else {
-            this.textInput.elt.removeEventListener("keydown", this.sendMessage);
-            this.textInput.hide();
-            this.clientState.sendingInput = true;
-        }
+    show() {
+        this.isActive = true;
+        this.textInput.show();
+        this.textInput.elt.focus();
+        this.textInput.elt.addEventListener("keydown", this.sendMessage);
+        this.clientState.sendingInput = false;
     },
-    init: function(socket, clientState, p5Instance) {
+    hide() {
+        this.isActive = false;
+        this.textInput.elt.removeEventListener("keydown", this.sendMessage);
+        this.textInput.hide();
+        this.clientState.sendingInput = true;
+    },
+    init: function (socket, clientState, p5Instance) {
         this.socket = socket;
         this.clientState = clientState;
         this.p5 = p5Instance;
@@ -69,7 +69,7 @@ var chat_system = {
         this.initChat();
     }
 }
-export default function(socket, clientState, p5Instance) {
+export default function (socket, clientState, p5Instance) {
     chat_system.init(socket, clientState, p5Instance)
     return chat_system;
 }

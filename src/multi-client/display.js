@@ -245,16 +245,7 @@ export default function (socket, clientState) {
             p.initGUI();
         };
         p.keyPressed = function () {
-            if (p.keyCode === p.ESCAPE) {
-                if (gui.isChatOn)
-                    gui.toggleChat()
-                else
-                    gui.toggleMenu();
-            }
-            if (p.keyCode === p.ENTER) {
-                // console.log(clientState.messageSystem);
-                gui.toggleChat();
-            }
+            gui.keyPressed(p.keyCode);
         }
         p.draw = function () {
             // p.translate(-p.windowWidth/2, -p.windowHeight/2) // WEBGL MODE ONLY, DUE TO DIFFERENT IN COORDINATE"S ORIGIN
