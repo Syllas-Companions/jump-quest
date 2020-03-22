@@ -24,7 +24,7 @@ export default class ChaserEnemy extends Enemy {
         this.togger = false;
         this.targetPoint = this.pointCenter;
         World.add(map.engine.world, this.body);
-        World.add(map.engine.world, this.sensorChase)
+        World.add(map.engine.world, this.sensorChase);
     }
     destroy(who) {
         World.remove(this.map.engine.world, who, true);
@@ -56,7 +56,7 @@ export default class ChaserEnemy extends Enemy {
         .forEach((collision) => {
             // console.log(collision.bodyA.objType);
             // console.log(collision.bodyB.objType);
-
+            this.togger = false;
             if (collision.bodyA.objType == 'character-body' || collision.bodyB.objType == 'character-body') {
                 this.togger = true;
                 this.destroy(this.sensorChase);     
@@ -67,9 +67,23 @@ export default class ChaserEnemy extends Enemy {
                     this.targetPoint = {x: collision.bodyB.position.x,y: collision.bodyB.position.y}
                 }
             }
-                
+            
         })  
-        if(this.togger) this.move(this.targetPoint.x, this.targetPoint.y);      
+
+        if(this.togger) this.move(this.targetPoint.x, this.targetPoint.y);
+        else {
+            let distance ;
+            distance = Math.sqrt(Math.pow(this.body.position.x - this.pointCenter.x,2) + Math.pow(this.body.position.y - this.pointCenter.y,2));
+            if(distance < 5 ) {
+                Body.setPosition(this.body, this.pointCenter);
+                this.body.isStatic = true;
+            }
+            else{
+                this.move(this.pointCenter.x,this.pointCenter.y);
+               
+            }
+        } 
+          
     }
     findTarget(){
 
