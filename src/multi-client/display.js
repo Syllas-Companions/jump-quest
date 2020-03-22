@@ -30,6 +30,7 @@ export default function (socket, clientState) {
             }
             return { x, y }
         }
+
         function drawHpBar(x, y, w, h, percent) {
             p.push();
             p.translate(x - w / 2, y - h / 2);
@@ -40,6 +41,7 @@ export default function (socket, clientState) {
             p.rect(2, 1, (w - 4) * (percent), h - 2);
             p.pop();
         }
+
         function drawObject(obj) {
             if (obj.tile_id) {
                 // draw tile
@@ -50,9 +52,15 @@ export default function (socket, clientState) {
                     let res = tileset_manager.getTile(tileset.source, obj.tile_id - tileset.firstgid)
                     if (res) {
                         // resource ready
+                        p.push();
                         p.imageMode(p.CENTER);
                         let { x, y } = getCoordinate(obj.timestamp, obj.position);
-                        p.image(res.tileset.image, x, y, 64, 64, res.x, res.y, res.width, res.height);
+                        p.translate(x, y);
+                        if (obj.angle) {
+                            p.rotate(obj.angle);
+                        }
+                        p.image(res.tileset.image, 0, 0, 64, 64, res.x, res.y, res.width, res.height);
+                        p.pop();
 
                     } else {
                         console.log("tileset not ready")
@@ -63,7 +71,7 @@ export default function (socket, clientState) {
                 // setting up color
                 if (obj.metadata && obj.metadata.color) {
                     p.noStroke()
-                    p.fill(obj.metadata.color.r, obj.metadata.color.g, obj.metadata.color.b);
+                    p.fill(obj.metadata.color);
                 } else if (obj.color) {
                     p.noStroke()
                     p.fill(obj.color);
@@ -101,7 +109,7 @@ export default function (socket, clientState) {
                         p.translate(x, y - 75);
 
                         // draw bubble
-                        p.stroke(0);
+                        p.stroke(1);
                         p.fill(255);
                         if (obj.facing == -1) p.scale(-1, 1);
                         p.triangle(40, 25, 45, 25, 35, 30);
@@ -113,7 +121,7 @@ export default function (socket, clientState) {
                         p.fill(0);
                         p.noStroke()
 
-                        p.textAlign(p.CENTER);
+                        p.textAlign(p.CENTER, p.CENTER);
                         p.text(message.info, 0, 0, 90, 40);
 
                         p.pop();
@@ -155,9 +163,15 @@ export default function (socket, clientState) {
                 if (obj.client_id) {
                     p.push();
                     let { x, y } = getCoordinate(obj.timestamp, obj.position);
-                    p.translate(x - 70, y - 35);
+                    p.translate(x, y + 40);
+                    p.textAlign(p.CENTER);
+                    p.stroke(1);
                     p.textSize(12);
-                    p.text(obj.client_id, 0, 0);
+                    if (obj.metadata && obj.metadata.name) {
+                        p.text(obj.metadata.name, 0, 0);
+                    } else {
+                        p.text(obj.client_id, 0, 0);
+                    }
                     p.pop();
                 }
             }
@@ -196,7 +210,6 @@ export default function (socket, clientState) {
                 p.pop();
             }
         }
-        // TODO: move GUI to another file
         p.initGUI = function () {
             gui.init(socket, clientState, p);
         }
@@ -223,26 +236,16 @@ export default function (socket, clientState) {
         p.setup = function () {
             p.select('body').style('margin:0px')
             tileset_manager.setP5Instance(p);
-            let canvas = p.createCanvas(p.windowWidth, p.windowHeight/*, p.WEBGL*/);
+            let canvas = p.createCanvas(p.windowWidth, p.windowHeight /*, p.WEBGL*/);
             canvas.style('display:block')
             camera.width = p.windowWidth;
             camera.height = p.windowHeight;
             p.frameRate(60);
 
-            // let button = p.createButton('click me');
-            // button.position(0, 0);
             p.initGUI();
         };
         p.keyPressed = function () {
-            if (p.keyCode === p.ESCAPE) {
-                if (gui.isChatOn)
-                    gui.toggleChat()
-                else
-                    gui.toggleMenu();
-            }
-            if (p.keyCode === p.ENTER) {
-                gui.toggleChat();
-            }
+            gui.keyPressed(p.keyCode);
         }
         p.draw = function () {
             // p.translate(-p.windowWidth/2, -p.windowHeight/2) // WEBGL MODE ONLY, DUE TO DIFFERENT IN COORDINATE"S ORIGIN
@@ -271,6 +274,7 @@ export default function (socket, clientState) {
                 p.pop();
             }
             p.updateRoomHp();
+            gui.update();
         };
     };
     let p5_instance = new p5(sketch);

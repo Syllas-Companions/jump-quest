@@ -11,7 +11,7 @@ function initTraps(layerJson) {
 function createBearTraps(layerJson) {
     let createdObjects = [];
     layerJson.objects.forEach(obj => {
-        let bt = new BearTrap(this, { x: obj.x, y: obj.y });
+        let bt = new BearTrap(this, { x: obj.x - this.tileWidth/2, y: obj.y - this.tileHeight/2});
         createdObjects.push(bt);
     })
     return createdObjects

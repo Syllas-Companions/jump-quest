@@ -19,7 +19,7 @@ export default class LazerGateTrap extends GameObject {
             let posAvg = { x: (pos[i].x + pos[i + 1].x) / 2, y: (pos[i].y + pos[i + 1].y) / 2 };
             let length = Math.sqrt(Math.pow(pos[i + 1].x - pos[i].x, 2) + Math.pow(pos[i + 1].y - pos[i].y, 2));
             let angle = Math.atan((pos[i + 1].x - pos[i].x) / (pos[i + 1].y - pos[i].y));
-            let body = Bodies.rectangle(posAvg.x, posAvg.y, 10, length, { isStatic:true, isSensor: true, inertia: Infinity, objType: "lazerGateTrap" });
+            let body = Bodies.rectangle(posAvg.x, posAvg.y, 10, length, { isStatic: true, isSensor: true, inertia: Infinity, objType: "lazerGateTrap" });
             Body.setAngle(body, Math.PI - angle);
             bodies.push(body);
         }
@@ -54,7 +54,7 @@ export default class LazerGateTrap extends GameObject {
         })
     }
     update() {
-        console.log(this.toggle)
+        // console.log(this.toggle)
         if (Date.now() - this.toggle_time > DEFAULT_DURATION) {
             // this.body.isSensor = !this.body.isSensor;
             this.toggle_time = Date.now();

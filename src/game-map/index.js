@@ -3,6 +3,7 @@ import GameMap from './base.js'
 // import other modules/ object types to the map; to disable an object type from the game, just commend out its module
 import BearTrap from 'game-objects/traps/BearTrap'
 import LazerGateTrap from 'game-objects/traps/LazerGateTrap'
+import SpringTrap from 'game-objects/traps/SpringTrap'
 import Door from 'game-objects/door'
 import Rope from 'game-objects/rope'
 import ItemBox from 'game-objects/items/Box'

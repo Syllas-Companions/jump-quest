@@ -1,6 +1,7 @@
 import io from 'socket.io-client'
 import tileset_manager from 'controllers/tileset_manager'
-
+import C from 'myConstants'
+import gui from './gui'
 // var clientState = {
 //     isAlive: true,
 //     id: null,
@@ -12,13 +13,15 @@ import tileset_manager from 'controllers/tileset_manager'
 
 // var socket = io.connect();
 export default function (socket, clientState) {
+
     socket.on('connect', () => {
         clientState.id = socket.id
         clientState.isAlive = true;
-        console.log('hello')
-        socket.emit('joinGame', 'lobby');
+
+        let characterData = localStorage.getItem('characterData');
+        if (characterData) characterData = JSON.parse(characterData);
+        socket.emit('joinGame', characterData);
     })
-    // TODO: add button for returning to lobby
     // change client status on disconnection
     socket.on('disconnect', (reason) => {
         if (reason === 'io server disconnect') {
@@ -52,25 +55,36 @@ export default function (socket, clientState) {
     }, 20);
 
     socket.on('requestRoomName', function () {
-        var roomName = prompt("Please enter room name", "room001");
+        gui.showRoomChooser();
+        // var roomName = prompt("Please enter room name", "room001");
         // check if room name valid
-        if (roomName && roomName != "") {
-            socket.emit('responseRoomName', roomName);
-            clientState.keyState = {}
-        } else {
-            alert('Room name must not be empty');
-        }
+        // if (roomName && roomName != "") {
+        //     socket.emit('responseRoomName', roomName);
+        //     clientState.keyState = {}
+        // } else {
+        //     alert('Room name must not be empty');
+        // }
     })
 
     socket.on('gameOver', function (data) {
         console.log("gameover")
-        // TODO: show message or such (when GUI's ready)
-        socket.emit('joinGame', 'lobby');
+        // TODO: show game over message
+        clientState.gameState = 'gameOver';
+        // socket.emit('joinGame', 'lobby');
     });
 
     var MAX_SAVED_STATE = 4
     clientState.dynamicData = new Map()
+
+    clientState.messageSystem = {
+        chatLog: [],
+        newMessages: [],
+        lastId: -1
+    }
+    clientState.characterData = {}
+
     socket.on('worldUpdate', function (data) {
+        // TODO: timestamp should be on server, client timestamp is likely off due to the change in latency
         let timestamp = new Date().getTime() + 50; // TODO: might be better when considering ping in place of constant
         let { objects, ...worldMetadata } = data;
 
@@ -82,15 +96,37 @@ export default function (socket, clientState) {
                 clientState.dynamicData.delete(key);
             }
         })
-        // transform the package for easier calculation
 
+        // transform the package for easier calculation
         objects.forEach(obj => {
             if (!obj) return;
             if (clientState.dynamicData.has(obj.id)) {
                 // old object 
                 let objState = clientState.dynamicData.get(obj.id)
-                let { vertices, position, ...metaData } = obj;
-                Object.assign(objState, metaData); // update other properties
+                let { vertices, position, ...metadata } = obj;
+                Object.assign(objState, metadata); // update other properties
+
+                // is character?
+                if (metadata.type && metadata.type == C.LAYER_CHARACTER) {
+                    // update current client's character data
+                    if (metadata.client_id == clientState.id) {
+                        clientState.characterData = Object.assign(clientState.characterData, metadata.metadata);
+                        // console.log(data);
+                    }
+                    // check new user message
+                    metadata.statuses
+                        .filter(s => s.name == 'message' && s.id > clientState.messageSystem.lastId)
+                        .forEach(s => {
+                            let message = {
+                                name: metadata.metadata.name,
+                                time: s.active_time,
+                                content: s.info
+                            };
+                            clientState.messageSystem.chatLog.push(message);
+                            clientState.messageSystem.newMessages.push(message);
+                            clientState.messageSystem.lastId = s.id
+                        })
+                }
 
                 // update position and vertices in a way easier to use later in calculation
                 for (let i = 0; i < objState.vertices.length; i++) {
@@ -135,6 +171,11 @@ export default function (socket, clientState) {
             tileset_manager.loadTileset(ts.source);
         })
     });
+
+    // clientState.characterData = {}
+    // socket.on('characterData', function(data) {
+    //     clientState.characterData = Object.assign(clientState.characterData, data);
+    // });
 
 }
 // export {sendMessage, clientState};

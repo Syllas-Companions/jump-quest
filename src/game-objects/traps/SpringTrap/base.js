@@ -7,23 +7,20 @@ var Engine = Matter.Engine,
     Bodies = Matter.Bodies,
     Body = Matter.Body;
 const VELOCITY_REVERSE = 5;
-export default class BearTrap extends GameObject {
+export default class SpringTrap extends GameObject {
 
     constructor(map, pos) {
-        let bodyC = Bodies.rectangle(pos.x, pos.y, 50, 10, { inertia: Infinity, objType: "bearTrap" });
+        let bodyC = Bodies.rectangle(pos.x, pos.y, 50, 10, { inertia: Infinity, objType: "springTrap" });
         let sensorUp = Bodies.rectangle(pos.x, pos.y, 51, 11, { isSensor: true });
         super(Body.create({
             parts: [bodyC, sensorUp],
-            options: { objType: "bearTrap" },
+            options: { objType: "springTrap" },
             isStatic: true
         }));
         this.bodyC = bodyC;
         this.sensorUp = sensorUp;
         this.map = map;
         World.add(map.engine.world, this.body);
-    }
-    destroy() {
-        World.remove(this.map.engine.world, this.body, true);
     }
     update() {
         Matter.Query.collides(this.sensorUp, this.map.engine.world.bodies)
@@ -36,11 +33,11 @@ export default class BearTrap extends GameObject {
                     // console.log("u dead");
                     let char_physics = collision.bodyA.objType == 'character-body' ? collision.bodyA : collision.bodyB;
                     let char_logics = char_physics.character_logic;
-                    char_logics.gotHit(1);
-                    char_logics.forceBack(this.body.position,VELOCITY_REVERSE);
-                    // console.log(char_logics);
+                    // char_logics.forceBack(this.body.position,VELOCITY_REVERSE);
+                    char_logics.setBaseJump(50);
                     // char_logics.die();
                 }
             })
+            // char_logics.setBaseJump();
     }
 }

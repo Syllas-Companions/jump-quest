@@ -18,6 +18,19 @@ export default class CreepEnemy extends Enemy {
         super(map, json);
         World.add(map.engine.world, this.body);
         let path = json.objects.find(obj => obj.name == "path");
+<<<<<<< HEAD
+=======
+        let tile = json.objects.find(obj => obj.name == "tile");
+        let pos = { x: path.x, y: path.y };
+        super(Bodies.circle(pos.x, pos.y, 40, { inertia: Infinity, isStatic: true, objType: "enemy" , isSensor: true}));
+
+        this.ignoreList = []
+        if (tile) {
+            this.body.render.tile_id = tile.gid;
+        }
+        this.body.render.angle = 0;
+        this.map = map;
+>>>>>>> develop
         this.polygon = path.polygon;
         let pos = { x: path.x, y: path.y };
         this.targetPoint = this.polygon[2];
@@ -28,8 +41,12 @@ export default class CreepEnemy extends Enemy {
     destroy() {
         World.remove(this.map.engine.world, this.body, true);
     }
+    simplify(){
+        return Object.assign({angle: this.body.render.angle},super.simplify());
+    }
     //function update beforce update
     update() {
+        this.body.render.angle+=0.1;
         let curFrameChars = []
         Matter.Query.collides(this.body, this.map.engine.world.bodies)
             .forEach((collision) => {

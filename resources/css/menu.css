@@ -1,0 +1,68 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.backdrop {
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.menu-container {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.menu {
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+    padding: 30px;
+    background-color: #595856;
+}
+
+.menu-entry {
+    margin: 10px 0px;
+}
+
+.menu-header {
+    color: #F2C12E;
+    font-weight: bold;
+    text-align: center;
+}
+
+.menu-label {
+    font-weight: bold;
+    color: #F2D22E;
+}
+
+.menu-radio-label {
+    color: #F2D22E;
+}
+
+.menu-input {
+    width: 100%;
+    margin: 5px 0px;
+}
+
+.menu-button {
+    background-color: #A67A29;
+    /* Green */
+    border: none;
+    color: #F2D22E;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    width:100%;
+    padding: 10px;
+}
+
+.menu-button:hover {
+    opacity: 0.6;
+}
