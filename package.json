@@ -30,7 +30,7 @@
         "matter-js": "^0.14.2",
         "p5": "^0.10.2",
         "resurrect-js": "^1.0.1",
-        "socket.io": "^2.3.0",
+        "socket.io": "^2.4.0",
         "socket.io-client": "^2.3.0",
         "uws": "^10.148.2",
         "browser-sync": "^2.26.7",
